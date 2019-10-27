@@ -92,6 +92,7 @@ class Install
             return $installState;
         } catch (PDOException $e) {
             echo "Getting data from settings failed: " . $e->getMessage();
+            return;
         }
     }
 
@@ -103,7 +104,7 @@ class Install
             $dhb->query($sql);
             return;
         } catch (PDOException $e) {
-            echo "Purging tables failed: " . $e->getMessage();
+            echo "Locking installation failed: " . $e->getMessage();
         }
     }
 }
