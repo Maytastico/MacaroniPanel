@@ -53,6 +53,8 @@ Domain       | $pdoDNS
 localhost    | mysql:host=localhost;port=3306;dbname=dashboard
 domain.eu    |  mysql:host=domain.eu;port=3306;dbname=dashboard
 192.168.2.1  | mysql:host=192.168.2.1;port=3306;dbname=dashboard
+
+
 *Installing Panel*<br>
 If everything is right, you will be able to install the tables and add a user.
 Open **/install** on your internet browser and press **"Install Tables"**.
