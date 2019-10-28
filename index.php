@@ -8,6 +8,8 @@
 include_once "assets/php/Config.php";
 include_once "_includes/autoloader.inc.php";
 include_once "_includes/header.inc.php";
-$user = new User("MacaroniJeff");
-var_dump($user->getUserId());
-
+$user = new User("Alios");
+echo "<pre style='color: white'>";
+var_dump($user->addUser("d@d.com", "123", "moderator"));
+var_dump($user->getPassword());
+echo "</pre>";

@@ -8,42 +8,134 @@
 
 class User
 {
-    //@type string
+    //@var PDO
+    //Database connection
+    private $dbh;
+
+    //@var string
     //name of the user from the constructor
     private $username;
-    //@type string
+    //@var string
     //email form the database
     private $email;
-    //@type string
-    //User type, specified inside the database
+    //@var string
+    //User var, specified inside the database
     private $type;
-    //@type string
+    //@var string
     //Hashed password form the database
     private $password;
 
-    //@type array
+    //@var array
     private $permissions = array();
 
-    public function __construct($uid)
+    //It will get all user information, if the user exists
+    function __construct($uid)
     {
+        $this->dbh = Config::dbCon();
+
         $this->username = $uid;
+        if ($this->userExists() === true) {
+            $userData = $this->getUserData();
+            $this->email = $userData['email'];
+            $this->password = $userData['password'];
+            $this->type = $userData['type'];
+        }
     }
 
+    //@return a password from plaintext
+    private function hashPW($plainPassword)
+    {
+        return password_hash($plainPassword, PASSWORD_DEFAULT);
+    }
+    //Returns if the User exists or not
+    //@return bool
+    //true -> user exists
+    //false -> user does not exists
+    public function userExists()
+    {
+        try {
+            $stmt = $this->dbh->prepare("SELECT * FROM users WHERE username=:uid");
+            $stmt->bindParam(":uid", $this->username);
+            $stmt->execute();
+            $res = $stmt->fetchAll();
+            $exists = null;
+            if (count($res) > 0) {
+                $exists = true;
+            } elseif (count($res) <= 0) {
+                $exists = false;
+            }
+            return $exists;
+        } catch (PDOException $e) {
+            echo "Getting data from users failed: " . $e->getMessage();
+            return;
+        }
+    }
+    //Returns  all information of an user
+    //@return array
+    public function getUserData()
+    {
+        try {
+            $stmt = $this->dbh->prepare("SELECT * FROM users WHERE username=:uid");
+            $stmt->bindParam(":uid", $this->username);
+            $stmt->execute();
+            $res = $stmt->fetchAll();
+            $userData = array();
+            foreach ($res as $re) {
+                foreach ($re as $key => $item) {
+                    $userData[$key] = $item;
+                }
+            }
+            return $userData;
+        } catch (PDOException $e) {
+            echo "Getting data from users failed: " . $e->getMessage();
+            return;
+        }
+    }
+    //This function will add a user to the database, if it does not exist.
+    //@return bool
+    //true -> Adding user was successful
+    //false -> User already exist
+    public function addUser($email, $plainPassword, $type)
+    {
+        if ($this->userExists() === false) {
+            $hashedPW = $this->hashPW($plainPassword);
+            try {
+                $stmt = $this->dbh->prepare("INSERT INTO users (username, password, email, type) VALUES (:uid, :pw, :email, :u_type)");
+                $stmt->bindParam(":uid", $this->username);
+                $stmt->bindParam(":pw", $hashedPW);
+                $stmt->bindParam(":email", $email);
+                $stmt->bindParam(":u_type", $type);
+                $stmt->execute();
+                return true;
+            } catch (PDOException $e) {
+                echo "Writing to settings failed: " . $e->getMessage();
+            }
+        } else {
+            return false;
+        }
+    }
+    //Returns the username, saved inside the object
+    //@return string
     public function getUsername()
     {
         return $this->username;
     }
+    //Returns the user type, saved inside the object
+    //@return string
     public function getType()
     {
         return $this->type;
     }
+    //Returns the email of a user, saved inside the object
+    //@return string
     public function getEmail()
     {
         return $this->email;
     }
+    //Returns the hashed password, saved inside the object
+    //@return string
     public function getPassword()
     {
         return $this->password;
     }
-
 }
