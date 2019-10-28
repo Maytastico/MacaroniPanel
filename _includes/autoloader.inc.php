@@ -19,12 +19,13 @@ class Loader
     static function stylesheetLoader()
     {
         $path = self::$jump . "assets/css/";
+
         if (file_exists($path)) {
             echo "<!--Stylesheets-->\n";
             $dirHandler = opendir($path);
             while ($file = readdir($dirHandler)) {
                 if ($file != "." && $file != "..") {
-                    $fullPath = $path . $file;
+                    $fullPath = Config::$folder ."/". $path . $file;
                     echo "<link rel=\"stylesheet\" href=\"" . $fullPath . "\">\n";
 
                 }
@@ -36,13 +37,13 @@ class Loader
 
     static function javascriptLoader()
     {
-        $path = self::$jump . "assets/js/";
+        $path = self::$jump  . "assets/js/";
         if (file_exists($path)) {
             echo "<!--JavaScript Files-->\n";
             $dirHandler = opendir($path);
             while ($file = readdir($dirHandler)) {
                 if ($file != "." && $file != "..") {
-                    $fullPath = $path . $file;
+                    $fullPath = Config::$folder ."/". $path . $file;
                     echo "<script src=\"" . $fullPath . "\"></script>\n";
                 }
             }
