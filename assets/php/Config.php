@@ -9,7 +9,7 @@
 class Config
 {
     //Folder Destination
-    public static $folder = "MacaroniPanel";
+    public static $folder = "";
     //Database
     private static $pdoDNS = "mysql:host=localhost;port=3306;dbname=dashboard";
     private static $pdoUser = "root";
@@ -23,7 +23,7 @@ class Config
             $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $dbh;
         } catch (PDOException $e) {
-            echo "Connection failed: " . $e->getMessage();
+            echo "<b><div class='wrong'>Connection failed: " . $e->getMessage() . "</div></b>";
         }
     }
 }

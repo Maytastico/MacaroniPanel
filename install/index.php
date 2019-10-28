@@ -12,7 +12,7 @@ include_once "../_includes/header.inc.php";
 <body>
 <div class="install">
     <?php $install = Install::installAllowed();
-    if (!$install) {
+    if ($install === false) {
         ?>
         Installation was locked up.
         <br>If you wish to interact with this page, you have to change the "installMode"
@@ -20,7 +20,7 @@ include_once "../_includes/header.inc.php";
     <?php }
     if ($install === null) {
         ?>
-        No Tables were installes please press Install Tables!
+        No Tables were installed please press <b>"Install Tables"</b>!
     <?php } ?>
 </div>
 <div class="container">
@@ -45,14 +45,14 @@ include_once "../_includes/header.inc.php";
     <section class="row main-container">
         <div class="col">
             <h2>Install/Reinstall Tables</h2>
-            <form class="signUp container-fluid" action="../../GamingParadise/dashboard/_includes/installation.inc.php" method="post">
+            <form class="signUp container-fluid" action="../scripts/install.php" method="post">
                 <div class="row">
-                    <button class="col" type="submit" name="action" value="install">Install Tables</button>
+                    <button class="col " type="submit" name="action" value="install">Install Tables</button>
                     <button class="red col" type="submit" name="action" value="lockup">Finish Installation</button>
                 </div>
                 <div class="row">
                     <button class="col" type="submit" name="action" value="reinstall">Reinstall Tables</button>
-                    <div class="col"><input type="checkbox" value="acceptRemoval" name="removal">Accept action</div>
+                    <div class="col"><input type="checkbox" value="accept" name="acceptRemove">Accept action</div>
                 </div>
                 <?php
                 if ($getInstall == "success") {
@@ -61,8 +61,7 @@ include_once "../_includes/header.inc.php";
                     echo '<div class="success text-center">Reinstallation was successful</div>';
                 } elseif ($getInstall == "noPermission") {
                     echo '<div class="wrong' .
-                        ' text-center">Action failed</div>';
-                } elseif ($getreinstall == "acceptRemoval") {
+                        ' text-center">Action failed</div>';                } elseif ($getreinstall == "acceptRemoval") {
                     echo '<div class="wrong' .
                         ' text-center">Please accept</div>';
                 }

@@ -12,9 +12,11 @@ class Install
 
     function __construct()
     {
+        //Gets the database connection.
         $this->dbh = Config::dbCon();
     }
 
+//Writes all tables into the database.
     public function installTables()
     {
         $queries = array(
@@ -33,6 +35,7 @@ class Install
         }
     }
 
+//Deletes all Tables inside the array.
     public function deleteTables()
     {
         $queries = array(
@@ -50,6 +53,7 @@ class Install
         }
     }
 
+//Writes all entries into the settings table.
     private function writeSettings()
     {
         $queries = array(
@@ -70,7 +74,11 @@ class Install
             echo "Writing to settings failed: " . $e->getMessage();
         }
     }
-
+//installAllowed() is a static function that returns the current installation mode
+//from the database
+//@return bool | null if no entry was found
+//true will be returned, if installation mode if active.
+//false will be returned, if installation mode was deactivated.
     static function installAllowed()
     {
         $dbh = Config::dbCon();
@@ -95,13 +103,14 @@ class Install
             return;
         }
     }
-
-    static function lockInstall()
+//lockInstall() overwrites the value inside the settings table.
+//It sets the value of "installMode" to false so the install page isn't
+//accessible.
+    public function lockInstall()
     {
-        $dhb = Config::dbCon();
         try {
             $sql = "update settings set value='false'where name='installMode';";
-            $dhb->query($sql);
+            $this->dbh->query($sql);
             return;
         } catch (PDOException $e) {
             echo "Locking installation failed: " . $e->getMessage();
