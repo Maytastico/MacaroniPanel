@@ -9,7 +9,7 @@
 class Config
 {
     //Folder Destination
-    public static $folder = "";
+    public static $folder = "MacaroniPanel";
     //Database
     private static $pdoDNS = "mysql:host=localhost;port=3306;dbname=dashboard";
     private static $pdoUser = "root";

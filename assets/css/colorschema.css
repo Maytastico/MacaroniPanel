@@ -1,0 +1,20 @@
+/*Grey Background*/
+nav #nav-content, #profileMgr .container-fluid, #profileMgr #menü, body{
+    background-color: #313131 !important;
+}
+nav .headline:hover, #profileMgr #profileMenü:hover, .dataTable tr:nth-child(2n), #dialogBox button{
+    background-color: #595959 !important;
+}
+#profileMgr #menü .item:hover, nav .item ul, .dataTable{
+    background-color: #525252;
+}
+nav .item li:hover, #profileMgr #menü #settings, #dialogBox div{
+    background-color: #414141;
+}
+/*Red Background*/
+#nav-btn, #menü #logout, #dialogBox button.cancel{
+    background-color: #b31227 !important;
+}
+#nav-btn:hover, #menü #logout:hover{
+    background-color: #ca3e47;
+}
