@@ -20,7 +20,7 @@ class Install
     public function installTables()
     {
         $queries = array(
-            "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, username VARCHAR(256) NOT NULL, password VARCHAR(256) NOT NULL, email VARCHAR(256), lastLogin TIMESTAMP(0), sessionID BIGINT, type VARCHAR(256) NOT NULL)",
+            "CREATE TABLE IF NOT EXISTS users (user_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, username VARCHAR(256) NOT NULL, password VARCHAR(256) NOT NULL, email VARCHAR(256), lastLogin TIMESTAMP(0), sessionID BIGINT, type VARCHAR(256) NOT NULL)",
             "CREATE TABLE IF NOT EXISTS settings(name VARCHAR(256) NOT NULL, value text NOT NULL)"
         );
 
@@ -32,6 +32,7 @@ class Install
             return;
         } catch (PDOException $e) {
             echo "Installing database tables failed: " . $e->getMessage();
+            exit();
         }
     }
 
@@ -50,6 +51,7 @@ class Install
             return;
         } catch (PDOException $e) {
             echo "Purging tables failed: " . $e->getMessage();
+            exit();
         }
     }
 

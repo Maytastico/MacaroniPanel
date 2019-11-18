@@ -10,7 +10,9 @@ include_once "../_includes/autoloader.inc.php";
 Loader::$jump = "../";
 $action = empty($_POST['action']) ? false : $_POST['action'];
 $remove = empty($_POST['acceptRemove']) ? false : $_POST['acceptRemove'];
-
+var_dump($i = new Install());
+//var_dump($i->deleteTables());
+var_dump($i->installTables());
 if (!$action || !$remove || Install::installAllowed() === false) {
     //If nothing was posted or installing tables is disabled, the user will
     //redirected to the install page.

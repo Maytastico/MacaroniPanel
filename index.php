@@ -11,5 +11,5 @@ include_once "_includes/header.inc.php";
 $user = new User("Alios");
 echo "<pre style='color: white'>";
 var_dump($user->addUser("d@d.com", "123", "moderator"));
-var_dump($user->getPassword());
+var_dump($user->getHashedPW());
 echo "</pre>";

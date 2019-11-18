@@ -22,8 +22,11 @@ class User
     //User var, specified inside the database
     private $type;
     //@var string
+    //stores the Password in plain text
+    private $plainPW;
+    //@var string
     //Hashed password form the database
-    private $password;
+    private $hashedPW;
 
     //@var array
     private $permissions = array();
@@ -37,12 +40,13 @@ class User
         if ($this->userExists() === true) {
             $userData = $this->getUserData();
             $this->email = $userData['email'];
-            $this->password = $userData['password'];
+            $this->hashedPW = $userData['password'];
             $this->type = $userData['type'];
         }
     }
 
-    //@return a password from plaintext
+    //@return string
+    //a password from plaintext
     private function hashPW($plainPassword)
     {
         return password_hash($plainPassword, PASSWORD_DEFAULT);
@@ -134,8 +138,8 @@ class User
     }
     //Returns the hashed password, saved inside the object
     //@return string
-    public function getPassword()
+    public function getHashedPW()
     {
-        return $this->password;
+        return $this->hashedPW;
     }
 }

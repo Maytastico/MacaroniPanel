@@ -24,6 +24,7 @@ class Config
             return $dbh;
         } catch (PDOException $e) {
             echo "<b><div class='wrong'>Connection failed: " . $e->getMessage() . "</div></b>";
+            exit();
         }
     }
 }
