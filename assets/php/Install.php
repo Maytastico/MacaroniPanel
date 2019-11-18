@@ -20,7 +20,9 @@ class Install
     public function installTables()
     {
         $queries = array(
-            "CREATE TABLE IF NOT EXISTS users (user_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, username VARCHAR(256) NOT NULL, password VARCHAR(256) NOT NULL, email VARCHAR(256), lastLogin TIMESTAMP(0), sessionID BIGINT, type VARCHAR(256) NOT NULL)",
+            "CREATE TABLE IF NOT EXISTS permissions(id int NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(256) NOT NULL)",
+            "CREATE TABLE IF NOT EXISTS role(permissionID INTEGER NOT NULL, name VARCHAR(256) NOT NULL, roleID INTEGER AUTO_INCREMENT NOT NULL PRIMARY KEY, FOREIGN KEY (permissionID) REFERENCES permissions(id))",
+            "CREATE TABLE IF NOT EXISTS users (user_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, username VARCHAR(256) NOT NULL, password VARCHAR(256) NOT NULL, email VARCHAR(256), lastLogin TIMESTAMP(0), sessionID BIGINT, type VARCHAR(256) NOT NULL, roleID INTEGER NOT NULL , FOREIGN KEY (roleID) REFERENCES role(roleID))",
             "CREATE TABLE IF NOT EXISTS settings(name VARCHAR(256) NOT NULL, value text NOT NULL)"
         );
 
@@ -40,8 +42,11 @@ class Install
     public function deleteTables()
     {
         $queries = array(
+            "DROP TABLE users",
+            "DROP TABLE role",
+            "DROP TABLE permissions",
             "DROP TABLE settings",
-            "DROP TABLE users"
+
         );
 
         try {
