@@ -8,27 +8,33 @@
 
 class User
 {
-    //@var PDO
-    //Database connection
+    /**@var PDO
+     *Database connection
+     */
     private $dbh;
 
-    //@var string
-    //name of the user from the constructor
+    /**@var string
+     *name of the user from the constructor
+     */
     private $username;
-    //@var string
-    //email form the database
+    /**@var string
+     *email form the database
+     */
     private $email;
-    //@var string
-    //User var, specified inside the database
-    private $type;
-    //@var string
-    //stores the Password in plain text
+    /**@var string
+     *User var, specified inside the database
+     */
+    private $roleID;
+    /**@var string
+     *stores the Password in plain text
+     */
     private $plainPW;
-    //@var string
-    //Hashed password form the database
+    /**@var string
+     *Hashed password form the database
+     */
     private $hashedPW;
 
-    //@var array
+    /**@var array */
     private $permissions = array();
 
     //It will get all user information, if the user exists
@@ -41,20 +47,25 @@ class User
             $userData = $this->getUserData();
             $this->email = $userData['email'];
             $this->hashedPW = $userData['password'];
-            $this->type = $userData['type'];
+            $this->roleID = $userData['roleID'];
         }
     }
 
-    //@return string
-    //a password from plaintext
+    /**@return string
+     * Returns the hashed password
+     *@param string
+     * A password from plaintext
+     */
     private function hashPW($plainPassword)
     {
         return password_hash($plainPassword, PASSWORD_DEFAULT);
     }
-    //Returns if the User exists or not
-    //@return bool
-    //true -> user exists
-    //false -> user does not exists
+
+    /**Returns if the User exists or not
+     * @return bool
+     *true -> user exists
+     *false -> user does not exists
+     */
     public function userExists()
     {
         try {
@@ -74,8 +85,10 @@ class User
             return;
         }
     }
-    //Returns  all information of an user
-    //@return array
+
+    /**Returns  all information of an user
+     * @return array
+     */
     public function getUserData()
     {
         try {
@@ -95,10 +108,12 @@ class User
             return;
         }
     }
-    //This function will add a user to the database, if it does not exist.
-    //@return bool
-    //true -> Adding user was successful
-    //false -> User already exist
+
+    /**This function will add a user to the database, if it does not exist.
+     * @return bool
+     *true -> Adding user was successful
+     *false -> User already exist
+     */
     public function addUser($email, $plainPassword, $type)
     {
         if ($this->userExists() === false) {
@@ -112,32 +127,40 @@ class User
                 $stmt->execute();
                 return true;
             } catch (PDOException $e) {
-                echo "Writing to settings failed: " . $e->getMessage();
+                echo "Writing to settingstype failed: " . $e->getMessage();
             }
         } else {
             return false;
         }
     }
-    //Returns the username, saved inside the object
-    //@return string
+
+    /**Returns the username, saved inside the object
+     * @return string
+     */
     public function getUsername()
     {
         return $this->username;
     }
-    //Returns the user type, saved inside the object
-    //@return string
-    public function getType()
+
+    /**Returns the user type, saved inside the object
+     * @return string
+     */
+    public function getRoleID()
     {
-        return $this->type;
+        return $this->roleID;
     }
-    //Returns the email of a user, saved inside the object
-    //@return string
+
+    /**Returns the email of a user, saved inside the object
+     * @return string
+     */
     public function getEmail()
     {
         return $this->email;
     }
-    //Returns the hashed password, saved inside the object
-    //@return string
+
+    /**Returns the hashed password, saved inside the object
+     * @return string
+     */
     public function getHashedPW()
     {
         return $this->hashedPW;
