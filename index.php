@@ -8,8 +8,16 @@
 include_once "assets/php/Config.php";
 include_once "_includes/autoloader.inc.php";
 include_once "_includes/header.inc.php";
-$user = new User("Alios");
 echo "<pre style='color: white'>";
-var_dump($user->addUser("d@d.com", "123", "moderator"));
-var_dump($user->getHashedPW());
+$rbac = new RBAC("moderator");
+$rbac->addPermission(5);
+$rbac->addPermission(2);
+$rbac->addPermission(1);
+$rbac->setRoleName("moderator");
+var_dump($rbac->getRoleID());
+
+
+
+$rbac->setRoleName("ma");
+
 echo "</pre>";
