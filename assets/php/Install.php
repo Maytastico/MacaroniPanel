@@ -22,9 +22,9 @@ class Install
         $queries = array(
             "CREATE TABLE IF NOT EXISTS permissions(id int NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(256) NOT NULL)",
             "CREATE TABLE IF NOT EXISTS role(id INTEGER AUTO_INCREMENT NOT NULL PRIMARY KEY , name VARCHAR(256) NOT NULL)",
-            "CREATE TABLE IF NOT EXISTS role_has_permission(role_id int NOT NULL , permission_id int NOT NULL, FOREIGN KEY (role_id) REFERENCES role(id), FOREIGN KEY (permission_id) REFERENCES permissions(id))",
-            "CREATE TABLE IF NOT EXISTS users (user_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, username VARCHAR(256) NOT NULL, password VARCHAR(256) NOT NULL, email VARCHAR(256), lastLogin TIMESTAMP(0), sessionID BIGINT, type VARCHAR(256) NOT NULL, roleID INTEGER NOT NULL , FOREIGN KEY (roleID) REFERENCES role(id))",
-            "CREATE TABLE IF NOT EXISTS settings(name VARCHAR(256) NOT NULL, value text NOT NULL)"
+            "CREATE TABLE IF NOT EXISTS users (user_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, username VARCHAR(256) NOT NULL, password VARCHAR(256) NOT NULL, email VARCHAR(256), lastLogin TIMESTAMP(0), sessionID BIGINT, type VARCHAR(256) NOT NULL, role_id INTEGER NOT NULL , FOREIGN KEY (role_id) REFERENCES role(id))",
+            "CREATE TABLE IF NOT EXISTS settings(name VARCHAR(256) NOT NULL, value text NOT NULL)",
+            "CREATE TABLE IF NOT EXISTS role_has_permission(role_id int NOT NULL , permission_id int NOT NULL, FOREIGN KEY (role_id) REFERENCES role(id), FOREIGN KEY (permission_id) REFERENCES permissions(id))"
         );
 
         try {

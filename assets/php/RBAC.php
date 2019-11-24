@@ -35,10 +35,18 @@ class RBAC
         $this->roleName = $name;
         $this->dbh = Config::dbCon();
 
-        $this->roleID = $this->getRoleIDFromName();
+        if ($this->roleExists()) {
+            $this->roleID = $this->getRoleIDFromName();
+        }
 
     }
 
+    /**
+     * @return bool|null
+     * true = Role Exists
+     * false = Role does not exist
+     * null = Some strange is going on
+     */
     public function roleExists()
     {
         try {
@@ -57,7 +65,6 @@ class RBAC
             return $exists;
         } catch (PDOException $e) {
             echo "Getting data from role failed: " . $e->getMessage();
-            return;
         }
     }
 
@@ -69,18 +76,14 @@ class RBAC
     public function createRole()
     {
         try {
-            if (count($this->permissionIDs) > 1) {
+            if (count($this->permissionIDs) >= 1) {
                 if (!$this->roleExists()) {
-                    $evaluatedRoleID = $this->evaluateID();
-                    $stmt = $this->dbh->prepare("INSERT INTO role(roleID, name, permissionID) VALUES (:roleID,:roleName, :permissionID);");
-                    foreach ($this->permissionIDs as $permission) {
-                        var_dump($permission);
-                        settype($permission, "integer");
-                        $stmt->bindParam(":roleID", $evaluatedRoleID);
-                        $stmt->bindParam(":roleName", $this->roleName);
-                        $stmt->bindParam(":permissionID", $permission);
-                        $stmt->execute();
-                    }
+                    $stmt = $this->dbh->prepare("INSERT INTO role(name) VALUES (:roleName);");
+                    $stmt->bindParam(":roleName", $this->roleName);
+                    $stmt->execute();
+                    $this->roleID = $this->getRoleIDFromName();
+                    $this->addRoleAndPermissionRelations();
+                    return true;
                 } else {
                     return false;
                 }
@@ -91,20 +94,59 @@ class RBAC
             echo "Creating new role failed " . $e->getMessage();
         }
     }
+    public function removeRole(){
+        try {
+            $this->removeRoleAndPermissionRealations();
+            $stmt = $this->dbh->prepare("DELETE FROM role WHERE id=:roleID");
+            $stmt->bindParam(":roleID", $this->roleID);
+            $stmt->execute();
+            return true;
+        } catch (PDOException $e) {
+            echo "Deleting $this->roleName role relations failed " . $e->getMessage();
+        }
+    }
+    /**
+     * Gets the role id and permission ids from the attributes and add them into the bridge table.
+     * It contains which role has which permission.
+     */
+    private function addRoleAndPermissionRelations()
+    {
+        try {
+            $stmt = $this->dbh->prepare("INSERT INTO role_has_permission(role_id, permission_id) VALUES (:roleID, :permissionID)");
+            $stmt->bindParam(":roleID", $this->roleID);
+            foreach ($this->permissionIDs as $permissionID){
+                $stmt->bindParam(":permissionID", $permissionID);
+                $stmt->execute();
+            }
+        } catch (PDOException $e) {
+            echo "Creating role-permission relations failed " . $e->getMessage();
+        }
+    }
+
+    private function removeRoleAndPermissionRealations(){
+        try {
+            $stmt = $this->dbh->prepare("DELETE FROM role_has_permission WHERE role_id=:roleID");
+            $stmt->bindParam(":roleID", $this->roleID);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            echo "Deleting role-permission relations failed " . $e->getMessage();
+        }
+    }
 
     /**
      * @return integer
-     * Returns the highest roleID inside the role Table
+     * Return the id from a Role Name
+     * Multiple role entries with the same name will be ignored.
      */
-     private function getRoleIDFromName()
+    private function getRoleIDFromName()
     {
         try {
-            if($this->roleExists()) {
+            if ($this->roleExists()) {
                 $stmt = $this->dbh->prepare("SELECT id FROM role WHERE name=:roleName");
                 $stmt->bindParam("roleName", $this->roleName);
                 $stmt->execute();
                 $queryResults = $stmt->fetchAll();
-                $roleID = $queryResults[0][0];
+                $roleID = $queryResults[0]["id"];
                 settype($roleID, "Integer");
                 return $roleID;
             } else {
@@ -114,7 +156,13 @@ class RBAC
             echo "Getting Role ID failed: " . $e;
         }
     }
-
+    private function updateRoleID(){
+        if($this->roleExists()){
+            $this->roleID = $this->getRoleIDFromName();
+        }else{
+            $this->roleID = -1;
+        }
+    }
     /**
      * @param $id
      * The permissionID that should be added to the role
@@ -124,6 +172,7 @@ class RBAC
         $sizeofPermission = count($this->permissionIDs);
         $this->permissionIDs[$sizeofPermission] = $id;
     }
+
     /**
      * @param $roleName
      * Name of the role the should be created
@@ -131,6 +180,7 @@ class RBAC
     public function setRoleName($roleName)
     {
         $this->roleName = $roleName;
+        $this->updateRoleID();
     }
 
     /**
@@ -147,7 +197,7 @@ class RBAC
      */
     public function getRoleID()
     {
-        settype($this->roleID, "Integer");
+        //settype($this->roleID, "Integer");
         return $this->roleID;
     }
 }
