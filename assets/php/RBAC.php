@@ -8,6 +8,11 @@
 
 class RBAC
 {
+    /**
+     * @var bool
+     * Contains the status wheather a role exists or not
+     */
+    private $exists = false;
     /**@var PDO
      * Saves the database handler
      */
@@ -36,6 +41,7 @@ class RBAC
         $this->dbh = Config::dbCon();
 
         if ($this->roleExists()) {
+            $this->exists = true;
             $this->roleID = $this->getRoleIDFromName();
         }
 
@@ -67,7 +73,6 @@ class RBAC
             echo "Getting data from role failed: " . $e->getMessage();
         }
     }
-
     /**
      * @return bool
      * true = if everything was successful
