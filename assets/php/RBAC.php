@@ -18,9 +18,14 @@ class RBAC
      */
     private $dbh;
     /**@var array
-     * Saves all permissions of a role
+     * Saves all permissions of a role as a number
      */
     private $permissionIDs = array();
+    /**
+     * @var array
+     * Saves the permissions of a role as the name
+     */
+    private $permissionsAsName = array();
     /**@var string
      * Saves the name of the role
      */
@@ -42,7 +47,8 @@ class RBAC
 
         if ($this->roleExists()) {
             $this->exists = true;
-            $this->roleID = $this->getRoleIDFromName();
+            $this->roleID = $this->fetchRoleIDFromName();
+            $this->permissionIDs = $this->fetchPermissions();
         }
 
     }
@@ -51,7 +57,7 @@ class RBAC
      * @return bool|null
      * true = Role Exists
      * false = Role does not exist
-     * null = Some strange is going on
+     * null = Something strange is going on
      */
     public function roleExists()
     {
@@ -70,7 +76,7 @@ class RBAC
             }
             return $exists;
         } catch (PDOException $e) {
-            echo "Getting data from role failed: " . $e->getMessage();
+            echo "Fetching data from role failed: " . $e->getMessage();
         }
     }
     /**
@@ -86,7 +92,7 @@ class RBAC
                     $stmt = $this->dbh->prepare("INSERT INTO role(name) VALUES (:roleName);");
                     $stmt->bindParam(":roleName", $this->roleName);
                     $stmt->execute();
-                    $this->roleID = $this->getRoleIDFromName();
+                    $this->roleID = $this->fetchRoleIDFromName();
                     $this->addRoleAndPermissionRelations();
                     return true;
                 } else {
@@ -99,6 +105,11 @@ class RBAC
             echo "Creating new role failed " . $e->getMessage();
         }
     }
+
+    /**
+     * @return bool
+     * Removes the with the corresponding permissions
+     */
     public function removeRole(){
         try {
             $this->removeRoleAndPermissionRealations();
@@ -111,8 +122,8 @@ class RBAC
         }
     }
     /**
-     * Gets the role id and permission ids from the attributes and add them into the bridge table.
-     * It contains which role has which permission.
+     * Gets the role id and permission ids from the attributes and adds them into the bridge table.
+     * The bridge table contains  role and the corresponding permission.
      */
     private function addRoleAndPermissionRelations()
     {
@@ -128,6 +139,9 @@ class RBAC
         }
     }
 
+    /**
+     * Removes the relation inside the bridge table
+     */
     private function removeRoleAndPermissionRealations(){
         try {
             $stmt = $this->dbh->prepare("DELETE FROM role_has_permission WHERE role_id=:roleID");
@@ -143,7 +157,7 @@ class RBAC
      * Return the id from a Role Name
      * Multiple role entries with the same name will be ignored.
      */
-    private function getRoleIDFromName()
+    private function fetchRoleIDFromName()
     {
         try {
             if ($this->roleExists()) {
@@ -161,28 +175,79 @@ class RBAC
             echo "Getting Role ID failed: " . $e;
         }
     }
+
+    private function fetchPermissions(){
+        try {
+            if ($this->roleExists()) {
+                $stmt = $this->dbh->prepare("SELECT  permission_id FROM role INNER JOIN  role_has_permission ON role.id=role_has_permission.role_id WHERE role_id=:roleID");
+                $stmt->bindParam("roleID", $this->roleID);
+                $stmt->execute();
+                $queryResults = $stmt->fetchAll();
+                $permissions = array();
+                $index = 0;
+                foreach ($queryResults as $key=>$permission){
+                    $permissions[$index] = $permission[0];
+                    $index++;
+                }
+                return $permissions;
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            echo "Fetching permission ID failed: " . $e;
+        }
+    }
+
+    private function fetchPermissionNames(){
+        try {
+            if ($this->roleExists()) {
+                $stmt = $this->dbh->prepare("SELECT  permission_id FROM role INNER JOIN  role_has_permission ON role.id=role_has_permission.role_id WHERE role_id=:roleID");
+                $stmt->bindParam("roleID", $this->roleID);
+                $stmt->execute();
+                $queryResults = $stmt->fetchAll();
+                $permissions = array();
+                $index = 0;
+                foreach ($queryResults as $key=>$permission){
+                    $permissions[$index] = $permission[0];
+                    $index++;
+                }
+                return $permissions;
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            echo "Fetching permission ID failed: " . $e;
+        }
+    }
+    /**
+     * Updates the role ID inside the object
+     */
     private function updateRoleID(){
         if($this->roleExists()){
-            $this->roleID = $this->getRoleIDFromName();
+            $this->roleID = $this->fetchRoleIDFromName();
         }else{
             $this->roleID = -1;
         }
     }
+
     /**
      * @param $id
      * The permissionID that should be added to the role
      */
     public function addPermission($id)
     {
-        $sizeofPermission = count($this->permissionIDs);
-        $this->permissionIDs[$sizeofPermission] = $id;
+        if ($this->exists === false){
+            $sizeofPermission = count($this->permissionIDs);
+            $this->permissionIDs[$sizeofPermission] = $id;
+        }
     }
 
     /**
      * @param $roleName
-     * Name of the role the should be created
+     * Sets a another Name inside the object, so the object can be
+     * reused
      */
-    public function setRoleName($roleName)
+    private function setRoleName($roleName)
     {
         $this->roleName = $roleName;
         $this->updateRoleID();
@@ -204,5 +269,14 @@ class RBAC
     {
         //settype($this->roleID, "Integer");
         return $this->roleID;
+    }
+
+    /**
+     * @return array
+     * Returns the permissions of the user
+     */
+    public function getPermissionIDs()
+    {
+        return $this->permissionIDs;
     }
 }
