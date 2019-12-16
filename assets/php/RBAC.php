@@ -49,6 +49,7 @@ class RBAC
             $this->exists = true;
             $this->roleID = $this->fetchRoleIDFromName();
             $this->permissionIDs = $this->fetchPermissions();
+            $this->permissionsAsName = $this->evaluatePermissionNames();
         }
 
     }
@@ -172,10 +173,15 @@ class RBAC
                 return false;
             }
         } catch (PDOException $e) {
-            echo "Getting Role ID failed: " . $e;
+            echo "Getting Role ID failed: " . $e->getMessage();
         }
     }
 
+    /**
+     * @return array|bool
+     * array: Gets all permissions of a role and returns them as a id
+     * false: The role doesn't exist
+     */
     private function fetchPermissions(){
         try {
             if ($this->roleExists()) {
@@ -194,31 +200,57 @@ class RBAC
                 return false;
             }
         } catch (PDOException $e) {
-            echo "Fetching permission ID failed: " . $e;
+            echo "Fetching permission ID failed: " . $e->getMessage();
         }
     }
 
-    private function fetchPermissionNames(){
-        try {
-            if ($this->roleExists()) {
-                $stmt = $this->dbh->prepare("SELECT  permission_id FROM role INNER JOIN  role_has_permission ON role.id=role_has_permission.role_id WHERE role_id=:roleID");
-                $stmt->bindParam("roleID", $this->roleID);
-                $stmt->execute();
-                $queryResults = $stmt->fetchAll();
-                $permissions = array();
-                $index = 0;
-                foreach ($queryResults as $key=>$permission){
-                    $permissions[$index] = $permission[0];
+    /**
+     * @return array
+     * Compares the the ids of the permission array of the object and the ids of the permission table and puts the name
+     * inside an array
+     */
+    private function evaluatePermissionNames(){
+        $permissionTable = $this->fetchPermissionTable();
+        $permissionIDs = $this->permissionIDs;
+        $permissionNames = array();
+        $index = 0;
+        foreach ($permissionIDs as $permission){
+            foreach ($permissionTable as $permissionEntry){
+                $permissionID = $permissionEntry["id"];
+                $permissionName = $permissionEntry["name"];
+                //Compared ids of the permissionID inside the object and
+                // the id inside the permission entry
+                if($permission == $permissionID){
+                    $permissionNames[$index] = $permissionName;
                     $index++;
                 }
-                return $permissions;
-            } else {
-                return false;
             }
+        }
+        return $permissionNames;
+    }
+
+    /**
+     * @return array
+     * Gets all available permissions inside the database table
+     */
+    private function fetchPermissionTable(){
+        try {
+            $stmt = $this->dbh->prepare("SELECT * FROM permissions");
+            $stmt->execute();
+            $queryResults = $stmt->fetchAll();
+            $permissions = array();
+            $index = 0;
+            foreach ($queryResults as $key=>$permission){
+                $permissions[$index]["id"] = $permission["id"];
+                $permissions[$index]["name"] = $permission["name"];
+                $index++;
+            }
+            return $permissions;
         } catch (PDOException $e) {
-            echo "Fetching permission ID failed: " . $e;
+            echo "Fetching permission table failed: " . $e->getMessage();
         }
     }
+
     /**
      * Updates the role ID inside the object
      */
@@ -229,16 +261,22 @@ class RBAC
             $this->roleID = -1;
         }
     }
-
     /**
      * @param $id
+     * @return bool
      * The permissionID that should be added to the role
+     * true: Role was successfully added to the object
+     * false: The role already exists and the permission can't be added to the object.
+     * The has to be deleted first
      */
     public function addPermission($id)
     {
         if ($this->exists === false){
             $sizeofPermission = count($this->permissionIDs);
             $this->permissionIDs[$sizeofPermission] = $id;
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -273,10 +311,19 @@ class RBAC
 
     /**
      * @return array
-     * Returns the permissions of the user
+     * Returns the permissions of the user as a number
      */
     public function getPermissionIDs()
     {
         return $this->permissionIDs;
+    }
+
+    /**
+     * @return array
+     * Returns the permission attributes of a role as the specific role name
+     */
+    public function getPermissionsAsName()
+    {
+        return $this->permissionsAsName;
     }
 }
