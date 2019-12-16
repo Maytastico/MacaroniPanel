@@ -33,9 +33,11 @@ class User
      *Hashed password form the database
      */
     private $hashedPW;
-
-    /**@var array */
-    private $permissions = array();
+    /**
+     * @var RBAC
+     * Contains the role information of a user
+     */
+    private $rbac;
 
     //It will get all user information, if the user exists
     function __construct($uid)
@@ -47,7 +49,8 @@ class User
             $userData = $this->getUserData();
             $this->email = $userData['email'];
             $this->hashedPW = $userData['password'];
-            $this->roleID = $userData['roleID'];
+            $this->roleID = $userData['role_id'];
+            $this->rbac = new RBAC(RBAC::fetchRoleNameFormID($this->roleID));
         }
     }
 
@@ -114,16 +117,16 @@ class User
      *true -> Adding user was successful
      *false -> User already exist
      */
-    public function addUser($email, $plainPassword, $type)
+    public function addUser($email, $plainPassword, $role)
     {
         if ($this->userExists() === false) {
             $hashedPW = $this->hashPW($plainPassword);
             try {
-                $stmt = $this->dbh->prepare("INSERT INTO users (username, password, email, type) VALUES (:uid, :pw, :email, :u_type)");
+                $stmt = $this->dbh->prepare("INSERT INTO users (username, password, email, role_id) VALUES (:uid, :pw, :email, :u_roleID)");
                 $stmt->bindParam(":uid", $this->username);
                 $stmt->bindParam(":pw", $hashedPW);
                 $stmt->bindParam(":email", $email);
-                $stmt->bindParam(":u_type", $type);
+                $stmt->bindParam(":u_roleID", $role);
                 $stmt->execute();
                 return true;
             } catch (PDOException $e) {
@@ -142,14 +145,6 @@ class User
         return $this->username;
     }
 
-    /**Returns the user type, saved inside the object
-     * @return string
-     */
-    public function getRoleID()
-    {
-        return $this->roleID;
-    }
-
     /**Returns the email of a user, saved inside the object
      * @return string
      */
@@ -164,5 +159,13 @@ class User
     public function getHashedPW()
     {
         return $this->hashedPW;
+    }
+
+    /**
+     * @return RBAC
+     */
+    public function getRbac()
+    {
+        return $this->rbac;
     }
 }

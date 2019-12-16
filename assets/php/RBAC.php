@@ -178,6 +178,32 @@ class RBAC
     }
 
     /**
+     * @param $id
+     * >Gets the role id
+     * @return bool|string
+     * false: Role id was not found
+     * string: Returns the Role Name
+     */
+    static public function fetchRoleNameFormID($id)
+    {
+        try {
+            $stmt = Config::dbCon()->prepare("SELECT name FROM role WHERE id=:roleID");
+            $stmt->bindParam("roleID", $id);
+            $stmt->execute();
+            $queryResults = $stmt->fetchAll();
+            //Error catching if the id does not exist
+            if(count($queryResults)<=0){
+                return false;
+            }
+            $roleName = $queryResults[0]["name"];
+            settype($roleName, "String");
+            return $roleName;
+        } catch (PDOException $e) {
+            echo "Getting Role Name failed: " . $e->getMessage();
+        }
+    }
+
+    /**
      * @return array|bool
      * array: Gets all permissions of a role and returns them as a id
      * false: The role doesn't exist
@@ -305,7 +331,6 @@ class RBAC
      */
     public function getRoleID()
     {
-        //settype($this->roleID, "Integer");
         return $this->roleID;
     }
 
