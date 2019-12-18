@@ -111,6 +111,7 @@ class Install
             }
         } catch (PDOException $e) {
             echo "Writing to permissions failed: " . $e->getMessage();
+            exit();
         }
     }
     /**
@@ -128,6 +129,7 @@ class Install
             }
         } catch (PDOException $e) {
             echo "Writing to permissions failed: " . $e->getMessage();
+            exit();
         }
     }
 

@@ -47,7 +47,7 @@ class RBAC
 
         if ($this->roleExists()) {
             $this->exists = true;
-            $this->roleID = $this->fetchRoleIDFromName();
+            $this->roleID = RBAC::fetchRoleIDFromName($name);
             $this->permissionIDs = $this->fetchPermissions();
             $this->permissionsAsName = $this->evaluatePermissionNames();
         }
@@ -158,20 +158,16 @@ class RBAC
      * Return the id from a Role Name
      * Multiple role entries with the same name will be ignored.
      */
-    private function fetchRoleIDFromName()
+    static public function fetchRoleIDFromName($roleName)
     {
         try {
-            if ($this->roleExists()) {
-                $stmt = $this->dbh->prepare("SELECT id FROM role WHERE name=:roleName");
-                $stmt->bindParam("roleName", $this->roleName);
-                $stmt->execute();
-                $queryResults = $stmt->fetchAll();
-                $roleID = $queryResults[0]["id"];
-                settype($roleID, "Integer");
-                return $roleID;
-            } else {
-                return false;
-            }
+            $stmt = Config::dbCon()->prepare("SELECT id FROM role WHERE name=:roleName");
+            $stmt->bindParam("roleName", $roleName);
+            $stmt->execute();
+            $queryResults = $stmt->fetchAll();
+            $roleID = $queryResults[0]["id"];
+            settype($roleID, "Integer");
+            return $roleID;
         } catch (PDOException $e) {
             echo "Getting Role ID failed: " . $e->getMessage();
         }

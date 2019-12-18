@@ -74,7 +74,7 @@ include_once "../_includes/header.inc.php";
         </div>
         <div class="col main-wrapper">
             <h2>Add a account</h2>
-            <form class="signUp" action="../../GamingParadise/dashboard/_includes/addUser.inc.php?site=/install/index.php" method="post">
+            <form class="signUp" action="../scripts/user.php?r=/install/index.php" method="post">
                 <?php
                 if ($getSignup == "uidtaken") {
                     echo '<div class="wrong"><input type="text" name="uid" placeholder="Username" class="wrong" value="' . $getUid . '"> There is already a user with this username!</div>';

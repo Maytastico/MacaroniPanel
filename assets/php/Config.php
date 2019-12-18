@@ -9,11 +9,12 @@
 class Config
 {
     //Folder Destination
-    public static $folder = "";
-    //Database
+    private static $folder = " ";
+    //Database Configuration
     private static $pdoDNS = "mysql:host=localhost;port=3306;dbname=dashboard";
     private static $pdoUser = "root";
     private static $pdoPW = "";
+
 
     //Handels and returns a PDO database object
     public static function dbCon()
@@ -26,5 +27,15 @@ class Config
             echo "<b><div class='wrong'>Connection failed: " . $e->getMessage() . "</div></b>";
             exit();
         }
+    }
+
+    /**
+     * @return string
+     * Returns the Destination of the application for scripts that have
+     * to jump to a certain destination back
+     */
+    public static function getFolder()
+    {
+        return self::$folder;
     }
 }

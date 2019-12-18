@@ -3,6 +3,9 @@
 
 class RBACContent
 {
+    /**
+     * Generates a HTML Dropdown for a User Management UI
+     */
     static public function showAvailableRolesAsDropdown(){
         $roles = RBAC::fetchRoleTable();
 

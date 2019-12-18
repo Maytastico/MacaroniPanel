@@ -168,4 +168,12 @@ class User
     {
         return $this->rbac;
     }
+
+    /**
+     * @return string
+     */
+    public function getRoleID()
+    {
+        return $this->roleID;
+    }
 }
