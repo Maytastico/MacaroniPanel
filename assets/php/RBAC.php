@@ -179,7 +179,7 @@ class RBAC
 
     /**
      * @param $id
-     * >Gets the role id
+     * Gets the role id
      * @return bool|string
      * false: Role id was not found
      * string: Returns the Role Name
@@ -197,6 +197,24 @@ class RBAC
             }
             $roleName = $queryResults[0]["name"];
             settype($roleName, "String");
+            return $roleName;
+        } catch (PDOException $e) {
+            echo "Getting Role Name failed: " . $e->getMessage();
+        }
+    }
+
+    static public function fetchPermissionID($permissionAttribute){
+        try {
+            $stmt = Config::dbCon()->prepare("SELECT id FROM permissions WHERE name=:permissionAttribute");
+            $stmt->bindParam("permissionAttribute", $permissionAttribute);
+            $stmt->execute();
+            $queryResults = $stmt->fetchAll();
+            //Error catching if the permission Attribute does not exist
+            if(count($queryResults)<=0){
+                return false;
+            }
+            $roleName = $queryResults[0]["id"];
+            settype($roleName, "Integer");
             return $roleName;
         } catch (PDOException $e) {
             echo "Getting Role Name failed: " . $e->getMessage();
@@ -277,6 +295,32 @@ class RBAC
         }
     }
 
+    /**
+     * @return array|bool
+     * Gets all role entries to return them to a function so they can be displayed on the website
+     * array: Roles are available and can be returned
+     * false: No Roles are inside the table
+     */
+    static public function fetchRoleTable(){
+        try {
+            $stmt = Config::dbCon()->prepare("SELECT * FROM role");
+            $stmt->execute();
+            $queryResults = $stmt->fetchAll();
+            $permissions = array();
+            $index = 0;
+            if(count($queryResults) > 0){
+                foreach ($queryResults as $key=>$permission){
+                    $permissions[$index]["id"] = $permission["id"];
+                    $permissions[$index]["name"] = $permission["name"];
+                    $index++;
+                }
+                return $permissions;
+            }
+            return false;
+        } catch (PDOException $e) {
+            echo "Fetching permission table failed: " . $e->getMessage();
+        }
+    }
     /**
      * Updates the role ID inside the object
      */

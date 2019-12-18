@@ -159,12 +159,12 @@ form input {
     width: 100%;
 }
 
-div.wrong {
+div.wrong{
     color: red;
     padding: 5px 0px;
 }
 
-input.wrong {
+input.wrong, select.wrong{
     border: 1px solid red;
 }
 

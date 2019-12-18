@@ -10,9 +10,7 @@ include_once "../_includes/autoloader.inc.php";
 Loader::$jump = "../";
 $action = empty($_POST['action']) ? false : $_POST['action'];
 $remove = empty($_POST['acceptRemove']) ? false : $_POST['acceptRemove'];
-var_dump($i = new Install());
-//var_dump($i->deleteTables());
-var_dump($i->installTables());
+
 if (!$action || !$remove || Install::installAllowed() === false) {
     //If nothing was posted or installing tables is disabled, the user will
     //redirected to the install page.
@@ -26,23 +24,40 @@ if (!$action || !$remove || Install::installAllowed() === false) {
         //If the value of $action is "install" (= press on "Install Tables"),
         //it will write the tables into the database and will redirect to the install page.
         $installObj->installTables();
+        $installObj->writePermissions();
+        $installObj->writeRoles();
         header("Location: ../install/index.php?install=success");
         exit();
     } else {
         if (Install::installAllowed() !== null) {
             //This should be executed, when tables were installed on the database
+            //And installAllowed doen't return null
+            //NUll will returned if the tables do not exist
+            //This action should be executed if the tables were installed.
             if ($action === "lockup") {
+                //Locks the installation mode so no action can be done on the "install UI
                 $installObj->lockInstall();
                 header("Location: ../install/index.php");
                 exit();
             } else {
-                if ($action === "reinstall" && $remove === "accept") {
-                    $installObj->deleteTables();
-                    $installObj->installTables();
-                    header("Location: ../install/index.php?reinstall=success");
+                //Installs the basic role model for the RBAC System so users can be added
+                if($action === "reinstallRoleModel"){
+                    $installObj->removeRoles();
+                    $installObj->removePermissions();
+                    $installObj->writePermissions();
+                    $installObj->writeRoles();
+                    header("Location: ../install/index.php?roleModel=success");
                     exit();
-                } else {
-                    header("Location: ../install/index.php?reinstall=acceptRemoval");
+                }else{
+                    if ($action === "reinstall" && $remove === "accept") {
+                        //Deleted tables and installs the tables again them
+                        $installObj->deleteTables();
+                        $installObj->installTables();
+                        header("Location: ../install/index.php?reinstall=success");
+                        exit();
+                    } else {
+                        header("Location: ../install/index.php?reinstall=acceptRemoval");
+                    }
                 }
             }
         }else{

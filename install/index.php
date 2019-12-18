@@ -5,6 +5,7 @@ $getEmail = !empty($_GET['email']) ? $_GET['email'] : null ;
 $getInstall = !empty($_GET['install']) ? $_GET['install'] : null;
 $getreinstall = !empty($_GET['reinstall']) ? $_GET['reinstall'] : null ;
 $getSignup = !empty($_GET['signup']) ? $_GET['signup'] : null ;
+$getRoleModel = !empty($_GET['roleModel']) ? $_GET['roleModel'] : null ;
 include_once "../_includes/autoloader.inc.php";
 Loader::$jump = "../";
 include_once "../_includes/header.inc.php";
@@ -52,6 +53,7 @@ include_once "../_includes/header.inc.php";
                 </div>
                 <div class="row">
                     <button class="col" type="submit" name="action" value="reinstall">Reinstall Tables</button>
+                    <button class="col" type="submit" name="action" value="reinstallRoleModel">Reinstall Permission Model</button>
                     <div class="col"><input type="checkbox" value="accept" name="acceptRemove">Accept action</div>
                 </div>
                 <?php
@@ -64,6 +66,8 @@ include_once "../_includes/header.inc.php";
                         ' text-center">Action failed</div>';                } elseif ($getreinstall == "acceptRemoval") {
                     echo '<div class="wrong' .
                         ' text-center">Please accept</div>';
+                }elseif ($getRoleModel == "success"){
+                    echo '<div class="success text-center">Reinstalling Permission Model was successful</div>';
                 }
                 ?>
             </form>
@@ -98,10 +102,7 @@ include_once "../_includes/header.inc.php";
                 }
                 ?>
 
-                <select name="type">
-                    <option value="admin">Admin</option>
-                    <option value="moderator">Moderator</option>
-                </select>
+                <?php RBACContent::showAvailableRolesAsDropdown() ?>
 
                 <button type="submit" name="submit">Sign up</button>
             </form>

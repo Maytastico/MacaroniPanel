@@ -8,7 +8,20 @@
 
 class Install
 {
+    /**
+     * @var PDO
+     */
     private $dbh;
+
+    /**
+     * @var array
+     * Contains the basic permission attributes
+     */
+    private $basicPermissions = array(
+        "usermanager.addUser",
+        "usermanager.removeUser",
+        "usermanager.editUser"
+    );
 
     function __construct()
     {
@@ -22,7 +35,7 @@ class Install
         $queries = array(
             "CREATE TABLE IF NOT EXISTS permissions(id int NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(256) NOT NULL)",
             "CREATE TABLE IF NOT EXISTS role(id INTEGER AUTO_INCREMENT NOT NULL PRIMARY KEY , name VARCHAR(256) NOT NULL)",
-            "CREATE TABLE IF NOT EXISTS users (user_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, username VARCHAR(256) NOT NULL, password VARCHAR(256) NOT NULL, email VARCHAR(256), lastLogin TIMESTAMP(0), sessionID BIGINT, role_id INTEGER NOT NULL , FOREIGN KEY (role_id) REFERENCES role(id))",
+            "CREATE TABLE IF NOT EXISTS users (user_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, username VARCHAR(256) NOT NULL, password VARCHAR(256) NOT NULL, email VARCHAR(256), lastLogin TIMESTAMP(0), sessionID BIGINT, role_id INTEGER NOT NULL )",
             "CREATE TABLE IF NOT EXISTS settings(name VARCHAR(256) NOT NULL, value text NOT NULL)",
             "CREATE TABLE IF NOT EXISTS role_has_permission(role_id int NOT NULL , permission_id int NOT NULL, FOREIGN KEY (role_id) REFERENCES role(id), FOREIGN KEY (permission_id) REFERENCES permissions(id))"
         );
@@ -83,11 +96,79 @@ class Install
             echo "Writing to settings failed: " . $e->getMessage();
         }
     }
-//installAllowed() is a static function that returns the current installation mode
-//from the database
-//@return bool | null if no entry was found
-//true will be returned, if installation mode if active.
-//false will be returned, if installation mode was deactivated.
+    /**
+     * Writes the basic permission model that comes with the application.
+     * This function will be used inside the script that handles the installation of the application
+     */
+    public function removePermissions(){
+        $permissions = $this->basicPermissions;
+
+        try {
+            foreach ($permissions as $permission) {
+                $stmt = $this->dbh->prepare("DELETE FROM permissions where name=:permission");
+                $stmt->bindParam(":permission", $permission);
+                $stmt->execute();
+            }
+        } catch (PDOException $e) {
+            echo "Writing to permissions failed: " . $e->getMessage();
+        }
+    }
+    /**
+     * Writes the basic permission model that comes with the application.
+     * This function will be used inside the script that handles the installation of the application
+     */
+    public function writePermissions(){
+        $permissions = $this->basicPermissions;
+
+        try {
+            foreach ($permissions as $permission) {
+                $stmt = $this->dbh->prepare("INSERT INTO permissions (name) VALUES ( :permission )");
+                $stmt->bindParam(":permission", $permission);
+                $stmt->execute();
+            }
+        } catch (PDOException $e) {
+            echo "Writing to permissions failed: " . $e->getMessage();
+        }
+    }
+
+    /**
+     * @return bool
+     * true: Writing roles to the roles table was successful
+     * false: Writing roles failed, because the Role already exists
+     */
+    public function writeRoles(){
+        $permissions= $this->basicPermissions;
+        $rbac = new RBAC("Admin");
+
+        foreach ($permissions as $p)
+            $rbac->addPermission(RBAC::fetchPermissionID($p));
+
+        if($rbac->createRole()){
+            return true;
+        }
+        return false;
+    }
+
+    /**This function will be used on the "Install UI" to manage changes during development.
+     *So roles can be added and removed
+     * @return bool
+     * true: Removing Roles was successful
+     * false: Removing Roles failed
+     */
+    public function removeRoles(){
+        $rbac = new RBAC("Admin");
+        if($rbac->removeRole()){
+            return true;
+        }
+        return false;
+    }
+    /**installAllowed() is a static function that returns the current installation mode
+    *from the database. This will be used to verify installation of tables or adding users inside the
+    * "Install UI"
+    *@return bool | null if no entry was found
+    *true will be returned, if installation mode if active.
+    *false will be returned, if installation mode was deactivated.
+     */
     static function installAllowed()
     {
         $dbh = Config::dbCon();
@@ -114,7 +195,7 @@ class Install
     }
 //lockInstall() overwrites the value inside the settings table.
 //It sets the value of "installMode" to false so the install page isn't
-//accessible.
+//accessible. And adding users or modifying tables is not possible
     public function lockInstall()
     {
         try {
