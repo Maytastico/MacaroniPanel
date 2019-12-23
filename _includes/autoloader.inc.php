@@ -51,4 +51,12 @@ class Loader
         }
         return false;
     }
+    static function jump($jumpDirectories){
+        settype($jumpDirectories, "integer");
+        $jump = "";
+        for($i = 0; $i<$jumpDirectories; $i++){
+            $jump = $jump . "../";
+        }
+        self::$jump = $jump;
+    }
 }
