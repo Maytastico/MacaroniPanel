@@ -145,7 +145,7 @@ class Install
         foreach ($permissions as $p)
             $rbac->addPermission(RBAC::fetchPermissionID($p));
 
-        if($rbac->createRole()){
+        if($rbac->addRole()){
             return true;
         }
         return false;

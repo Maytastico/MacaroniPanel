@@ -85,7 +85,7 @@ class RBAC
      * true = if everything was successful
      * false = if the role exists or there were no permissions set
      */
-    public function createRole()
+    public function addRole()
     {
         try {
             if (count($this->permissionIDs) >= 1) {
@@ -93,7 +93,7 @@ class RBAC
                     $stmt = $this->dbh->prepare("INSERT INTO role(name) VALUES (:roleName);");
                     $stmt->bindParam(":roleName", $this->roleName);
                     $stmt->execute();
-                    $this->roleID = $this->fetchRoleIDFromName();
+                    $this->roleID = self::fetchRoleIDFromName($this->roleName);
                     $this->addRoleAndPermissionRelations();
                     return true;
                 } else {

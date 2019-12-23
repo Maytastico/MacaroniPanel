@@ -7,7 +7,7 @@ $getreinstall = !empty($_GET['reinstall']) ? $_GET['reinstall'] : null ;
 $getSignup = !empty($_GET['signup']) ? $_GET['signup'] : null ;
 $getRoleModel = !empty($_GET['roleModel']) ? $_GET['roleModel'] : null ;
 include_once "../_includes/autoloader.inc.php";
-Loader::$jump = "../";
+Loader::jump(1);
 include_once "../_includes/header.inc.php";
 ?>
 <body>
@@ -97,12 +97,18 @@ include_once "../_includes/header.inc.php";
                     echo '<input type="password" name="pwd" placeholder="Password">';
                 }
 
-                if ($getSignup == "success") {
-                    echo '<div class="success">Regestration was successful</div>';
-                }
+
+
+                RBACContent::showAvailableRolesAsDropdown();
+                 if ($getSignup == "success") {
+                     echo '<div class="success">Regestration was successful</div>';
+                 }elseif ($getSignup == "noPermission"){
+                     echo '<div class="wrong">You do not have the permission to add a user</div>';
+                 }
+
                 ?>
 
-                <?php RBACContent::showAvailableRolesAsDropdown() ?>
+
 
                 <button type="submit" name="submit">Sign up</button>
             </form>

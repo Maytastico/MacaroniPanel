@@ -21,18 +21,28 @@ class User
      *email form the database
      */
     private $email;
-    /**@var string
-     *User var, specified inside the database
+    /**
+     * @var string
+     *The role id is in relation to the role table inside the database.
+     *This is to authorize actions of the user.
      */
     private $roleID;
     /**@var string
-     *stores the Password in plain text
+     *Stores the Password in plain text.
+     * This is for adding a new user to the database
      */
     private $plainPW;
     /**@var string
      *Hashed password form the database
      */
     private $hashedPW;
+    /**
+     * @var string
+     * Contains the Session ID that is generated after logging in into the dashboard.
+     * It prevents that two clients can login into the dashboard at the same time.
+     * So the Cookie can't be stolen by a malicious software.
+     */
+    private $sessionID;
     /**
      * @var RBAC
      * Contains the role information of a user
@@ -50,6 +60,7 @@ class User
             $this->email = $userData['email'];
             $this->hashedPW = $userData['password'];
             $this->roleID = $userData['role_id'];
+            $this->sessionID = $userData['sessionID'];
             $this->rbac = new RBAC(RBAC::fetchRoleNameFormID($this->roleID));
         }
     }
@@ -120,18 +131,18 @@ class User
     public function addUser($email, $plainPassword, $role)
     {
         if ($this->userExists() === false) {
-            $hashedPW = $this->hashPW($plainPassword);
-            try {
-                $stmt = $this->dbh->prepare("INSERT INTO users (username, password, email, role_id) VALUES (:uid, :pw, :email, :u_roleID)");
-                $stmt->bindParam(":uid", $this->username);
-                $stmt->bindParam(":pw", $hashedPW);
-                $stmt->bindParam(":email", $email);
-                $stmt->bindParam(":u_roleID", $role);
-                $stmt->execute();
-                return true;
-            } catch (PDOException $e) {
-                echo "Writing to settingstype failed: " . $e->getMessage();
-            }
+                $hashedPW = $this->hashPW($plainPassword);
+                try {
+                    $stmt = $this->dbh->prepare("INSERT INTO users (username, password, email, role_id) VALUES (:uid, :pw, :email, :u_roleID)");
+                    $stmt->bindParam(":uid", $this->username);
+                    $stmt->bindParam(":pw", $hashedPW);
+                    $stmt->bindParam(":email", $email);
+                    $stmt->bindParam(":u_roleID", $role);
+                    $stmt->execute();
+                    return true;
+                } catch (PDOException $e) {
+                    echo "Writing to settingstype failed: " . $e->getMessage();
+                }
         } else {
             return false;
         }
@@ -175,5 +186,13 @@ class User
     public function getRoleID()
     {
         return $this->roleID;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSessionID()
+    {
+        return $this->sessionID;
     }
 }
