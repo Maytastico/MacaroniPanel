@@ -131,5 +131,15 @@ class Authenticator extends User
         session_write_close();
     }
 
-
+    /**
+     * Overrides the php-session data, destroys the php-session and writes
+     * another sessionID into the database, so the old php-session is deprecated.
+     * It is used to log a user out of its account
+     */
+    public function resetSession(){
+        session_start();
+        $_SESSION = array();
+        session_destroy();
+        $this->updateSessionID();
+    }
 }
