@@ -35,7 +35,7 @@ class Install
         $queries = array(
             "CREATE TABLE IF NOT EXISTS permissions(id int NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(256) NOT NULL)",
             "CREATE TABLE IF NOT EXISTS role(id INTEGER AUTO_INCREMENT NOT NULL PRIMARY KEY , name VARCHAR(256) NOT NULL)",
-            "CREATE TABLE IF NOT EXISTS users (user_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, username VARCHAR(256) NOT NULL, password VARCHAR(256) NOT NULL, email VARCHAR(256), lastLogin TIMESTAMP(0), sessionID BIGINT, role_id INTEGER NOT NULL )",
+            "CREATE TABLE IF NOT EXISTS users (user_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, username VARCHAR(256) NOT NULL, password VARCHAR(256) NOT NULL, email VARCHAR(256), lastLogin TIMESTAMP(0), sessionID VARCHAR(32), role_id INTEGER NOT NULL )",
             "CREATE TABLE IF NOT EXISTS settings(name VARCHAR(256) NOT NULL, value text NOT NULL)",
             "CREATE TABLE IF NOT EXISTS role_has_permission(role_id int NOT NULL , permission_id int NOT NULL, FOREIGN KEY (role_id) REFERENCES role(id), FOREIGN KEY (permission_id) REFERENCES permissions(id))"
         );

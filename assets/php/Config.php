@@ -9,11 +9,11 @@
 class Config
 {
     //Folder Destination
-    private static $folder = " ";
+    private static $folder = "";
     //Database Configuration
     private static $pdoDNS = "mysql:host=localhost;port=3306;dbname=dashboard";
     private static $pdoUser = "root";
-    private static $pdoPW = "";
+    private static $pdoPW = "10-Days-Of-Death";
 
 
     //Handels and returns a PDO database object

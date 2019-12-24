@@ -11,7 +11,7 @@ class RBACContent
 
         if($roles === false){
             echo "<select class='wrong' name='type'>";
-            echo "<option>No roles were found. Please install the application again!</option>";
+            echo "<option>No roles were found. Please install the basic Permission Model!</option>";
         }else{
             echo "<select name='type'>";
             foreach ($roles as $entry){

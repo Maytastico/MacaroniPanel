@@ -6,15 +6,15 @@ $u_name = empty(htmlspecialchars(trim($_POST['uid']))) ? false : $_POST['uid'];
 $u_email = empty(htmlspecialchars($_POST['email'])) ? false : $_POST['email'];
 $u_password = empty(htmlspecialchars($_POST['pwd'])) ? false : $_POST['pwd'];
 $u_type = empty(htmlspecialchars($_POST['type'])) ? false : $_POST['type'];
-$folder = Config::getFolder();
 $back = empty(htmlspecialchars($_GET['r'])) ? "" : $_GET['r'];
+$folder = Config::getFolder();
 
 $u = new Authenticator(Authenticator::fetchSessionUserName());
-if(Install::installAllowed() === false && $u->verifySessionID() === false){
+if(Install::installAllowed() === false && $u->verifySession() === false){
     header("Location: " . $folder . $back . "?signup=noPermission");
     exit();
 } else {
-    if(Install::installAllowed() === true || ($u->verifySessionID() === true &&  $u->hasPermission("usermanager.addUser") === true)){
+    if(Install::installAllowed() === true || ($u->verifySession() === true &&  $u->hasPermission("usermanager.addUser") === true)){
         if(!$u_name || !$u_email || !$u_password || !$u_type){
             header("Location: " . $folder . $back . "?signup=empty&email=$u_email&uid=$u_name");
             exit();

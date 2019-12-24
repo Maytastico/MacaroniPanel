@@ -100,7 +100,8 @@ class User
         }
     }
 
-    /**Returns  all information of an user
+    /**
+     * Returns  all information of an user
      * @return array
      */
     public function getUserData()
@@ -148,24 +149,63 @@ class User
         }
     }
 
-    /**Returns the username, saved inside the object
+    /**
+     * It gets a hash and writes it as the sessionID to the database.
+     */
+    public function updateSessionID(){
+        try{
+            $sessionID = $this->generateSessionID();
+            $stmt = $this->dbh->prepare("UPDATE users SET sessionID=:sessionID where username=:userID");
+            $stmt->bindParam(":sessionID", $sessionID);
+            $stmt->bindParam(":userID", $this->username);
+            $stmt->execute();
+            $this->sessionID = $sessionID;
+
+        } catch (PDOException $e){
+            echo "Updating the sessionID of $this->username failed: " . $e->getMessage();
+        }
+    }
+
+    /**
      * @return string
+     * This function generates a hash that should be as random as it can be.
+     * It takes a random number form -2,147,483,648 to 2,147,483,647 , the username, the email of the user and generates
+     * a md5 hash. This hash will be hashed few times, to ensure a secure sessionID that can't be bruteforced
+     * This hash will be saved inside the php-session and database to authenticate a user.
+     */
+    private function generateSessionID(){
+        $randomIteration = rand(1, 10);
+        $randomNumber = rand(-0x7FFFFFFF, 0x7FFFFFFF);
+        $lastIteration = md5($randomNumber . $this->username . $this->email);
+        $newSessionID = "";
+        for($i=0; $i<=$randomIteration; $i++){
+            $newSessionID = md5($lastIteration);
+            $lastIteration = $newSessionID;
+        }
+        return $newSessionID;
+    }
+
+    /**
+     * @return string
+     * Returns the username, saved inside the object
      */
     public function getUsername()
     {
         return $this->username;
     }
 
-    /**Returns the email of a user, saved inside the object
+    /**
      * @return string
+     * Returns the email of a user, saved inside the object
      */
     public function getEmail()
     {
         return $this->email;
     }
 
-    /**Returns the hashed password, saved inside the object
+    /**
      * @return string
+     * Returns the hashed password, saved inside the object
      */
     public function getHashedPW()
     {
@@ -174,6 +214,7 @@ class User
 
     /**
      * @return RBAC
+     * Returns the rbac object. It contains the permission data of the user
      */
     public function getRbac()
     {
@@ -182,6 +223,7 @@ class User
 
     /**
      * @return string
+     * Returns the role id stored inside the users table.
      */
     public function getRoleID()
     {
@@ -190,6 +232,7 @@ class User
 
     /**
      * @return string
+     * Returns the SessionID to authenticate the user
      */
     public function getSessionID()
     {
