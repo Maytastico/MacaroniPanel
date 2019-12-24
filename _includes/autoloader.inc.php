@@ -4,7 +4,7 @@ spl_autoload_register("Loader::myAutoloader");
 
 class Loader
 {
-    static $jump = "";
+    static public $jump = "";
 
     static function myAutoloader($className)
     {
