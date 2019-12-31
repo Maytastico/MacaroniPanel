@@ -16,9 +16,12 @@ $u->addUser("d@d.com", "123", RBAC::fetchRoleIDFromName("Admin"));
 $a = new Authenticator("Hans");
 var_dump($a->hasPermission("usermanager.addUser "));*/
 
-$a = new Authenticator("Alios");
+$a = new Authenticator("NoPerm");
 $a->writeSessionData();
 var_dump($_SESSION);
+
+
+
 
 
 

@@ -1,6 +1,6 @@
-<div class="col main-wrapper">
-    <h2>Add a account</h2>
+<div class="width50 main-wrapper">
     <form class="signUp" action="<?php echo Loader::$jump?>scripts/addUser.php?r=/install/index.php" method="post">
+        <h2>Add a account</h2>
         <?php
         if ($getSignup == "uidtaken") {
             echo '<div class="wrong"><input type="text" name="uid" placeholder="Username" class="wrong" value="' . $getUid . '"> There is already a user with this username!</div>';

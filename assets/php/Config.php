@@ -13,7 +13,7 @@ class Config
     //Database Configuration
     private static $pdoDNS = "mysql:host=localhost;port=3306;dbname=dashboard";
     private static $pdoUser = "root";
-    private static $pdoPW = "10-Death";
+    private static $pdoPW = "10-Days-Of-Death";
 
 
     //Handels and returns a PDO database object

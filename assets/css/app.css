@@ -1,245 +1,88 @@
-main {
-    max-width: 920px;
-    margin: 0 auto;
-    padding: 50px 10px;
-}
-
-.btn {
-    min-width: 50px;
-    min-height: 50px;
-    border-radius: 3px;
-}
-
-.btn-group {
-    margin: 10px 0;
-    z-index: 0;
-}
-
-header nav {
-    width: 100%;
-    height: 60px;
-    background-color: #fff;
-}
-
-header nav ul {
-    float: left;
-}
-
-header nav ul li {
-    float: left;
-    list-style: none;
-}
-
-header nav ul li a {
-
-    font-size: 16px;
-    color: #111;
-    line-height: 63px;
-}
-
-header .nav-login {
-    float: right;
-}
-
-header .nav-login form {
-    float: left;
-    padding-top: 15px;
-}
-
-header .nav-login form input {
-    float: left;
-    width: 140px;
-    height: 30px;
-    padding: 0px 10px;
-    margin-right: 10px;
-    border: none;
-    background-color: #ccc;
-    color: #111;
-    line-height: 30px;
-    font-size: 14px;
-}
-
-
-header .nav-login form button {
-    float: left;
-    width: 60px;
-    height: 30px;
-    margin-right: 10px;
-    border: none;
-    background-color: #f3f3f3;
-    color: #111;
-    font-size: 14px;
-    cursor: pointer;
-    transition: 1s;
-}
-
-header .nav-login form button:hover {
-    background-color: #ccc;
-}
-
-header .nav-login a {
-    display: block;
-    width: 60px;
-    height: 60px;
-    border: none;
-    float: left;
-    background-color: #fff;
-    font-size: 16px;
-    color: #111;
-    line-height: 63px;
-    cursor: pointer;
-}
-
-.main-container {
-    padding-top: 40px;
-}
-
-.main-container h2 {
-    padding-top: 40px;
-    font-size: 40px;
-    line-height: 50px;
-    text-align: center;
-}
-
-/*Sign Up*/
-.signUp {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 30px;
-}
-
-form input, input {
-    width: 90%;
-    height: 40px;
-    padding: 0px 5%;
-    margin-bottom: 4px;
-    border: none;
-    background-color: #FFF;
-    color: #111;
-    line-height: 30px;
-    font-size: 14px;
-}
-
-form button, .button {
-    display: block;
-    margin: 5px 0;
-    width: 30%;
-    padding: 5px;
-    border: none;
-    background-color: #222;
-
-    color: #FFF;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 500ms;
-}
-
-select {
-    color: black;
-    background-color: #FFF;
-    border: 0;
-    cursor: pointer;
-    padding: 5px;
-    width: 100%;
-}
-
-button.red {
-    background-color: red;
-}
-
-button.red:hover {
-    background-color: #8b1014;
-}
-
-button:hover {
-    background-color: #111;
-}
-
-form input {
-    width: 100%;
-}
-
-div.wrong{
-    color: red;
-    padding: 5px 0px;
-}
-
-input.wrong, select.wrong{
-    border: 1px solid red;
-}
-
-select {
-    width: 100%;
-}
-
-.hidden {
-    display: none;
-}
-
-.success {
-    color: green;
-    text-align: center;
-    padding: 5px 0;
-}
-
-.install {
-    max-width: 50%;
-    text-align: center;
-    margin: 0 auto;
-}
-
-/*Tables*/
-.dataTable {
-    text-align: left;
-    border-radius: 3px;
-    margin: 0 auto;
+body{
+    background-image: linear-gradient(to top,#ac887b, #c8ad7f);
+    background-size: cover;
+    background-repeat: no-repeat;
+    min-height: 100vh;
     color: white;
+}
+.container{
     width: 100%;
-}
-
-.dataTable tr:nth-child(2n) {
-    background: red;
-
-}
-
-.dataTable tr {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-    box-shadow: 0px 1px 1px gray;
-}
-
-.dataTable th {
-    text-align: center;
-    padding: 5px;
-}
-
-.dataTable td {
-    padding: 5px;
-}
-
-.dataTable button {
-    background-color: grey;
-    border-radius: 3px;
-    margin: 3px;
-    padding: 2px 5px;
-}
-
-.dataTable button[name = 'delete'] {
-    background-color: red;
-}
-
-.horizontolCenter {
-    align-items: center;
-
-    justify-content: center;
-
     position: relative;
+}
+.row{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: center;
+}
+h2{
+    font-size: 1.7em;
+}
+/*---Sign up form---*/
+.signUp{
+    margin: auto;
+    position: relative;
+    display: flex;
+    max-width: 30em;
+    justify-content: center;
+    flex-direction: column;
+    padding: 3px;
+    text-align: center;
+}
+.install{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
 
-    top: 50%;
+}
 
-    -webkit-transform: translateY(-50%);
+/*---Global input element properties---*/
+form input, form input::placeholder,form select,form  button, a{
+    flex-direction: column;
+    max-width: 100%;
+    transition: 0.5s;
+    color: black;
+    background-color: white;
+    margin: 0.3em;
+    padding: 0.3em;
+    font-size: 1.1em;
+    border-radius: 3px;
+    text-decoration: none;
+}
+form input, form select{
+    border: none;
+    text-align: left !important;
+    border-bottom: 2px gray solid;
+}
+form input:hover, form select:hover{
+    border-bottom: 2px black solid;
+    transform: scale(1.05);
+}
 
-    -ms-transform: translateY(-50%);
+form button, a{
+    background-color: #7b7b7b;
+    color: white;
+    border: none;
+    border-left: 3px solid #7b7b7b;
+    border-bottom: 3px solid #7b7b7b;
+    min-width: 10em;
+    text-align: center;
+}
+form button:hover, a:hover{
+    border-bottom-color: #656666;
+    border-left-color: #656666;
+    box-shadow: -5px 2px 5px black;
+}
 
-    transform: translateY(-50%);
 
+/*---Media queries---*/
+@media screen and (min-width: 720px){
+    .width50{
+        max-width: calc(50%);
+        margin: auto;
+    }
+    .signUp{
+        width: 20em;
+    }
 }
