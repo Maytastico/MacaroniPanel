@@ -1,8 +1,14 @@
 body{
+    min-height: 100vh;
+    color: black;
+    background: white;
+    font-family: Ubuntu;
+}
+/*background properties for the install page*/
+body#install{
     background-image: linear-gradient(to top,#ac887b, #c8ad7f);
     background-size: cover;
     background-repeat: no-repeat;
-    min-height: 100vh;
     color: white;
 }
 .container{
@@ -18,6 +24,42 @@ body{
 }
 h2{
     font-size: 1.7em;
+}
+/*Feedback message properties*/
+div.messages{
+    text-align: center;
+}
+div.install{
+    text-align: center;
+    padding: 5px  0;
+    box-shadow: 0px 0px 4px gray;
+}
+
+/*Feedback Colors*/
+input.red{
+    border-bottom-color: #e22a45;
+    border-radius: 3px;
+}
+button.red{
+    background-color: #AA5E42;
+    border-bottom-color: #AA5E42;
+    border-left-color: #AA5E42;
+}
+button.red:hover{
+    border-bottom-color: #99553B;
+    border-left-color: #99553B;
+}
+div.red{
+    padding: 3px;
+    color: white;
+    background: #e22a45;
+}
+div.success{
+    padding: 3px;
+    color: white;
+    background: #3DB39B;
+    border-radius: 3px;
+    margin-top: 0.5em;
 }
 /*---Sign up form---*/
 .signUp{
@@ -41,7 +83,7 @@ h2{
 form input, form input::placeholder,form select,form  button, a{
     flex-direction: column;
     max-width: 100%;
-    transition: 0.5s;
+    transition: 0.3s;
     color: black;
     background-color: white;
     margin: 0.3em;
@@ -55,24 +97,25 @@ form input, form select{
     text-align: left !important;
     border-bottom: 2px gray solid;
 }
-form input:hover, form select:hover{
+form input:hover, form input:focus, form select:hover, form select:focus{
     border-bottom: 2px black solid;
     transform: scale(1.05);
 }
 
+/*Contains properties for links and buttons*/
 form button, a{
     background-color: #7b7b7b;
     color: white;
     border: none;
     border-left: 3px solid #7b7b7b;
-    border-bottom: 3px solid #7b7b7b;
+    border-bottom: 5px solid #7b7b7b;
     min-width: 10em;
     text-align: center;
 }
 form button:hover, a:hover{
     border-bottom-color: #656666;
     border-left-color: #656666;
-    box-shadow: -5px 2px 5px black;
+    /*box-shadow: -5px 2px 5px black;*/
 }
 
 

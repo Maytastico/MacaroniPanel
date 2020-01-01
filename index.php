@@ -9,7 +9,7 @@ include_once "assets/php/Config.php";
 include_once "_includes/autoloader.inc.php";
 Loader::jump(0);
 include_once "_includes/header.inc.php";
-echo "<pre style='color: white'>";
+echo "<pre>";
 /*$u = new User("Hans");
 $u->addUser("d@d.com", "123", RBAC::fetchRoleIDFromName("Admin"));
 

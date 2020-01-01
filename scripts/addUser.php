@@ -13,7 +13,7 @@ $folder = Config::getFolder();
 //Initializes a new Authenticator object. To access and validate the user session.
 $u = new Authenticator(Authenticator::fetchSessionUserName());
 //Checks whether the install mode is deactivated or the Session isn't verified
-if(Install::installAllowed() === false || ($u->verifySession() === false &&  $u->hasPermission("usermanager.addUser") === false)){
+if(Install::installAllowed() === false && ($u->verifySession() === false &&  $u->hasPermission("usermanager.addUser") === false)){
     header("Location: " . $folder . $back . "?signup=noPermission");
     exit();
 } else {
