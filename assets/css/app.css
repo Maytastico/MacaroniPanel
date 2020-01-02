@@ -11,6 +11,13 @@ body#install{
     background-repeat: no-repeat;
     color: white;
 }
+/*background properties for the install page*/
+body#login{
+    background-image: url("../img/macaroni.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: white;
+}
 .container{
     width: 100%;
     position: relative;
@@ -78,7 +85,6 @@ div.success{
     flex-wrap: wrap;
 
 }
-
 /*---Global input element properties---*/
 form input, form input::placeholder,form select,form  button, a{
     flex-direction: column;
@@ -97,7 +103,7 @@ form input, form select{
     text-align: left !important;
     border-bottom: 2px gray solid;
 }
-form input:hover, form input:focus, form select:hover, form select:focus{
+form input:focus, form select:hover, form select:focus{
     border-bottom: 2px black solid;
     transform: scale(1.05);
 }
@@ -112,13 +118,28 @@ form button, a{
     min-width: 10em;
     text-align: center;
 }
-form button:hover, a:hover{
+form button:hover, a:hover, a:focus{
     border-bottom-color: #656666;
     border-left-color: #656666;
     /*box-shadow: -5px 2px 5px black;*/
 }
-
-
+/*---Login page properties---*/
+#login h2{
+    text-align: center;
+}
+#loginBox{
+    color: white;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%, -50%);
+    border-radius: 3px;
+    padding: 10px;
+    background-image: linear-gradient(to top,#ac887b, #c8ad7f);
+    box-shadow: 0 0 10px grey;
+    display: inline-block;
+}
 /*---Media queries---*/
 @media screen and (min-width: 720px){
     .width50{

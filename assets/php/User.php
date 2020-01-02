@@ -31,7 +31,7 @@ class User
      *Stores the Password in plain text.
      * This is for adding a new user to the database
      */
-    private $plainPW;
+    protected $plainPW;
     /**@var string
      *Hashed password form the database
      */
@@ -170,7 +170,7 @@ class User
      * @return string
      * This function generates a hash that should be as random as it can be.
      * It takes a random number form -2,147,483,648 to 2,147,483,647 , the username, the email of the user and generates
-     * a md5 hash. This hash will be hashed few times, to ensure a secure sessionID that can't be bruteforced
+     * a md5 hash. This hash will be hashed few times, to ensure a secure sessionID that can't be bruteforced.
      * This hash will be saved inside the php-session and database to authenticate a user.
      */
     private function generateSessionID(){
@@ -237,5 +237,13 @@ class User
     public function getSessionID()
     {
         return $this->sessionID;
+    }
+
+    /**
+     * @param string $plainPW
+     */
+    public function setPlainPW($plainPW)
+    {
+        $this->plainPW = $plainPW;
     }
 }

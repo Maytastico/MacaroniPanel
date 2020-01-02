@@ -22,6 +22,16 @@ class Authenticator extends User
     }
 
     /**
+     * @return bool
+     * The plain password has to be set first so the function can get the plain password from the object and is able to
+     * to check whether the password is right. This function is used inside the login script.
+     */
+    public function checkPassword(){
+        $plainPassword = $this->plainPW;
+        $hashedPassword = $this->getHashedPW();
+        return password_verify($plainPassword, $hashedPassword);
+    }
+    /**
      * @param $permissionAttribute
      * @return bool
      * This function needs a string that contains a permission attribute like "usermanager.addUser" that should be checked.
