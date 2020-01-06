@@ -29,6 +29,9 @@ body#login{
     align-items: stretch;
     justify-content: center;
 }
+.col{
+    display: inline-block;
+}
 h2{
     font-size: 1.7em;
 }
@@ -37,15 +40,19 @@ div.messages{
     text-align: center;
 }
 div.install{
+    margin: 0 auto;
     text-align: center;
     padding: 5px  0;
     box-shadow: 0px 0px 4px gray;
 }
 
 /*Feedback Colors*/
+.red{
+    border-radius: 3px;
+}
 input.red{
     border-bottom-color: #e22a45;
-    border-radius: 3px;
+
 }
 button.red{
     background-color: #AA5E42;
@@ -61,11 +68,13 @@ div.red{
     color: white;
     background: #e22a45;
 }
+.success{
+    border-radius: 3px;
+}
 div.success{
     padding: 3px;
     color: white;
     background: #3DB39B;
-    border-radius: 3px;
     margin-top: 0.5em;
 }
 /*---Sign up form---*/

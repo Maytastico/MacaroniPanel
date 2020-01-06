@@ -24,7 +24,7 @@ class Authenticator extends User
     /**
      * @return bool
      * The plain password has to be set first so the function can get the plain password from the object and is able to
-     * to check whether the password is right. This function is used inside the login script.
+     * to check whether the password is right. This function is used inside the login script to verify the password.
      */
     public function checkPassword(){
         $plainPassword = $this->plainPW;
@@ -107,7 +107,9 @@ class Authenticator extends User
     static function fetchSessionUserName()
     {
         session_start();
-        $s_username = $_SESSION["u_name"];
+        $s_username = false;
+        if(isset($_SESSION["u_name"]))
+            $s_username = $_SESSION["u_name"];
         session_write_close();
         return $s_username;
     }

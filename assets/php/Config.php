@@ -24,7 +24,7 @@ class Config
             $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $dbh;
         } catch (PDOException $e) {
-            echo "<b><div class='wrong'>Connection failed: " . $e->getMessage() . "</div></b>";
+            echo "<b><div class='red'>Connection failed: " . $e->getMessage() . "</div></b>";
             exit();
         }
     }

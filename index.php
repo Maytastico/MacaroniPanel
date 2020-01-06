@@ -12,9 +12,7 @@ include_once "_includes/header.inc.php";
 echo "<pre>";
 
 
-$a = new Authenticator("Manuel");
-$a->setPlainPW("1234567");
-var_dump($a->checkPassword());
+
 
 
 
