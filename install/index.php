@@ -26,7 +26,7 @@ include_once "../_includes/header.inc.php";
             <?php if (Authenticator::fetchSessionUserName() !== false) {
                 $a=new Authenticator(Authenticator::fetchSessionUserName())?>
                 <div class="col">You are logged in as <?php echo $a->getUsername() ?>
-                    <form action="../scripts/logout.php" method="post">
+                    <form action="../scripts/logout.php?back=/install" method="post">
                         <button name="submit" value="logout">Logout</button>
                     </form>
 
@@ -35,7 +35,7 @@ include_once "../_includes/header.inc.php";
                     <a class="button" href="../dashboard">Back to Dashboard</a>
                 </div>
             <?php } else { ?>
-                <a class="button" href="../index.php">Login</a>
+                <a class="button" href="../login.php">Login</a>
             <?php } ?>
         </div>
     </div>

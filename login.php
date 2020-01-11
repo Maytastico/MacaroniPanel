@@ -5,7 +5,10 @@ $uid = !empty($_GET['uid']) ? $_GET['uid'] : null ;
 include_once "_includes/autoloader.inc.php";
 Loader::jump(0);
 include_once "_includes/header.inc.php";
-
+$aRes = Authenticator::fetchSessionUserName();
+if($aRes !== false){
+    header("Location: ./dashboard");
+}
 ?>
 <body id="login">
     <section id="loginBox">

@@ -6,7 +6,7 @@ class Authenticator extends User
     /**
      * @var array
      * Contains the data of the user for authenticating its previleges.The data is stored on the server it is
-     * refered to a php-session cookie that is stored inside browser of the user.
+     * referred to a php-session cookie that is stored inside browser of the user.
      */
     private $sessionData = [];
 
@@ -98,11 +98,14 @@ class Authenticator extends User
         return false;
     }
 
+
     /**
-     * @return string
+     * @return bool|string
      * This gets the username from the Session.
      * This will be used to construct the "User" or "Authenticator" Object inside a script,
      * because these objects need a username to be constructed
+     * bool: is returned when a session wasn't created
+     * string: contains the username from the session
      */
     static function fetchSessionUserName()
     {
