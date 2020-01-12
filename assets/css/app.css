@@ -18,6 +18,9 @@ body#login{
     background-repeat: no-repeat;
     color: white;
 }
+body#dashboard{
+    background-color: white;
+}
 .container{
     width: 100%;
     position: relative;
@@ -149,6 +152,53 @@ form button:hover, a:hover, a:focus{
     box-shadow: 0 0 10px grey;
     display: inline-block;
 }
+/*---Navigation properties---*/
+nav img{
+    filter: invert();
+}
+nav #button{
+    transition: 0.3s;
+    position: fixed;
+    background-image: linear-gradient(to right,#ac887b, rgba(200, 173, 127, 0.7));
+    left: 0;
+    padding: 0.7em;
+    border-bottom-right-radius: 3px;
+}
+nav #button.open{
+    left: 20em;
+}
+nav{
+    transition: 0.5s;
+    bottom: 0;
+    left: -40em;
+    position: fixed;
+    color: white;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    background-image: linear-gradient(to right, #ac887b, rgba(200, 173, 127, 0.7));
+    height: 100vh;
+    box-shadow: -6px 0px 20px gray;
+    border-bottom-right-radius: 3px;
+}
+nav.open{
+    left: 0;
+}
+nav #content{
+    background-color: rgba(0,0,0,0.1);
+    width: 100%;
+    max-height: 90%;
+    overflow: hidden;
+}
+nav #user{
+    width: 100%;
+    padding: 15px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-self: flex-end;
+}
 /*---Media queries---*/
 @media screen and (min-width: 720px){
     .width50{
@@ -156,6 +206,9 @@ form button:hover, a:hover, a:focus{
         margin: auto;
     }
     .signUp{
+        width: 20em;
+    }
+    nav{
         width: 20em;
     }
 }

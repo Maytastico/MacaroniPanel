@@ -15,7 +15,7 @@ if($aRes !== false){
         <div class="container">
             <section class="row main-container">
                 <div class="col main-wrapper">
-                    <h2>Macaroni Dashboard Login</h2>
+                    <h2>Macaroni Dashboard<br> Login</h2>
                     <form class="signUp" action="./scripts/login.php" method="post">
                         <?php
                         if($getFeedback == "noUid"){
