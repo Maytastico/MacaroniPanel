@@ -7,8 +7,18 @@ document.addEventListener("DOMContentLoaded", ()=>{
             openNav();
         }else{
             closeNav();
+            closeProfileMenue();
         }
-    })
+    });
+    const profileButton = document.querySelector("nav #userButton");
+    const profileMenue = document.querySelector("nav #userMenue");
+    profileButton.addEventListener("click", () =>{
+        if(!profileMenue.classList.contains("open")){
+            openProfileMenue();
+        }else{
+            closeProfileMenue();
+        }
+    });
 });
 
 function openNav() {
@@ -23,4 +33,12 @@ function closeNav() {
     
     navButton.classList.remove("open");
     navElement.classList.remove("open");
+}
+function closeProfileMenue() {
+    const profileMenue = document.querySelector("nav #userMenue");
+    profileMenue.classList.remove("open");
+}
+function openProfileMenue() {
+    const profileMenue = document.querySelector("nav #userMenue");
+    profileMenue.classList.add("open");
 }

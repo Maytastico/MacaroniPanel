@@ -3,58 +3,6 @@
         <img src="<?php Loader::$jump?>/assets/icons/feather/menu.svg">
     </div>
     <section id="content">
-        Machines are great
-        Machines are greatMachines are great
-        Machines are great
-        Machines are greatMachines are great
-
-        Machines are greatMachines are great
-        Machines are great
-        Machines are great
-        Machines are greatMachines are great
-        Machines are great
-        Machines are great
-        Machines are great
-        Machines are great<br>
-        Machines are great<br>
-        Machines are great<br>
-        Machines are great<br>
-        Machines are great<br>
-        Machines are great<br>
-        Machines are great<br>
-        Machines are great<br>
-        Machines are great<br>
-        Machines are great<br>
-
-        Machines are great<br>
-        Machines are great<br>
-        Machines are great<br>Machines are great<br>
-        Machines are great<br>
-        Machines are great<br>
-        Machines are great<br>
-        Machines are great<br>
-        Machines are great<br>
-        Machines are great<br>
-        Machines are great<br>
-        <h2>asdkjalösdj</h2>
-        <h2>asdkjalösdj</h2>
-        <h2>asdkjalösdj</h2>
-        <h2>asdkjalösdj</h2>
-        <h2>asdkjalösdj</h2>
-        <h2>asdkjalösdj</h2>
-        <h2>asdkjalösdj</h2>
-        <h2>asdkjalösdj</h2>
-        <h2>asdkjalösdj</h2>
-        <h2>asdkjalösdj</h2>
-        <h2>asdkjalösdj</h2>
-        <h2>asdkjalösdj</h2>
-        <h2>asdkjalösdj</h2>
-        <h2>asdkjalösdj</h2>
-        <h2>asdkjalösdj</h2>
-        <h2>asdkjalösdj</h2>
-        Machines are great
-
-
     </section>
     <section id="user">
         <div>
@@ -64,8 +12,18 @@
             Welcome
             <?php echo Authenticator::fetchSessionUserName();?>
         </div>
-        <div>
+        <div id="userButton">
             <img src="<?php Loader::$jump?>/assets/icons/feather/more-vertical.svg">
         </div>
     </section>
+    <section id="userMenue">
+        <div>
+            <form action="<?php Loader::$jump?>/scripts/logout.php">
+                <button class="red" name="logout" type="submit">Logout</button>
+                <button>User Settings</button>
+            </form>
+        </div>
+
+    </section>
+
 </nav>

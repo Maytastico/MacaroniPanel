@@ -168,6 +168,7 @@ nav #button.open{
     left: 20em;
 }
 nav{
+    overflow-x: hidden;
     transition: 0.5s;
     bottom: 0;
     left: -40em;
@@ -180,6 +181,7 @@ nav{
     height: 100vh;
     box-shadow: -6px 0px 20px gray;
     border-bottom-right-radius: 3px;
+    width: 100%;
 }
 nav.open{
     left: 0;
@@ -187,7 +189,7 @@ nav.open{
 nav #content{
     background-color: rgba(0,0,0,0.1);
     width: 100%;
-    max-height: 90%;
+    max-height: calc(100% - 3.5em);
     overflow: hidden;
 }
 nav #user{
@@ -198,6 +200,30 @@ nav #user{
     flex-wrap: wrap;
     flex-direction: row;
     align-self: flex-end;
+}
+nav #user div{
+    padding: 10px;
+}
+nav #userButton{
+    transition: 0.5s;
+
+}
+nav #userButton:hover{
+    background-color: rgba(0,0,0,0.1);
+}
+nav section#userMenue{
+    position: fixed;
+    transition: 0.5s;
+    right: 0;
+    left: -100vh;
+    bottom: 4em;
+}
+nav section#userMenue.open{
+    bottom: 4em;
+    left: 0;
+}
+nav section#userMenue form{
+    text-align: right;
 }
 /*---Media queries---*/
 @media screen and (min-width: 720px){
@@ -210,5 +236,8 @@ nav #user{
     }
     nav{
         width: 20em;
+    }
+    nav section#userMenue{
+        max-width: 20em;
     }
 }
