@@ -5,7 +5,7 @@
     <button class="userSettings icon">
         <img src="<?php echo Loader::$jump ?>/assets/icons/feather/x-circle.svg">
     </button>
-    <section id="profilePicture">
+    <section id="profilePicture" class="changePic">
         <img src="<?php echo Loader::$jump ?>/assets/icons/feather/user-plus.svg">
     </section>
     <form class="editUser" action="<?php echo Loader::$jump?>scripts/editUser.php?r=/index.php" method="post">
@@ -50,6 +50,15 @@
             <input placeholder="Old password" name="oldPW">
             <input placeholder="New password" name="newPW">
             <button type="submit">Change Password</button>
+        </form>
+    </div>
+    <div id="picUpload" class="box">
+        <button class="changePic icon">
+            <img src="<?php echo Loader::$jump ?>/assets/icons/feather/x-circle.svg">
+        </button>
+        <form>
+            <input type="file" name="profilePicture">
+            <button type="submit">Upload Photo</button>
         </form>
     </div>
 </div>

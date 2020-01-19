@@ -139,6 +139,7 @@ form input, form input::placeholder,form select,form  button, a{
     font-size: 1.1em;
     border-radius: 3px;
     text-decoration: none;
+    cursor: pointer;
 }
 form input, form select{
     border: none;
@@ -150,6 +151,12 @@ form input:focus, form select:hover, form select:focus{
     transform: scale(1.05);
 }
 
+form input[type=file]{
+    border: none;
+}
+form input[type=file]:focus{
+    transform: none;
+}
 /*Contains properties for links and buttons*/
 form button, a{
     background-color: #7b7b7b;
@@ -263,11 +270,12 @@ nav section#userMenue button:nth-child(n){
 div#editUser{
     z-index: 0;
     display: none;
+    max-width: 30em;
 }
 div#pwBox{
     display: none;
     min-width: 20em;
-    position: absolute;
+    position: relative;
 }
 div#pwBox.open{
     display: flex;
@@ -285,6 +293,7 @@ div#editUser #profilePicture{
     border-radius: 100%;
     box-shadow: 0px 0 10px grey;
     overflow: hidden;
+    cursor: pointer;
 }
 div#editUser #profilePicture img{
     width: 100%;
@@ -292,6 +301,14 @@ div#editUser #profilePicture img{
 div#editUser button.userSettings{
     background-color: transparent;
     border:none;
+}
+
+div#editUser div#picUpload{
+    display: none;
+}
+div#editUser div#picUpload.open{
+    display: flex;
+    opacity: 1;
 }
 
 /*---Media queries---*/
