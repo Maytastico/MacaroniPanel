@@ -13,7 +13,9 @@ document.addEventListener("DOMContentLoaded", ()=>{
     const profileButton = document.querySelector("nav #userButton");
     const profileMenue = document.querySelector("nav #userMenue");
     profileButton.addEventListener("click", () =>{
+        console.log("trigged");
         if(!profileMenue.classList.contains("open")){
+
             openProfileMenue();
         }else{
             closeProfileMenue();

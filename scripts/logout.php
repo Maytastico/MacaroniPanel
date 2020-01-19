@@ -12,6 +12,4 @@ if(Authenticator::fetchSessionUserName() !== false){
     $a = new Authenticator(Authenticator::fetchSessionUserName());
     $a->resetSession();
     header("Location: " . $folder . $back . "?logout=success");
-}else{
-    header("Location: " . $folder . $back . "?logout=notLoggedIn");
 }

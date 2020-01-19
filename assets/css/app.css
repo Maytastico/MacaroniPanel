@@ -80,6 +80,36 @@ div.success{
     background: #3DB39B;
     margin-top: 0.5em;
 }
+button.link{
+    border: none;
+    background-color: transparent;
+    color: #0064f7;
+    text-decoration: underline;
+    transition: 0.5s;
+}
+button.link:hover{
+    text-shadow: 0 0 1px grey;
+}
+button.icon{
+    background-color: transparent;
+    border:none;
+}
+/*Ui Elements*/
+.box.centered{
+    position: fixed;
+    top: -50vh;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.box{
+    background-color: rgb(240,240,240);
+    box-shadow: 1px 1px 10px grey;
+    border-radius: 3px;
+    padding: 10px;
+    transition: 0.5s;
+    opacity: 0;
+    margin: 15px;
+}
 /*---Sign up form---*/
 .signUp{
     margin: auto;
@@ -168,6 +198,7 @@ nav #button.open{
     left: 20em;
 }
 nav{
+    z-index: 99999999999;
     overflow-x: hidden;
     transition: 0.5s;
     bottom: 0;
@@ -225,6 +256,44 @@ nav section#userMenue.open{
 nav section#userMenue form{
     text-align: right;
 }
+nav section#userMenue button:nth-child(n){
+    transition-delay: 0.5s;
+}
+/*---Edit user Ui*/
+div#editUser{
+    z-index: 0;
+    display: none;
+}
+div#pwBox{
+    display: none;
+    min-width: 20em;
+    position: absolute;
+}
+div#pwBox.open{
+    display: flex;
+    opacity: 1;
+}
+div#editUser.open{
+    opacity: 1;
+    top:50%;
+    display: block;
+}
+div#editUser #profilePicture{
+    height: 60px;
+    width: 60px;
+    margin: 15px auto;
+    border-radius: 100%;
+    box-shadow: 0px 0 10px grey;
+    overflow: hidden;
+}
+div#editUser #profilePicture img{
+    width: 100%;
+}
+div#editUser button.userSettings{
+    background-color: transparent;
+    border:none;
+}
+
 /*---Media queries---*/
 @media screen and (min-width: 720px){
     .width50{
