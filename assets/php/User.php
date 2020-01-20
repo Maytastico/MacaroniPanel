@@ -211,6 +211,15 @@ class User
         }
     }
 
+    /**
+     * @param $oldPassword
+     * Contains the current password the user has put in into a form
+     * @param $newPassword
+     * Contains the password, that the user wants.
+     * @return bool
+     * This method checks whether the current hash can be verified with the password the user has put into a form.
+     * Is it right the database will be updated with the new hashed password.
+     */
     public function updatePassword($oldPassword, $newPassword){
         if(password_verify($this->hashedPW, $oldPassword) === true){
             try {

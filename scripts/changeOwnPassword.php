@@ -17,15 +17,20 @@ if ($u->verifySession() === false) {
     header("Location: " . $folder . $back . "?changeUserInfo=noPermission");
     exit();
 } else if ($u->verifySession() === true) {
+    //Checks if all fields where set.
     if($oldPassword === false || $newPassword === false){
         header("Location: " . $folder . $back . "?changePassword=empty");
         exit();
     }else{
+        //Assures that the password has more than eight characters
         if(strlen($newPassword)<8){
             header("Location: " . $folder . $back . "?changePassword=passwordLength");
             exit();
         }else{
+            //Compares the old hash password with old password the user has put in.
+            //If it is right the method will update the old hash with the new hash
             if($u->updatePassword($oldPassword, $newPassword)===false){
+                //Is the Password wrong the user will get a feedback.
                 header("Location: " . $folder . $back . "?changePassword=wrongPassword");
                 exit();
             }
