@@ -11,7 +11,9 @@ Loader::jump(0);
 include_once "_includes/header.inc.php";
 echo "<pre>";
 
-
+$a = new Authenticator(Authenticator::fetchSessionUserName());
+$a->updateUsername("Mannuel");
+$a->writeSessionData();
 
 
 

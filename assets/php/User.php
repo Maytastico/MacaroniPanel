@@ -184,7 +184,41 @@ class User
         }
         return $newSessionID;
     }
-
+    public function updateUsername($newUsername){
+        $newUser = new User($newUsername);
+        if ($newUser->userExists() === false) {
+            try {
+                $this->username = $newUsername;
+                $stmt = $this->dbh->prepare("UPDATE users set username=:u_name where :role_id");
+                $stmt->bindParam(":u_name", $this->username);
+                $stmt->bindParam(":role_id", $this->roleID);
+                $stmt->execute();
+                return true;
+            } catch (PDOException $e) {
+                echo "Updating username failed: " . $e->getMessage();
+                exit();
+            }
+        } else {
+            return false;
+        }
+    }
+    public function updateEmail($newEmail){
+        if ($this->userExists() === true) {
+            try {
+                $this->email = $newEmail;
+                $stmt = $this->dbh->prepare("UPDATE users set email=:u_email where :role_id");
+                $stmt->bindParam(":u_email", $this->email);
+                $stmt->bindParam(":role_id", $this->roleID);
+                $stmt->execute();
+                return true;
+            } catch (PDOException $e) {
+                echo "Updating email failed: " . $e->getMessage();
+                exit();
+            }
+        } else {
+            return false;
+        }
+    }
     /**
      * @return string
      * Returns the username, saved inside the object
