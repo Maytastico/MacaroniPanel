@@ -18,7 +18,7 @@
     </section>
     <section id="userMenue">
         <div>
-            <form action="<?php Loader::$jump?>/scripts/logout.php?back=/login.php">
+            <form action="<?php Loader::$jump?>/scripts/logout.php?r=/login.php">
                 <button class="red" name="logout" type="submit">Logout</button>
                 <button class="userSettings" type="button">User Settings</button>
             </form>

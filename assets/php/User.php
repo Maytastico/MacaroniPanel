@@ -184,6 +184,14 @@ class User
         }
         return $newSessionID;
     }
+    /**
+     * @param $newUsername
+     * @return bool
+     * $newUsername should contain the new username of the user
+     * Changes the username of a user. This method is used in scripts that change properties of a user.
+     * true: The username was changed successful.
+     * false: The user does not exist or something went wrong during the changing process.
+     */
     public function updateUsername($newUsername){
         $newUser = new User($newUsername);
         if ($newUser->userExists() === false) {
@@ -202,6 +210,15 @@ class User
             return false;
         }
     }
+
+    /**
+     * @param $newEmail
+     * @return bool
+     * $newEmail should contain the new email address of the user
+     * Changes the email of a user. This method is used in scripts that change properties of a user.
+     * true: The email was changed successful
+     * false: The user does not exist or something went wrong during the changing process
+     */
     public function updateEmail($newEmail){
         if ($this->userExists() === true) {
             try {

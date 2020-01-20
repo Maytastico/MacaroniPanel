@@ -21,7 +21,7 @@
         }
 
         if ($getChange == "email")
-            echo '<div class="red"><input type="text" name="email" placeholder="' . $u->getEmail() .'" class="red" value="' . $getEmail . '">The format is incorrect!</div>';
+            echo '<div class="red"><input type="text" name="email" placeholder="' . $u->getEmail() .'" class="red" value="' . $getEmail . '"><br>The format is incorrect!</div>';
         else {
             echo '<input type="text" name="email" placeholder="' . $u->getEmail() .'" value="' . $getEmail . '">';
         }
