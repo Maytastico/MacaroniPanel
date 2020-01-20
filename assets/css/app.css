@@ -274,7 +274,6 @@ div#editUser{
 }
 div#pwBox{
     display: none;
-    min-width: 20em;
     position: relative;
 }
 div#pwBox.open{

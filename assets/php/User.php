@@ -211,6 +211,25 @@ class User
         }
     }
 
+    public function updatePassword($oldPassword, $newPassword){
+        if(password_verify($this->hashedPW, $oldPassword) === true){
+            try {
+                $newHashedPassword = $this->hashPW($newPassword);
+                $this->hashedPW = $newHashedPassword;
+                $stmt = $this->dbh->prepare("UPDATE users set password=:u_pw where :role_id");
+                $stmt->bindParam(":u_pw", $this->hashedPW);
+                $stmt->bindParam(":role_id", $this->roleID);
+                $stmt->execute();
+                return true;
+            } catch (PDOException $e) {
+                echo "Updating username failed: " . $e->getMessage();
+                exit();
+            }
+        }else{
+            return false;
+        }
+    }
+
     /**
      * @param $newEmail
      * @return bool

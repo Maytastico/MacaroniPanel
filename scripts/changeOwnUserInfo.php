@@ -52,5 +52,7 @@ if($u->verifySession()===false){
     $u->writeSessionData();
     //Directs the user back to the dashboard with a "success" message
     header("Location: " . $folder . $back . "?changeUserInfo=success");
+}else{
+    echo "Authentication error!";
 }
 
