@@ -12,7 +12,7 @@ include_once "_includes/header.inc.php";
 echo "<pre>";
 
 $a = new Authenticator(Authenticator::fetchSessionUserName());
-var_dump(User::getUserIDFromUsername("Martin"));
+var_dump($a);
 
 
 

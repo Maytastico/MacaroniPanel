@@ -202,7 +202,7 @@ class User
         if ($newUser->userExists() === false) {
             try {
                 $this->username = $newUsername;
-                $stmt = $this->dbh->prepare("UPDATE users set username=:u_name where :user_id");
+                $stmt = $this->dbh->prepare("UPDATE users set username=:u_name where user_id=:user_id");
                 $stmt->bindParam(":u_name", $this->username);
                 $stmt->bindParam(":user_id", $this->user_id);
                 $stmt->execute();
@@ -230,7 +230,7 @@ class User
             try {
                 $newHashedPassword = $this->hashPW($newPassword);
                 $this->hashedPW = $newHashedPassword;
-                $stmt = $this->dbh->prepare("UPDATE users set password=:u_pw where :user_id");
+                $stmt = $this->dbh->prepare("UPDATE users set password=:u_pw where user_id=:user_id");
                 $stmt->bindParam(":u_pw", $this->hashedPW);
                 $stmt->bindParam(":user_id", $this->user_id);
                 $stmt->execute();
@@ -256,7 +256,7 @@ class User
         if ($this->userExists() === true) {
             try {
                 $this->email = $newEmail;
-                $stmt = $this->dbh->prepare("UPDATE users set email=:u_email where :user_id");
+                $stmt = $this->dbh->prepare("UPDATE users set email=:u_email where user_id=:user_id");
                 $stmt->bindParam(":u_email", $this->email);
                 $stmt->bindParam(":user_id", $this->user_id);
                 $stmt->execute();
