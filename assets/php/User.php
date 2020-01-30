@@ -12,7 +12,11 @@ class User
      *Database connection
      */
     private $dbh;
-
+    /**
+     * @var int
+     * Contains the user id
+     */
+    private $user_id;
     /**@var string
      *name of the user from the constructor
      */
@@ -57,6 +61,7 @@ class User
         $this->username = $uid;
         if ($this->userExists() === true) {
             $userData = $this->getUserData();
+            $this->user_id = (int) $userData['user_id'];
             $this->email = $userData['email'];
             $this->hashedPW = $userData['password'];
             $this->roleID = $userData['role_id'];
@@ -197,9 +202,9 @@ class User
         if ($newUser->userExists() === false) {
             try {
                 $this->username = $newUsername;
-                $stmt = $this->dbh->prepare("UPDATE users set username=:u_name where :role_id");
+                $stmt = $this->dbh->prepare("UPDATE users set username=:u_name where :user_id");
                 $stmt->bindParam(":u_name", $this->username);
-                $stmt->bindParam(":role_id", $this->roleID);
+                $stmt->bindParam(":user_id", $this->user_id);
                 $stmt->execute();
                 return true;
             } catch (PDOException $e) {
@@ -225,9 +230,9 @@ class User
             try {
                 $newHashedPassword = $this->hashPW($newPassword);
                 $this->hashedPW = $newHashedPassword;
-                $stmt = $this->dbh->prepare("UPDATE users set password=:u_pw where :role_id");
+                $stmt = $this->dbh->prepare("UPDATE users set password=:u_pw where :user_id");
                 $stmt->bindParam(":u_pw", $this->hashedPW);
-                $stmt->bindParam(":role_id", $this->roleID);
+                $stmt->bindParam(":user_id", $this->user_id);
                 $stmt->execute();
                 return true;
             } catch (PDOException $e) {
@@ -251,9 +256,9 @@ class User
         if ($this->userExists() === true) {
             try {
                 $this->email = $newEmail;
-                $stmt = $this->dbh->prepare("UPDATE users set email=:u_email where :role_id");
+                $stmt = $this->dbh->prepare("UPDATE users set email=:u_email where :user_id");
                 $stmt->bindParam(":u_email", $this->email);
-                $stmt->bindParam(":role_id", $this->roleID);
+                $stmt->bindParam(":user_id", $this->user_id);
                 $stmt->execute();
                 return true;
             } catch (PDOException $e) {
@@ -262,6 +267,36 @@ class User
             }
         } else {
             return false;
+        }
+    }
+    static function getUsernameFromUserID($id){
+        try {
+            $stmt = Config::dbCon()->prepare("SELECT username from users where user_id=:user_id");
+            $stmt->bindParam(":user_id", $id);
+            $stmt->execute();
+            $res = $stmt->fetchAll();
+            if(count($res)>0){
+                return $res[0]["username"];
+            }
+            return false;
+        } catch (PDOException $e) {
+            echo "Getting user id failed: " . $e->getMessage();
+            exit();
+        }
+    }
+    static function getUserIDFromUsername($username){
+        try {
+            $stmt = Config::dbCon()->prepare("SELECT user_id from users where username=:user_name");
+            $stmt->bindParam(":user_name", $username);
+            $stmt->execute();
+            $res = $stmt->fetchAll();
+            if(count($res)>0){
+                return (int) $res[0]["user_id"] ;
+            }
+            return false;
+        } catch (PDOException $e) {
+            echo "Getting user id failed: " . $e->getMessage();
+            exit();
         }
     }
     /**
@@ -324,5 +359,13 @@ class User
     public function setPlainPW($plainPW)
     {
         $this->plainPW = $plainPW;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUserId()
+    {
+        return (int) $this->user_id;
     }
 }
