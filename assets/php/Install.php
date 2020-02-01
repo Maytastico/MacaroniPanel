@@ -36,8 +36,10 @@ class Install
             "CREATE TABLE IF NOT EXISTS permissions(id int NOT NULL AUTO_INCREMENT PRIMARY KEY, name VARCHAR(256) NOT NULL)",
             "CREATE TABLE IF NOT EXISTS role(id INTEGER AUTO_INCREMENT NOT NULL PRIMARY KEY , name VARCHAR(256) NOT NULL)",
             "CREATE TABLE IF NOT EXISTS users (user_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL, username VARCHAR(256) NOT NULL, password VARCHAR(256) NOT NULL, email VARCHAR(256), lastLogin TIMESTAMP(0), sessionID VARCHAR(32), role_id INTEGER NOT NULL )",
+            "CREATE TABLE IF NOT EXISTS files(id INTEGER AUTO_INCREMENT NOT NULL PRIMARY KEY , fileName TEXT NOT NULL, folderPath TEXT NOT NULL , description TEXT, tags text)",
             "CREATE TABLE IF NOT EXISTS settings(name VARCHAR(256) NOT NULL, value text NOT NULL)",
-            "CREATE TABLE IF NOT EXISTS role_has_permission(role_id int NOT NULL , permission_id int NOT NULL, FOREIGN KEY (role_id) REFERENCES role(id), FOREIGN KEY (permission_id) REFERENCES permissions(id))"
+            "CREATE TABLE IF NOT EXISTS role_has_permission(role_id int NOT NULL , permission_id int NOT NULL, FOREIGN KEY (role_id) REFERENCES role(id), FOREIGN KEY (permission_id) REFERENCES permissions(id))",
+            "CREATE TABLE IF NOT EXISTS user_has_file(user_id int NOT NULL , file_id int NOT NULL, FOREIGN KEY (user_id) REFERENCES users(user_id), FOREIGN KEY (file_id) REFERENCES files(id))"
         );
 
         try {
@@ -56,6 +58,8 @@ class Install
     public function deleteTables()
     {
         $queries = array(
+            "DROP TABLE user_has_file",
+            "DROP TABLE files",
             "DROP TABLE users",
             "DROP TABLE role_has_permission",
             "DROP TABLE role",
