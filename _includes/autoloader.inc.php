@@ -25,7 +25,7 @@ class Loader
             $dirHandler = opendir($path);
             while ($file = readdir($dirHandler)) {
                 if ($file != "." && $file != "..") {
-                    $fullPath = Config::getFolder() ."/". $path . $file;
+                    $fullPath =  $path . $file;
                     echo "<link rel=\"stylesheet\" href=\"" . $fullPath . "\">\n";
 
                 }
@@ -43,7 +43,8 @@ class Loader
             $dirHandler = opendir($path);
             while ($file = readdir($dirHandler)) {
                 if ($file != "." && $file != "..") {
-                    $fullPath = Config::getFolder() ."/". $path . $file;
+                    $path = self::$jump  . "assets/js/";
+                    $fullPath = $path . $file;
                     echo "<script src=\"" . $fullPath . "\"></script>\n";
                 }
             }

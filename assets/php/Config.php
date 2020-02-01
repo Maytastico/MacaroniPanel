@@ -9,7 +9,10 @@
 class Config
 {
     //Folder Destination
-    private static $folder = "";
+    //Add a "/" at the front your foldername
+    //Example: foldername is Dashboard
+    //The Variable has to look like "/Dashboard"
+    private static $folder = "/MacaroniPanel";
     //Database Configuration
     private static $pdoDNS = "mysql:host=localhost;port=3306;dbname=dashboard";
     private static $pdoUser = "root";
