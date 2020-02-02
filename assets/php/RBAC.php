@@ -333,7 +333,7 @@ class RBAC
      * The permissionID that should be added to the role
      * true: Role was successfully added to the object
      * false: The role already exists and the permission can't be added to the object.
-     * The has to be deleted first
+     * The permission has to be deleted first
      */
     public function addPermission($id)
     {

@@ -11,12 +11,17 @@ Loader::jump(0);
 include_once "_includes/header.inc.php";
 echo "<pre>";
 
-$file = new File("userfiles" . DIRECTORY_SEPARATOR . "mandeus", "mandeus.txt");
+$file = new File(DIRECTORY_SEPARATOR ."userfiles" . DIRECTORY_SEPARATOR . "mandeus", "mandeus.txt");
 var_dump($file->fileExistsInDir());
 var_dump($file);
-var_dump($file->getFolderPath());
+var_dump($file->fileExistsInDatabase());
+$file->setDescription("<br>This is file for mandeus");
+$file->addTag("Mandeus");
+$file->addTag("KurKur");
+$file->addTag("<br>murmur");
+var_dump($file->decodeTags("Mandeus,KurKur,&lt;br&gt;murmur"));
+var_dump(__FILE__);
 
-var_dump(is_dir($_SERVER['DOCUMENT_ROOT'] ."/userfiles"));
 
 
 

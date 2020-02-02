@@ -1,5 +1,5 @@
 <div class="width50">
-    <form class="install container-fluid" action="<?php Loader::$jump?>/scripts/install.php" method="post">
+    <form class="install container-fluid" action="<?php echo Loader::$jump?>/scripts/install.php" method="post">
         <h2>Install/Reinstall Tables</h2>
         <div class="row">
             <button class="col " type="submit" name="action" value="install">Install Tables</button>
