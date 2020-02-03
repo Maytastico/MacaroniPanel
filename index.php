@@ -12,16 +12,11 @@ include_once "_includes/header.inc.php";
 echo "<pre>";
 
 $file = new File(DIRECTORY_SEPARATOR ."userfiles" . DIRECTORY_SEPARATOR . "mandeus", "mandeus.txt");
-var_dump($file->fileExistsInDir());
 var_dump($file);
-var_dump($file->fileExistsInDatabase());
-$file->setDescription("<br>This is file for mandeus");
-$file->addTag("Mandeus");
-$file->addTag("KurKur");
-$file->addTag("<br>murmur");
-var_dump($file->decodeTags("Mandeus,KurKur,&lt;br&gt;murmur"));
-var_dump(__FILE__);
-
+$file->addUserID(1);
+$file->addUserID(2);
+var_dump($file);
+FILE::removeAllUserRelations(1);
 
 
 
