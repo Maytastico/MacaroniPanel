@@ -53,6 +53,11 @@ class User
      */
     private $rbac;
 
+    /**
+     * @var File
+     */
+    private $currentProfilePicture;
+
     //It will get all user information, if the user exists
     function __construct($uid)
     {
@@ -72,6 +77,8 @@ class User
         $this->hashedPW = $userData['password'];
         $this->roleID = $userData['role_id'];
         $this->sessionID = $userData['sessionID'];
+        $picData = FILE::fetchFileDataFromID($userData["currentProfilePicture"]);
+        $this->currentProfilePicture = new File($picData["dir"], $picData["fileName"]);
         $this->rbac = new RBAC(RBAC::fetchRoleNameFormID($this->roleID));
     }
 
@@ -243,6 +250,25 @@ class User
             $lastIteration = $newSessionID;
         }
         return $newSessionID;
+    }
+
+    public function updateCurrentProfilePicture($file_id)
+    {
+        if (FILE::fileIDExistsInDatabase($file_id)) {
+            if ($this->userExists()) {
+                try {
+                    $stmt = $this->dbh->prepare("UPDATE users set currentProfilePicture=:pb where user_id=:user_id");
+                    $stmt->bindParam(":pb", $file_id);
+                    $stmt->bindParam(":user_id", $this->user_id);
+                    $stmt->execute();
+                    return true;
+                } catch (PDOException $e) {
+                    echo "Updating profile picture failed: " . $e->getMessage();
+                    exit();
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -431,5 +457,14 @@ class User
     public function getUserId()
     {
         return (int)$this->user_id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCurrentProfilePicture()
+    {
+        $tag = "<img src='" . $this->currentProfilePicture->getRelativePath() . "'>";
+        return "<img src='".$this->currentProfilePicture->getRelativePath()."'>";
     }
 }

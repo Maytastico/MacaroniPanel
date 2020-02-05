@@ -34,6 +34,12 @@ class File
 
     /**
      * @var string
+     * Contains the not concatenated filepath from the root of the webbrowser to the file.
+     */
+    private $clearPath;
+
+    /**
+     * @var string
      * Contains the absolute path to the file.
      * This is string is used as an unique identifier inside the database
      */
@@ -83,6 +89,7 @@ class File
         $this->dbh = Config::dbCon();
         $this->fileName = $filename;
         $this->dir = Config::getFolder() . $dir;
+        $this->clearPath = $dir;
         $this->absolutePath = $this->evaluateAbsolutePath();
         $this->relativePath = $this->evaluateRelativePath();
         if ($this->fileExistsInDatabase()) {
@@ -182,7 +189,7 @@ class File
                     $encodedTags = $this->encodeTags();
                     $stmt = $this->dbh->prepare("INSERT INTO files (fileName, dir, relativePath, absolutePath, description, tags) VALUES (:fileName, :dir, :relativePath, :absolutePath, :describtion, :tags)");
                     $stmt->bindParam(":fileName", $this->fileName);
-                    $stmt->bindParam(":dir", $this->dir);
+                    $stmt->bindParam(":dir", $this->clearPath);
                     $stmt->bindParam(":relativePath", $this->relativePath);
                     $stmt->bindParam(":absolutePath", $this->absolutePath);
                     $stmt->bindParam(":describtion", $this->description);
@@ -271,7 +278,7 @@ class File
         try {
             var_dump($this->userIDs);
             foreach ($this->userIDs as $userID) {
-                echo "<br>" . $userID;
+                ;
                 $stmt = $this->dbh->prepare("INSERT INTO user_has_file (user_id, file_id) VALUES (:user_id, :file_id)");
                 $stmt->bindParam(":file_id", $this->fileID);
                 $stmt->bindParam(":user_id", $userID);
@@ -312,7 +319,7 @@ class File
         }
     }
 
-    static public function removeAllUserRelations($user_ID)
+    static public function removeAllUserRelationsToFile($user_ID)
     {
         try {
             $stmt = Config::dbCon()->prepare("DELETE from user_has_file where user_id = :user_id");
@@ -348,6 +355,37 @@ class File
             echo "Failed adding file user relations: " . $e->getMessage();
             exit();
         }
+    }
+
+    static function fetchFileDataFromID($file_id)
+    {
+        try {
+            $stmt = Config::dbCon()->prepare("SELECT fileName, dir, relativePath, description, tags from files where id= :file_id");
+            $stmt->bindParam(":file_id", $file_id);
+            $stmt->execute();
+            $res = $stmt->fetchAll();
+            if (count($res) > 0) {
+                $data = array();
+                foreach ($res as $key => $entries) {
+                    foreach ($entries as $key => $entry) {
+                        $data[$key] = $entry;
+                    }
+                }
+                return $data;
+            }
+            return false;
+        } catch (PDOException $e) {
+            echo "Failed adding file user relations: " . $e->getMessage();
+            exit();
+        }
+    }
+
+    static function fileIDExistsInDatabase($file_id)
+    {
+        if (count(self::fetchFileDataFromID($file_id)) > 0){
+            return true;
+    }
+        return false;
     }
 
     /**
@@ -461,6 +499,7 @@ class File
     {
         return $this->dir . DIRECTORY_SEPARATOR . $this->fileName;
     }
+
 
     /**
      * @return string
