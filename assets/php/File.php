@@ -57,6 +57,21 @@ class File
     private $userIDs = array();
 
     /**
+     * @var false|int
+     * Contains the timestamp when the file was created
+     * Will be read during the construction of the object
+     */
+    private $creationTimestamp;
+
+    /**
+     * @var false|int
+     * Contains the file size of the the file
+     * Will be read during the construction of the object
+     * Can be used to determine whether a file can be uploaded or not.
+     */
+    private $fileSize;
+
+    /**
      * File constructor.
      * @param $dir
      * @param $filename
@@ -75,18 +90,42 @@ class File
             $this->userIDs = $this->fetchUserRelationsToFileID();
             $this->userIDs = $this->fetchUserRelationsToFileID();
         }
+        if ($this->fileExistsInDir()) {
+            $this->creationTimestamp = $this->readCreationTime();
+            $this->fileSize = $this->readFileSize();
+        }
     }
 
     /**
      * Takes the data from the database and puts the data into the object
      */
-    private function reloadingData(){
+    private function reloadingData()
+    {
         $fileData = $this->fetchFileDataFormDatabase();
         $this->description = $fileData["description"];
         $this->tags = $this->decodeTags($fileData["tags"]);
         $this->fileID = $fileData["id"];
 
     }
+
+    /**
+     * @return false|int
+     * Reads the creation data from the file
+     */
+    private function readCreationTime()
+    {
+        return filemtime($this->absolutePath);
+    }
+
+    /**
+     * @return false|int
+     * Reads the file size from the file
+     */
+    private function readFileSize()
+    {
+        return filesize($this->absolutePath);
+    }
+
     /**
      * @return bool
      * Checks whether a file exists on the hard disk.
@@ -96,7 +135,8 @@ class File
         return file_exists($this->absolutePath);
     }
 
-    public function fileIsWritable(){
+    public function fileIsWritable()
+    {
         return is_writable($this->absolutePath);
     }
 
@@ -137,7 +177,7 @@ class File
     {
         try {
             var_dump($this->userIDs);
-            if($this->fileExistsInDir()){
+            if ($this->fileExistsInDir()) {
                 if (!$this->fileExistsInDatabase()) {
                     $encodedTags = $this->encodeTags();
                     $stmt = $this->dbh->prepare("INSERT INTO files (fileName, dir, relativePath, absolutePath, description, tags) VALUES (:fileName, :dir, :relativePath, :absolutePath, :describtion, :tags)");
@@ -157,8 +197,8 @@ class File
                 } else {
                     return false;
                 }
-            }else{
-                echo "<div class='red'>Error while adding file to Database: ".$this->absolutePath." does not exist on the Hard Disk</div>";
+            } else {
+                echo "<div class='red'>Error while adding file to Database: " . $this->absolutePath . " does not exist on the Hard Disk</div>";
                 return false;
             }
         } catch (PDOException $e) {
@@ -167,9 +207,14 @@ class File
         }
     }
 
-    public function removeFileFromDatabase(){
+    /**
+     * @return bool
+     * Deletes the entry of the file from the database when it exists inside it.
+     */
+    public function removeFileFromDatabase()
+    {
         try {
-            if($this->fileExistsInDatabase()){
+            if ($this->fileExistsInDatabase()) {
                 $this->removeFileUserRelations();
                 $stmt = $this->dbh->prepare("DELETE from files where absolutePath=:absolutePath");
                 $stmt->bindParam(":absolutePath", $this->absolutePath);
@@ -189,14 +234,15 @@ class File
      * false -> File is not writeable
      * true -> Deleting file was successful
      */
-    public function removeFileFromHardDisk(){
-        if($this->fileIsWritable()){
-            if(unlink($this->absolutePath))
+    public function removeFileFromHardDisk()
+    {
+        if ($this->fileIsWritable()) {
+            if (unlink($this->absolutePath))
                 return true;
             else
                 return false;
         }
-        echo "<div class='red'>Error while deleting ".$this->absolutePath." from hard disk!</div>";
+        echo "<div class='red'>Error while deleting " . $this->absolutePath . " from hard disk!</div>";
         return false;
     }
 
@@ -206,14 +252,16 @@ class File
      * true -> Deleting file was successful
      * false -> The file is not writeable or does not exist inside the database
      */
-    public function purgeFile(){
-        if($this->removeFileFromHardDisk()){
-            if($this->removeFileFromDatabase()){
+    public function purgeFile()
+    {
+        if ($this->removeFileFromHardDisk()) {
+            if ($this->removeFileFromDatabase()) {
                 return true;
             }
         }
         return false;
     }
+
     /**
      * Creates relations between users and and a file
      * Will be used to determine whether a user can see a file inside its filemanager
@@ -223,7 +271,7 @@ class File
         try {
             var_dump($this->userIDs);
             foreach ($this->userIDs as $userID) {
-                echo "<br>".$userID;
+                echo "<br>" . $userID;
                 $stmt = $this->dbh->prepare("INSERT INTO user_has_file (user_id, file_id) VALUES (:user_id, :file_id)");
                 $stmt->bindParam(":file_id", $this->fileID);
                 $stmt->bindParam(":user_id", $userID);
@@ -250,12 +298,12 @@ class File
     public function removeUserRelationToFileID($user_ID)
     {
         try {
-            if($this->fileExistsInDatabase()){
+            if ($this->fileExistsInDatabase()) {
                 $stmt = $this->dbh->prepare("DELETE from user_has_file where file_id = :file_id AND user_id = :user_id");
                 $stmt->bindParam(":file_id", $this->fileID);
                 $stmt->bindParam(":user_id", $user_ID);
                 $stmt->execute();
-            }else{
+            } else {
                 return false;
             }
         } catch (PDOException $e) {
@@ -264,7 +312,8 @@ class File
         }
     }
 
-    static public function removeAllUserRelations($user_ID){
+    static public function removeAllUserRelations($user_ID)
+    {
         try {
             $stmt = Config::dbCon()->prepare("DELETE from user_has_file where user_id = :user_id");
             $stmt->bindParam(":user_id", $user_ID);
@@ -274,7 +323,6 @@ class File
             exit();
         }
     }
-
 
 
     /**
@@ -369,7 +417,7 @@ class File
     private function encodeTags()
     {
         $encoded = null;
-        if(count($this->tags)>0){
+        if (count($this->tags) > 0) {
             foreach ($this->tags as $tag) {
                 if (!empty($encoded))
                     $encoded = $encoded . "," . htmlspecialchars($tag);
@@ -440,5 +488,23 @@ class File
     public function getRelativePath()
     {
         return $this->relativePath;
+    }
+
+    /**
+     * @return false|int
+     * Returns a unix timestamp when the file was created
+     */
+    public function getCreationTimestamp()
+    {
+        return $this->creationTimestamp;
+    }
+
+    /**
+     * @return false|int
+     * Returns the file size of the selected file
+     */
+    public function getFileSize()
+    {
+        return $this->fileSize;
     }
 }

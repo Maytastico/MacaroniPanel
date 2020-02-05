@@ -11,12 +11,18 @@ Loader::jump(0);
 include_once "_includes/header.inc.php";
 echo "<pre>";
 
-$file = new File(DIRECTORY_SEPARATOR ."userfiles" . DIRECTORY_SEPARATOR . "mandeus", "mandeus.txt");
+$u = new User(Authenticator::fetchSessionUserName());
+var_dump($u);
+var_dump($u->createUserDir());
+
+
+/*$file = new File(DIRECTORY_SEPARATOR ."userfiles" . DIRECTORY_SEPARATOR . "mandeus", "mandeus.txt");
 var_dump($file);
 /*$file->addUserID(1);
-$file->addUserID(2);*/
+$file->addUserID(2);
 var_dump($file->addFileToDatabase());
-FILE::removeAllUserRelations(1);
+echo date(filemtime($file->getAbsolutePath()));
+FILE::removeAllUserRelations(1);*/
 
 
 

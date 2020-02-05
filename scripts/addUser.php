@@ -43,6 +43,7 @@ if(Install::installAllowed() === false && ($u->verifySession() === false &&  $u-
                         //A new user will be created, if the username does not exist.
                         $u = new User($u_name);
                         if($u->addUser($u_email, $u_password, RBAC::fetchRoleIDFromName($u_type)) === true){
+                            $u->createUserDir();
                             header("Location: " . $folder . $back . "?signup=success");
                             exit();
                         }else{

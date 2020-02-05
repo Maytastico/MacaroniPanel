@@ -60,20 +60,25 @@ class User
 
         $this->username = $uid;
         if ($this->userExists() === true) {
-            $userData = $this->getUserData();
-            $this->user_id = (int) $userData['user_id'];
-            $this->email = $userData['email'];
-            $this->hashedPW = $userData['password'];
-            $this->roleID = $userData['role_id'];
-            $this->sessionID = $userData['sessionID'];
-            $this->rbac = new RBAC(RBAC::fetchRoleNameFormID($this->roleID));
+            $this->reloadData();
         }
     }
 
-    /**@return string
-     * Returns the hashed password
-     *@param string
+    private function reloadData()
+    {
+        $userData = $this->getUserData();
+        $this->user_id = (int)$userData['user_id'];
+        $this->email = $userData['email'];
+        $this->hashedPW = $userData['password'];
+        $this->roleID = $userData['role_id'];
+        $this->sessionID = $userData['sessionID'];
+        $this->rbac = new RBAC(RBAC::fetchRoleNameFormID($this->roleID));
+    }
+
+    /**@param string
      * A password from plaintext
+     * @return string
+     * Returns the hashed password
      */
     private function hashPW($plainPassword)
     {
@@ -137,28 +142,77 @@ class User
     public function addUser($email, $plainPassword, $role)
     {
         if ($this->userExists() === false) {
-                $hashedPW = $this->hashPW($plainPassword);
-                try {
-                    $stmt = $this->dbh->prepare("INSERT INTO users (username, password, email, role_id) VALUES (:uid, :pw, :email, :u_roleID)");
-                    $stmt->bindParam(":uid", $this->username);
-                    $stmt->bindParam(":pw", $hashedPW);
-                    $stmt->bindParam(":email", $email);
-                    $stmt->bindParam(":u_roleID", $role);
-                    $stmt->execute();
-                    return true;
-                } catch (PDOException $e) {
-                    echo "Writing to settingstype failed: " . $e->getMessage();
-                }
+            $hashedPW = $this->hashPW($plainPassword);
+            try {
+                $stmt = $this->dbh->prepare("INSERT INTO users (username, password, email, role_id) VALUES (:uid, :pw, :email, :u_roleID)");
+                $stmt->bindParam(":uid", $this->username);
+                $stmt->bindParam(":pw", $hashedPW);
+                $stmt->bindParam(":email", $email);
+                $stmt->bindParam(":u_roleID", $role);
+                $stmt->execute();
+                $this->reloadData();
+                return true;
+            } catch (PDOException $e) {
+                echo "Adding user failed: " . $e->getMessage();
+            }
         } else {
             return false;
         }
     }
 
+    /**This function will removes a user from the database, if it exists.
+     * @return bool
+     *true -> Removing user was successful
+     *false -> User does not exist
+     */
+    public function removeUser()
+    {
+        if ($this->userExists() === false) {
+            try {
+                $stmt = $this->dbh->prepare("DELETE FROM users WHERE user_id=:user_id");
+                $stmt->bindParam(":uid", $this->user_id);
+                $stmt->execute();
+                return true;
+            } catch (PDOException $e) {
+                echo "Deleting user failed: " . $e->getMessage();
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public function createUserDir()
+    {
+        if (!empty($this->user_id)) {
+            $dir = new File("/userfiles", $this->user_id);
+            if (!$dir->fileExistsInDir()) {
+                $userDir = $dir->getAbsolutePath();
+                if (mkdir($userDir)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public function destroyUserDir()
+    {
+        $dir = new File("/userfiles", $this->user_id);
+        if ($dir->fileExistsInDir()) {
+            $userDir = $dir->getAbsolutePath();
+            if (rmdir($userDir)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * It gets a hash and writes it as the sessionID to the database.
      */
-    public function updateSessionID(){
-        try{
+    public function updateSessionID()
+    {
+        try {
             $sessionID = $this->generateSessionID();
             $stmt = $this->dbh->prepare("UPDATE users SET sessionID=:sessionID where username=:userID");
             $stmt->bindParam(":sessionID", $sessionID);
@@ -166,7 +220,7 @@ class User
             $stmt->execute();
             $this->sessionID = $sessionID;
 
-        } catch (PDOException $e){
+        } catch (PDOException $e) {
             echo "Updating the sessionID of $this->username failed: " . $e->getMessage();
         }
     }
@@ -178,17 +232,19 @@ class User
      * a md5 hash. This hash will be hashed few times, to ensure a secure sessionID that can't be bruteforced.
      * This hash will be saved inside the php-session and database to authenticate a user.
      */
-    private function generateSessionID(){
+    private function generateSessionID()
+    {
         $randomIteration = rand(1, 10);
         $randomNumber = rand(-0x7FFFFFFF, 0x7FFFFFFF);
         $lastIteration = md5($randomNumber . $this->username . $this->email);
         $newSessionID = "";
-        for($i=0; $i<=$randomIteration; $i++){
+        for ($i = 0; $i <= $randomIteration; $i++) {
             $newSessionID = md5($lastIteration);
             $lastIteration = $newSessionID;
         }
         return $newSessionID;
     }
+
     /**
      * @param $newUsername
      * @return bool
@@ -197,7 +253,8 @@ class User
      * true: The username was changed successful.
      * false: The user does not exist or something went wrong during the changing process.
      */
-    public function updateUsername($newUsername){
+    public function updateUsername($newUsername)
+    {
         $newUser = new User($newUsername);
         if ($newUser->userExists() === false) {
             try {
@@ -225,8 +282,9 @@ class User
      * This method checks whether the current hash can be verified with the password the user has put into a form.
      * Is it right the database will be updated with the new hashed password.
      */
-    public function updatePassword($oldPassword, $newPassword){
-        if(password_verify($this->hashedPW, $oldPassword) === true){
+    public function updatePassword($oldPassword, $newPassword)
+    {
+        if (password_verify($this->hashedPW, $oldPassword) === true) {
             try {
                 $newHashedPassword = $this->hashPW($newPassword);
                 $this->hashedPW = $newHashedPassword;
@@ -239,7 +297,7 @@ class User
                 echo "Updating username failed: " . $e->getMessage();
                 exit();
             }
-        }else{
+        } else {
             return false;
         }
     }
@@ -252,7 +310,8 @@ class User
      * true: The email was changed successful
      * false: The user does not exist or something went wrong during the changing process
      */
-    public function updateEmail($newEmail){
+    public function updateEmail($newEmail)
+    {
         if ($this->userExists() === true) {
             try {
                 $this->email = $newEmail;
@@ -269,13 +328,15 @@ class User
             return false;
         }
     }
-    static function getUsernameFromUserID($id){
+
+    static function getUsernameFromUserID($id)
+    {
         try {
             $stmt = Config::dbCon()->prepare("SELECT username from users where user_id=:user_id");
             $stmt->bindParam(":user_id", $id);
             $stmt->execute();
             $res = $stmt->fetchAll();
-            if(count($res)>0){
+            if (count($res) > 0) {
                 return $res[0]["username"];
             }
             return false;
@@ -284,14 +345,16 @@ class User
             exit();
         }
     }
-    static function getUserIDFromUsername($username){
+
+    static function getUserIDFromUsername($username)
+    {
         try {
             $stmt = Config::dbCon()->prepare("SELECT user_id from users where username=:user_name");
             $stmt->bindParam(":user_name", $username);
             $stmt->execute();
             $res = $stmt->fetchAll();
-            if(count($res)>0){
-                return (int) $res[0]["user_id"] ;
+            if (count($res) > 0) {
+                return (int)$res[0]["user_id"];
             }
             return false;
         } catch (PDOException $e) {
@@ -299,6 +362,7 @@ class User
             exit();
         }
     }
+
     /**
      * @return string
      * Returns the username, saved inside the object
@@ -366,6 +430,6 @@ class User
      */
     public function getUserId()
     {
-        return (int) $this->user_id;
+        return (int)$this->user_id;
     }
 }
