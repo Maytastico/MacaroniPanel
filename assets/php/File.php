@@ -73,6 +73,7 @@ class File
         if ($this->fileExistsInDatabase()) {
             $this->reloadingData();
             $this->userIDs = $this->fetchUserRelationsToFileID();
+            $this->userIDs = $this->fetchUserRelationsToFileID();
         }
     }
 
@@ -93,6 +94,10 @@ class File
     public function fileExistsInDir()
     {
         return file_exists($this->absolutePath);
+    }
+
+    public function fileIsWritable(){
+        return is_writable($this->absolutePath);
     }
 
     /**
@@ -123,6 +128,7 @@ class File
 
     /**
      * @return bool
+     * This method check whether a file exist on the hard disk and adds it when it does not already exist inside the database
      * true -> The entry for this file does not exist inside the database and was added
      * false -> The entry for this absolute path was already saved inside the database
      * You can use this method to add a file that was uploaded by a user to the database, so it is accessible inside the Panel
@@ -131,23 +137,28 @@ class File
     {
         try {
             var_dump($this->userIDs);
-            if (!$this->fileExistsInDatabase()) {
-                $encodedTags = $this->encodeTags();
-                $stmt = $this->dbh->prepare("INSERT INTO files (fileName, dir, relativePath, absolutePath, description, tags) VALUES (:fileName, :dir, :relativePath, :absolutePath, :describtion, :tags)");
-                $stmt->bindParam(":fileName", $this->fileName);
-                $stmt->bindParam(":dir", $this->dir);
-                $stmt->bindParam(":relativePath", $this->relativePath);
-                $stmt->bindParam(":absolutePath", $this->absolutePath);
-                $stmt->bindParam(":describtion", $this->description);
-                $stmt->bindParam(":tags", $encodedTags);
-                $stmt->execute();
+            if($this->fileExistsInDir()){
+                if (!$this->fileExistsInDatabase()) {
+                    $encodedTags = $this->encodeTags();
+                    $stmt = $this->dbh->prepare("INSERT INTO files (fileName, dir, relativePath, absolutePath, description, tags) VALUES (:fileName, :dir, :relativePath, :absolutePath, :describtion, :tags)");
+                    $stmt->bindParam(":fileName", $this->fileName);
+                    $stmt->bindParam(":dir", $this->dir);
+                    $stmt->bindParam(":relativePath", $this->relativePath);
+                    $stmt->bindParam(":absolutePath", $this->absolutePath);
+                    $stmt->bindParam(":describtion", $this->description);
+                    $stmt->bindParam(":tags", $encodedTags);
+                    $stmt->execute();
 
-                //if (!empty($this->userIDs)) {
-                    $this->reloadingData();
-                    $this->addFileUserRelations();
-                //}
-                return true;
-            } else {
+                    if (!empty($this->userIDs)) {
+                        $this->reloadingData();
+                        $this->addFileUserRelations();
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            }else{
+                echo "<div class='red'>Error while adding file to Database: ".$this->absolutePath." does not exist on the Hard Disk</div>";
                 return false;
             }
         } catch (PDOException $e) {
@@ -170,6 +181,38 @@ class File
             echo "Failed removing file from database: " . $e->getMessage();
             exit();
         }
+    }
+
+    /**
+     * @return bool
+     * Deletes a file from the hard disk
+     * false -> File is not writeable
+     * true -> Deleting file was successful
+     */
+    public function removeFileFromHardDisk(){
+        if($this->fileIsWritable()){
+            if(unlink($this->absolutePath))
+                return true;
+            else
+                return false;
+        }
+        echo "<div class='red'>Error while deleting ".$this->absolutePath." from hard disk!</div>";
+        return false;
+    }
+
+    /**
+     * @return bool
+     * Removes a file form the database and hard disk
+     * true -> Deleting file was successful
+     * false -> The file is not writeable or does not exist inside the database
+     */
+    public function purgeFile(){
+        if($this->removeFileFromHardDisk()){
+            if($this->removeFileFromDatabase()){
+                return true;
+            }
+        }
+        return false;
     }
     /**
      * Creates relations between users and and a file
@@ -325,12 +368,14 @@ class File
      */
     private function encodeTags()
     {
-        $encoded = "";
-        foreach ($this->tags as $tag) {
-            if (!empty($encoded))
-                $encoded = $encoded . "," . htmlspecialchars($tag);
-            else
-                $encoded = $tag;
+        $encoded = null;
+        if(count($this->tags)>0){
+            foreach ($this->tags as $tag) {
+                if (!empty($encoded))
+                    $encoded = $encoded . "," . htmlspecialchars($tag);
+                else
+                    $encoded = $tag;
+            }
         }
         return $encoded;
     }

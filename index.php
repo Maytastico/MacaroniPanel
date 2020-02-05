@@ -13,9 +13,9 @@ echo "<pre>";
 
 $file = new File(DIRECTORY_SEPARATOR ."userfiles" . DIRECTORY_SEPARATOR . "mandeus", "mandeus.txt");
 var_dump($file);
-$file->addUserID(1);
-$file->addUserID(2);
-var_dump($file);
+/*$file->addUserID(1);
+$file->addUserID(2);*/
+var_dump($file->addFileToDatabase());
 FILE::removeAllUserRelations(1);
 
 
