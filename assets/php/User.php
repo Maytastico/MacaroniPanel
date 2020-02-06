@@ -188,6 +188,10 @@ class User
         }
     }
 
+    /**
+     * @return bool
+     * Checks whether the user exists and will then add a folder to the userfiles directory
+     */
     public function createUserDir()
     {
         if (!empty($this->user_id)) {
@@ -202,6 +206,10 @@ class User
         return false;
     }
 
+    /**
+     * @return bool
+     * Deletes the user dir of a user
+     */
     public function destroyUserDir()
     {
         $dir = new File("/userfiles", $this->user_id);
@@ -252,6 +260,13 @@ class User
         return $newSessionID;
     }
 
+    /**
+     * @param $file_id
+     * @return bool
+     * Checks at first whether the file and user exists on the database.
+     * and will
+     * todo add a check whether a user has the permission to add this file as a profile picture
+     */
     public function updateCurrentProfilePicture($file_id)
     {
         if (FILE::fileIDExistsInDatabase($file_id)) {
@@ -355,6 +370,11 @@ class User
         }
     }
 
+    /**
+     * @param $id
+     * @return bool|mixed
+     * This returns the username with the help of the id of the user
+     */
     static function getUsernameFromUserID($id)
     {
         try {
@@ -372,6 +392,12 @@ class User
         }
     }
 
+    /**
+     * @param $username
+     * @return bool|int
+     * You send a username and it will return the id of the user.
+     * false will be returned, if the username does not exist.
+     */
     static function getUserIDFromUsername($username)
     {
         try {
@@ -445,6 +471,7 @@ class User
 
     /**
      * @param string $plainPW
+     * This is for updating or setting the password of an user
      */
     public function setPlainPW($plainPW)
     {
@@ -453,6 +480,7 @@ class User
 
     /**
      * @return int
+     * Returns the user id of the user entry of the database
      */
     public function getUserId()
     {
@@ -460,11 +488,11 @@ class User
     }
 
     /**
-     * @return mixed
+     * @return string
+     * Returns an image tag to echo it on the browser
      */
     public function getCurrentProfilePicture()
     {
-        $tag = "<img src='" . $this->currentProfilePicture->getRelativePath() . "'>";
-        return "<img src='".$this->currentProfilePicture->getRelativePath()."'>";
+        return "<img src='" . $this->currentProfilePicture->getRelativePath() . "'>";
     }
 }

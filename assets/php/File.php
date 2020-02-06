@@ -142,6 +142,11 @@ class File
         return file_exists($this->absolutePath);
     }
 
+    /**
+     * @return bool
+     * Checks whether a file can be written by the program
+     * Is useful before you delete a file, to check whether it is possible
+     */
     public function fileIsWritable()
     {
         return is_writable($this->absolutePath);
@@ -290,6 +295,10 @@ class File
         }
     }
 
+    /**
+     * Deletes all relations to a file id.
+     * This will be useful when a user wants to delete a file.
+     */
     public function removeFileUserRelations()
     {
         try {
@@ -302,6 +311,11 @@ class File
         }
     }
 
+    /**
+     * @param $user_ID
+     * @return bool
+     * removes the permission to a file form a username
+     */
     public function removeUserRelationToFileID($user_ID)
     {
         try {
@@ -319,6 +333,11 @@ class File
         }
     }
 
+    /**
+     * @param $user_ID
+     * removes all file permissions of a user.
+     * Deleting all permissions to a file for a user is useful, when a user will be deleted.
+     */
     static public function removeAllUserRelationsToFile($user_ID)
     {
         try {
