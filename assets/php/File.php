@@ -95,7 +95,6 @@ class File
         if ($this->fileExistsInDatabase()) {
             $this->reloadingData();
             $this->userIDs = $this->fetchUserRelationsToFileID();
-            $this->userIDs = $this->fetchUserRelationsToFileID();
         }
         if ($this->fileExistsInDir()) {
             $this->creationTimestamp = $this->readCreationTime();
@@ -274,6 +273,29 @@ class File
         return false;
     }
 
+    /**
+     * @param $file_id
+     * @param $user_id
+     * @return bool
+     * Returns true when a user has the permission to take the file and show it.
+     * Returns false when a user does not own a file.
+     */
+    static function userOwsFile($file_id, $user_id){
+        try {
+                $stmt = Config::dbCon()->prepare("SELECT * from user_has_file where file_id = :file_id AND user_id = :user_id");
+                $stmt->bindParam(":file_id", $file_id);
+                $stmt->bindParam(":user_id", $user_id);
+                $stmt->execute();
+                $res = $stmt->fetchAll();
+                if(count($res)>0){
+                    return true;
+                }
+                return false;
+        } catch (PDOException $e) {
+            echo "Failed removing file user relations: " . $e->getMessage();
+            exit();
+        }
+    }
     /**
      * Creates relations between users and and a file
      * Will be used to determine whether a user can see a file inside its filemanager
