@@ -271,15 +271,17 @@ class User
     {
         if (FILE::fileIDExistsInDatabase($file_id)) {
             if ($this->userExists()) {
-                try {
-                    $stmt = $this->dbh->prepare("UPDATE users set currentProfilePicture=:pb where user_id=:user_id");
-                    $stmt->bindParam(":pb", $file_id);
-                    $stmt->bindParam(":user_id", $this->user_id);
-                    $stmt->execute();
-                    return true;
-                } catch (PDOException $e) {
-                    echo "Updating profile picture failed: " . $e->getMessage();
-                    exit();
+                if(FILE::userOwsFile($file_id, $this->user_id)){
+                    try {
+                        $stmt = $this->dbh->prepare("UPDATE users set currentProfilePicture=:pb where user_id=:user_id");
+                        $stmt->bindParam(":pb", $file_id);
+                        $stmt->bindParam(":user_id", $this->user_id);
+                        $stmt->execute();
+                        return true;
+                    } catch (PDOException $e) {
+                        echo "Updating profile picture failed: " . $e->getMessage();
+                        exit();
+                    }
                 }
             }
         }
