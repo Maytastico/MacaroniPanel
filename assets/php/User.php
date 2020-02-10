@@ -71,15 +71,19 @@ class User
 
     private function reloadData()
     {
+        //Gets all the Data from the Database and loads it into the object
         $userData = $this->getUserData();
         $this->user_id = (int)$userData['user_id'];
         $this->email = $userData['email'];
         $this->hashedPW = $userData['password'];
         $this->roleID = $userData['role_id'];
         $this->sessionID = $userData['sessionID'];
-        $picData = FILE::fetchFileDataFromID($userData["currentProfilePicture"]);
-        $this->currentProfilePicture = new File($picData["dir"], $picData["fileName"]);
         $this->rbac = new RBAC(RBAC::fetchRoleNameFormID($this->roleID));
+        //Locks whether a profile picture exists
+        if(!empty($userData["currentProfilePicture"])){
+            $picData = FILE::fetchFileDataFromID($userData["currentProfilePicture"]);
+            $this->currentProfilePicture = new File($picData["dir"], $picData["fileName"]);
+        }
     }
 
     /**@param string
