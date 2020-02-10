@@ -1,8 +1,12 @@
+@font-face {
+    font-family: Ubuntu;
+    src: url("../fonts/Ubuntu-R.ttf");
+}
 body{
     min-height: 100vh;
     color: black;
     background: white;
-    font-family: Ubuntu;
+    font-family: Ubuntu !important;
 }
 /*background properties for the install page*/
 body#install{

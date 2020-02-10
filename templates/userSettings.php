@@ -68,7 +68,7 @@
         <button class="changePic icon">
             <img src="<?php echo Loader::$jump ?>/assets/icons/feather/x-circle.svg">
         </button>
-        <form>
+        <form method="post" enctype="multipart/form-data" action="<?php echo Loader::$jump?>/scripts/changeOwnProfilePicture.php">
             <input type="file" name="profilePicture">
             <button type="submit">Upload Photo</button>
         </form>

@@ -265,7 +265,6 @@ class User
      * @return bool
      * Checks at first whether the file and user exists on the database.
      * and will
-     * todo add a check whether a user has the permission to add this file as a profile picture
      */
     public function updateCurrentProfilePicture($file_id)
     {
@@ -495,6 +494,13 @@ class User
      */
     public function getCurrentProfilePicture()
     {
-        return "<img src='" . $this->currentProfilePicture->getRelativePath() . "'>";
+        if(!empty($this->currentProfilePicture)){
+            if($this->currentProfilePicture->fileExistsInDir()){
+                if($this->currentProfilePicture->fileExistsInDatabase()){
+                    return "<img src='" . $this->currentProfilePicture->getRelativePath() . "'>";
+                }
+            }
+        }
+        return "<img src='" . Config::getUserIcon() . "'>";
     }
 }

@@ -8,6 +8,7 @@
 
 class Config
 {
+    private static $userIcon = "/assets/icons/feather/user.svg";
     //Folder Destination
     //Add a "/" at the front your foldername
     //Example: foldername is Dashboard
@@ -40,5 +41,14 @@ class Config
     public static function getFolder()
     {
         return self::$folder;
+    }
+
+    /**
+     * @return string
+     * Returns the path to the default user icon
+     */
+    public static function getUserIcon()
+    {
+        return  self::$folder . self::$userIcon;
     }
 }

@@ -18,7 +18,7 @@ var_dump($file->addUserID(User::getUserIDFromUsername("MacaroniJeff1")));
 var_dump($file);
 var_dump($file->addFileToDatabase());
 var_dump($u->updateCurrentProfilePicture(3));
-echo $u->getCurrentProfilePicture();
+var_dump( $u->getCurrentProfilePicture());
 
 /*$file->addUserID(1);
 $file->addUserID(2);
