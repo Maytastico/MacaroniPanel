@@ -9,6 +9,10 @@
 class Config
 {
     private static $userIcon = "/assets/icons/feather/user.svg";
+    private static $allowedImageTypes = array( "png","jpeg");
+    private static $allowedDocumentTypes = array("pdf");
+    private static $allowedArchiveTypes = array("zip");
+    private static $maxFileSize = 1000000;
     //Folder Destination
     //Add a "/" at the front your foldername
     //Example: foldername is Dashboard
@@ -51,4 +55,40 @@ class Config
     {
         return  self::$folder . self::$userIcon;
     }
+
+    /**
+     * @return array
+     * Returns a list of allowed file types that are images
+     */
+    public static function getAllowedImageTypes()
+    {
+        return self::$allowedImageTypes;
+    }
+
+    /**
+     * @return array
+     * Organizes all lists with all allowed file types and returns them inside a one dimensional array
+     */
+    public static function getAllAllowedTypes(){
+        $fileTypes = array(self::$allowedArchiveTypes, self::$allowedImageTypes, self::$allowedDocumentTypes);
+        $allTypes = array();
+        $i = 0;
+        foreach ($fileTypes as $types){
+            foreach ($types as $type){
+                $allTypes[$i] = $type;
+                $i = $i + 1;
+            }
+        }
+        return $allTypes;
+    }
+
+    /**
+     * @return int
+     * Returns the defined maximum size of a file
+     */
+    public static function getMaxFileSize()
+    {
+        return self::$maxFileSize;
+    }
+
 }
