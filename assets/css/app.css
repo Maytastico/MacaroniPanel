@@ -196,6 +196,7 @@ form button:hover, a:hover, a:focus{
 /*---Navigation properties---*/
 nav img{
     filter: invert();
+    width: 100%;
 }
 nav #button{
     transition: 0.3s;
@@ -246,9 +247,21 @@ nav #user{
 nav #user div{
     padding: 10px;
 }
+nav #user div.profilePicture{
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    overflow: hidden;
+    filter: none;
+    display: flex;
+    align-items: center;
+}
+nav #user div.profilePicture img{
+    filter: none;
+    transform: scale(3);
+}
 nav #userButton{
     transition: 0.5s;
-
 }
 nav #userButton:hover{
     background-color: rgba(0,0,0,0.1);

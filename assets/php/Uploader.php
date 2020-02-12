@@ -44,14 +44,14 @@ class Uploader
     {
         $targetDir_tmp = new File($targetDir, "");
         $fileData = $_FILES[$fieldName];
-        if(count($fileData)>0){
-            if($targetDir_tmp->fileExistsInDir()){
+        if (count($fileData) > 0) {
+            if ($targetDir_tmp->fileExistsInDir()) {
                 $this->errorCode = $fileData["error"];
                 $this->type = $fileData["type"];
                 $this->fileSize = $fileData["size"];
-                $this->tmpOnServer= $fileData["tmp_name"];
+                $this->tmpOnServer = $fileData["tmp_name"];
                 $this->fileName = $fileData["name"];
-                $this->targetDir = $targetDir_tmp->getAbsolutePath();
+                $this->targetDir = $targetDir_tmp;
             }
         }
     }
@@ -62,78 +62,119 @@ class Uploader
      * and whether the evaluated file type is allowed
      * Can be used when you just want to upload a pictures to the server by a script.
      */
-     public function fileIsPicture(){
-         $imageType = explode("/", $this->type);
-         $fileType = $imageType[0];
-        if($fileType === "image"){
-            if($this->pictureTypeAllowed()){
-                if($this->validateContainsPictureData()){
+    public function fileIsPicture()
+    {
+        $imageType = explode("/", $this->type);
+        $fileType = $imageType[0];
+        if ($fileType === "image") {
+            if ($this->pictureTypeAllowed()) {
+                if ($this->validateContainsPictureData()) {
                     return true;
                 }
             }
         }
         return false;
-     }
+    }
 
     /**
      * @return bool
      * Checks whether this picture type is allowed to be uploaded to the server
      */
-     public function pictureTypeAllowed(){
-        foreach (Config::getAllowedImageTypes() as $type){
+    public function pictureTypeAllowed()
+    {
+        foreach (Config::getAllowedImageTypes() as $type) {
             $imageType = explode("/", $this->type);
             $imageType = $imageType[1];
-            if($type === $imageType){
+            if ($type === $imageType) {
                 return true;
             }
         }
         return false;
-     }
+    }
+
+    /**
+     * @return array|false
+     * Returns the height/width and image type of the file.
+     * It can be used to validate that a file is an image.
+     */
+    public function getImageData()
+    {
+        return getimagesize($this->tmpOnServer);
+    }
 
     /**
      * @return bool
      * Checks whether the file contains picture data
      */
-     private function validateContainsPictureData(){
-         $check = getimagesize($this->tmpOnServer);
-         if($check !== false) {
-             return true;
-         } else {
-             return false;
-         }
-     }
+    private function validateContainsPictureData()
+    {
+        if ($this->getImageData() !== false) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * @return bool
      * Checks whether the file type is allowed to be uploaded to the server
      */
-     public function fileTypeAllowed(){
-         $fileType = explode("/", $this->type);
-         $fileType = $fileType[1];
+    public function fileTypeAllowed()
+    {
+        $fileType = explode("/", $this->type);
+        $fileType = $fileType[1];
         foreach (Config::getAllAllowedTypes() as $type) {
             if ($type === $fileType) {
                 return true;
             }
         }
         return false;
-     }
+    }
 
     /**
      * @return bool
-     * Checks whether the filetype is allowed and loads the file to the target directory
-     * true -> Filename was concatenated with the time to ensure there are no duplicated filenames and
-     *         was moved to the wished directory
-     *false -> File type is not allowed or upload was unsuccessful
+     * Check whether the file size is not too big
      */
-     public function moveFileToTarget(){
-         //if(Config::getMaxFileSize() <= $this->fileSize){
-            if($this->fileTypeAllowed()){
-                $targetFilePath = $this->targetDir . time() . $this->fileName;
-                 if(move_uploaded_file($this->tmpOnServer, $targetFilePath)){
-                     return true;
-                 }
+    public function fileSizeAllowed()
+    {
+        if($this->errorCode !== 1 || $this->errorCode !== 2) {
+            if (Config::getMaxFileSize() >= $this->fileSize) {
+                return true;
             }
-         //}
+        }
         return false;
-     }
+    }
+
+    /**
+     * @return bool|File
+     * Checks whether the filetype is allowed and loads the file to the target directory
+     * File -> Filename was concatenated with the time to ensure there are no duplicated filenames and
+     *         was moved to the wished directory
+     * false -> File type is not allowed or upload was unsuccessful
+     */
+    public function moveFileToTarget()
+    {
+        if ($this->errorCode === 0) {
+            if ($this->fileSizeAllowed()) {
+                if ($this->fileTypeAllowed()) {
+                    $fileName = time() . $this->fileName;
+                    $targetFilePath = $this->targetDir->getAbsolutePath() . $fileName;
+                    if (move_uploaded_file($this->tmpOnServer, $targetFilePath)) {
+                        $targetFile = new File($this->targetDir->getRelativePath(), $fileName);
+                        return $targetFile;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return int
+     * Returns an error code that was evaluated by php
+     */
+    public function getErrorCode()
+    {
+        return $this->errorCode;
+    }
 }

@@ -5,8 +5,11 @@
     <section id="content">
     </section>
     <section id="user">
-        <div>
-            <img src="<?php echo Loader::$jump?>/assets/icons/feather/user.svg">
+        <div class="profilePicture">
+            <?php
+                $u = new User(Authenticator::fetchSessionUserName());
+                echo $u->getCurrentProfilePicture();
+            ?>
         </div>
         <div>
             Welcome

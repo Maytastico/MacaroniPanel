@@ -105,7 +105,7 @@ class File
     /**
      * Takes the data from the database and puts the data into the object
      */
-    private function reloadingData()
+    public function reloadingData()
     {
         $fileData = $this->fetchFileDataFormDatabase();
         $this->description = $fileData["description"];
@@ -586,5 +586,13 @@ class File
     public function getFileSize()
     {
         return $this->fileSize;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFileID()
+    {
+        return $this->fileID;
     }
 }

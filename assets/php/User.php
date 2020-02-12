@@ -81,7 +81,7 @@ class User
         $this->rbac = new RBAC(RBAC::fetchRoleNameFormID($this->roleID));
         //Locks whether a profile picture exists
         if(!empty($userData["currentProfilePicture"])){
-            $picData = FILE::fetchFileDataFromID($userData["currentProfilePicture"]);
+            $picData = File::fetchFileDataFromID($userData["currentProfilePicture"]);
             $this->currentProfilePicture = new File($picData["dir"], $picData["fileName"]);
         }
     }
