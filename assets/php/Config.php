@@ -9,7 +9,7 @@
 class Config
 {
     private static $userIcon = "/assets/icons/feather/user.svg";
-    private static $allowedImageTypes = array( "png","jpeg");
+    private static $allowedImageTypes = array( "png","jpeg", "jpg");
     private static $allowedDocumentTypes = array("pdf");
     private static $allowedArchiveTypes = array("zip");
     private static $maxFileSize = 1000000;
@@ -21,7 +21,7 @@ class Config
     //Database Configuration
     private static $pdoDNS = "mysql:host=localhost;port=3306;dbname=dashboard";
     private static $pdoUser = "root";
-    private static $pdoPW = "";
+    private static $pdoPW = "10-Days-Of-Death";
 
 
     //Handels and returns a PDO database object

@@ -20,7 +20,8 @@ class Install
     private $basicPermissions = array(
         "usermanager.addUser",
         "usermanager.removeUser",
-        "usermanager.editUser"
+        "usermanager.editUser",
+        "usersettings.upload"
     );
 
     function __construct()

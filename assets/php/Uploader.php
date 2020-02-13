@@ -4,6 +4,11 @@
 class Uploader
 {
     /**
+     * @var bool
+     * evaluates whether a target dir were the file will be saved exists on the file system
+     */
+    private $targetExists = false;
+    /**
      * @var string
      * Contains the dir where the programmer wishes to move the uploaded file to.
      */
@@ -46,6 +51,7 @@ class Uploader
         $fileData = $_FILES[$fieldName];
         if (count($fileData) > 0) {
             if ($targetDir_tmp->fileExistsInDir()) {
+                $this->targetExists = true;
                 $this->errorCode = $fileData["error"];
                 $this->type = $fileData["type"];
                 $this->fileSize = $fileData["size"];
@@ -176,5 +182,13 @@ class Uploader
     public function getErrorCode()
     {
         return $this->errorCode;
+    }
+
+    /**
+     * @return bool
+     */
+    public function doesTargetExists()
+    {
+        return $this->targetExists;
     }
 }

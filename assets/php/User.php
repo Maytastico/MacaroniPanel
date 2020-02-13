@@ -501,10 +501,17 @@ class User
         if(!empty($this->currentProfilePicture)){
             if($this->currentProfilePicture->fileExistsInDir()){
                 if($this->currentProfilePicture->fileExistsInDatabase()){
-                    return "<img src='" . $this->currentProfilePicture->getRelativePath() . "'>";
+                    return "<img class='profilePicture' src='" . $this->currentProfilePicture->getRelativePath() . "'>";
                 }
             }
         }
         return "<img src='" . Config::getUserIcon() . "'>";
+    }
+
+    public function profilePictureExists(){
+        if($this->currentProfilePicture instanceof File){
+            return true;
+        }
+        return false;
     }
 }
