@@ -1,4 +1,4 @@
-<nav>
+<nav id="nativeNav">
     <div id="button">
         <img src="<?php echo Loader::$jump?>/assets/icons/feather/menu.svg">
     </div>
@@ -7,8 +7,8 @@
     <section id="user">
         <div class="profilePicture">
             <?php
-                $u = new User(Authenticator::fetchSessionUserName());
-                echo $u->getCurrentProfilePicture();
+
+                echo $a->getCurrentProfilePicture();
             ?>
         </div>
         <div>
@@ -24,6 +24,12 @@
             <form action="<?php echo Loader::$jump?>/scripts/logout.php?r=/login.php">
                 <button class="red" name="logout" type="submit">Logout</button>
                 <button class="userSettings" type="button">User Settings</button>
+                <?php
+                    //will shows a button that redirectes to an adminpanel when the user has the permission to show the adminpanel
+                    if($a->hasPermission("adminpanel.show")){
+                        echo '<a id="adminButton" href="./admin.php">Admin Panel</a>';
+                    }
+                ?>
             </form>
         </div>
 

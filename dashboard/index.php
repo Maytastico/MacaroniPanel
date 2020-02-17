@@ -23,6 +23,4 @@ $getRoleModel = !empty($_GET['roleModel']) ? $_GET['roleModel'] : null ;
 <body id="dashboard">
     <?php include_once "../templates/navigation.php"?>
     <?php include_once "../templates/userSettings.php"?>
-
-
 </body>

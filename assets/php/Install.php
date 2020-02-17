@@ -21,7 +21,8 @@ class Install
         "usermanager.addUser",
         "usermanager.removeUser",
         "usermanager.editUser",
-        "usersettings.upload"
+        "usersettings.upload",
+        "adminpanel.show"
     );
 
     function __construct()

@@ -132,10 +132,13 @@ button.icon{
 
 }
 /*---Global input element properties---*/
+div.icon{
+    display: flex;
+}
 form{
     overflow: hidden;
 }
-form input, form input::placeholder,form select,form  button, a{
+form a, form input, form input::placeholder,form select,form  button{
     flex-direction: column;
     max-width: 100%;
     transition: 0.3s;
@@ -165,7 +168,7 @@ form input[type=file]:focus{
     transform: none;
 }
 /*Contains properties for links and buttons*/
-form button, a{
+form button, form a{
     background-color: #7b7b7b;
     color: white;
     border: none;
@@ -276,18 +279,58 @@ nav section#userMenue{
     position: fixed;
     transition: 0.5s;
     right: 0;
-    left: -100vh;
+    left: -100vw;
+    right: 100vw;
     bottom: 4em;
 }
 nav section#userMenue.open{
     bottom: 4em;
     left: 0;
+    right: 0;
 }
 nav section#userMenue form{
     text-align: right;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
 }
 nav section#userMenue button:nth-child(n){
     transition-delay: 0.5s;
+}
+/*Contains information about the nav bar that is is
+used inside the administration panel for example
+ */
+nav.navbar{
+    background-image: linear-gradient(to bottom,#ac887b, #c8ad7f);
+    width: 100vw;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    top: 0;
+    height: 3em;
+}
+nav.navbar .buttons{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+nav.navbar a{
+    color: white;
+    display: inline-block;
+    margin: 0.5em 0.7em;
+}
+nav.navbar .middle{
+    margin: 0 auto;
+}
+nav.navbar .buttons .middle{
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+    display: flex;
+}
+nav.navbar .buttons .left{
+    border-right: 1px solid white;
 }
 /*---Edit user Ui*/
 div#editUser{

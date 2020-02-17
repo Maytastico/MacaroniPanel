@@ -76,6 +76,7 @@ pre {
 a {
     /*It was commented because it was declared inside app.css
     /*background-color: transparent;*/
+    text-decoration: none;
 }
 
 /**

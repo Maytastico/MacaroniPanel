@@ -12,7 +12,7 @@ include_once "_includes/header.inc.php";
 echo "<pre>";
 var_dump(Config::getAllAllowedTypes());
 
-$u = new User("MacaroniJeff");
+$u = new ("MacaroniJeff");
 /*$file = new File(DIRECTORY_SEPARATOR ."userfiles" . DIRECTORY_SEPARATOR . "1", "100-peitschenhiebe.jpg");
 var_dump($file->fileExistsInDir());
 var_dump($file->addUserID(User::getUserIDFromUsername("MacaroniJeff1")));
