@@ -420,6 +420,18 @@ class User
         }
     }
 
+    static function getUserTable(){
+        try {
+            $stmt = Config::dbCon()->prepare("SELECT * from users");
+            $stmt->bindParam(":user_name", $username);
+            $stmt->execute();
+            $res = $stmt->fetchAll();
+            return $res;
+        } catch (PDOException $e) {
+            echo "Getting user id failed: " . $e->getMessage();
+            exit();
+        }
+    }
     /**
      * @return string
      * Returns the username, saved inside the object

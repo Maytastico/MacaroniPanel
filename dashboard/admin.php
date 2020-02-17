@@ -33,5 +33,32 @@ $getRoleModel = !empty($_GET['roleModel']) ? $_GET['roleModel'] : null ;
             </div>
         </section>
     </nav>
+    <section id="content">
+        <table class="tableContent">
+            <tr>
+                <th>Profile</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Last Login</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+            <tr>
+                <td>pic</td>
+                <td>MacaroniJeff</td>
+                <td>MacaroniJeff@a.com</td>
+                <td>12.11.2012</td>
+                <td>Admin</td>
+                <td>
+                    <form action="" method="post">
+                        <button class="radial red"><img src="<?php echo Loader::$jump;?>/assets/icons/feather/trash-2.svg"></button>
+                        <button class="radial"><img src="<?php echo Loader::$jump;?>/assets/icons/feather/edit.svg"></button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+
+    </section>
+    <pre
 
 </body>

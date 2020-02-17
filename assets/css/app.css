@@ -99,6 +99,32 @@ button.icon{
     border:none;
 }
 /*Ui Elements*/
+.radial{
+    border-radius: 100%;
+}
+button.radial{
+     border-radius: 100%;
+    min-width: 50px;
+    max-width: 50px;
+    max-height: 50px;
+    display: inline-block;
+    overflow: hidden;
+ }
+button.radial img{
+    filter: invert();
+}
+
+.tableContent{
+    width: 100%;
+}
+.tableContent td{
+    text-align: center;
+    margin: auto;
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+}
+.tableContent th{
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+}
 .box.centered{
     position: fixed;
     top: -50vh;
@@ -150,6 +176,7 @@ form a, form input, form input::placeholder,form select,form  button{
     border-radius: 3px;
     text-decoration: none;
     cursor: pointer;
+    overflow: hidden;
 }
 form input, form select{
     border: none;
@@ -381,6 +408,12 @@ div#editUser div#picUpload{
 div#editUser div#picUpload.open{
     display: flex;
     opacity: 1;
+}
+#admin #content{
+    margin: 5em auto;
+    max-width: 1280px;
+    width: 100vw;
+    overflow-x: scroll;
 }
 
 /*---Media queries---*/
