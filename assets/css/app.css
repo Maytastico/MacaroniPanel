@@ -8,6 +8,9 @@ body{
     background: white;
     font-family: Ubuntu !important;
 }
+*{
+    scroll-behavior: smooth;
+}
 /*background properties for the install page*/
 body#install{
     background-image: linear-gradient(to top,#ac887b, #c8ad7f);
@@ -41,6 +44,9 @@ body#dashboard{
 }
 h2{
     font-size: 1.7em;
+}
+img.invert{
+    filter: invert();
 }
 /*Feedback message properties*/
 div.messages{
@@ -178,6 +184,8 @@ form a, form input, form input::placeholder,form select,form  button{
     cursor: pointer;
     overflow: hidden;
 }
+
+
 form input, form select{
     border: none;
     text-align: left !important;
@@ -203,6 +211,9 @@ form button, form a{
     border-bottom: 5px solid #7b7b7b;
     min-width: 10em;
     text-align: center;
+}
+form button.small{
+    min-width: 0;
 }
 form button:hover, a:hover, a:focus{
     border-bottom-color: #656666;
@@ -333,7 +344,7 @@ nav.navbar{
     position: fixed;
     left: 0;
     bottom: 0;
-    top: 0;
+    top: 50%;
     height: 3em;
 }
 nav.navbar .buttons{
