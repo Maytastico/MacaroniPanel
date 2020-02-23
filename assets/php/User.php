@@ -432,6 +432,16 @@ class User
             exit();
         }
     }
+    static function getUserTableAsUserObj(){
+        $userData = User::getUserTable();
+        $userObj = array();
+        $i = 0;
+        foreach ($userData as $userEntry){
+            $userObj[$i] = new User($userEntry["username"]);
+            $i++;
+        }
+        return $userObj;
+    }
     /**
      * @return string
      * Returns the username, saved inside the object

@@ -1,15 +1,28 @@
 <?php
 
 
-class UserContent
+class UserContent extends Table
 {
-    private $pages;
-    private static $page;
-    private static $entries;
-    private static $maxEntries;
+    public function __construct()
+    {
+        $userData = User::getUserTableAsUserObj();
+        parent::__construct($userData);
+    }
 
-    public static function showUserTable(){
+    protected function evaluateHeader()
+    {
+        $this->tableHeader = array("Profile",
+                                   "Username",
+                                   "Email",
+                                   "Last Login",
+                                   "Role",
+                                   "Actions");
+    }
+
+    public function drawTable()
+    {
         $tableContent = User::getUserTable();
         return $tableContent;
     }
+
 }

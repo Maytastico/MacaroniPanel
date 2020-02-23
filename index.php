@@ -10,15 +10,21 @@ include_once "_includes/autoloader.inc.php";
 Loader::jump(0);
 include_once "_includes/header.inc.php";
 echo "<pre>";
-var_dump(Config::getAllAllowedTypes());
+var_dump(User::getUserTableAsUserObj());
 
-$u = new ("MacaroniJeff");
+//$u = new ("MacaroniJeff");
 /*$file = new File(DIRECTORY_SEPARATOR ."userfiles" . DIRECTORY_SEPARATOR . "1", "100-peitschenhiebe.jpg");
 var_dump($file->fileExistsInDir());
 var_dump($file->addUserID(User::getUserIDFromUsername("MacaroniJeff1")));
 var_dump($file);
 var_dump($file->addFileToDatabase());*/
-var_dump(User::getUserTable());
+$table = new UserContent();
+var_dump($table);
+
+/*for($i=0;$i<10;$i++){
+    $u = new User(uniqid());
+    $u->addUser("a@a.com", "123", 2);
+}*/
 
 
 
