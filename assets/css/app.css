@@ -344,7 +344,7 @@ nav.navbar{
     position: fixed;
     left: 0;
     bottom: 0;
-    top: 50%;
+    top: 0;
     height: 3em;
 }
 nav.navbar .buttons{

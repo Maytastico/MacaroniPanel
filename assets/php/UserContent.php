@@ -3,7 +3,7 @@
 
 class UserContent
 {
-    private static $pages;
+    private $pages;
     private static $page;
     private static $entries;
     private static $maxEntries;

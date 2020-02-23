@@ -18,7 +18,7 @@ var_dump($file->fileExistsInDir());
 var_dump($file->addUserID(User::getUserIDFromUsername("MacaroniJeff1")));
 var_dump($file);
 var_dump($file->addFileToDatabase());*/
-var_dump($u);
+var_dump(User::getUserTable());
 
 
 

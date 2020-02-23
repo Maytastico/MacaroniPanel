@@ -64,6 +64,20 @@ class Uploader
 
     /**
      * @return bool
+     * true -> the filename of the uploaded file exists already on the target path
+     * false -> there is no file inside the target dir that is named like the file the user uploaded
+     * Will be needed to do error handling inside a script
+     */
+    public function fileExistsInTargetPath()
+    {
+        $check = new File($this->targetDir->getRelativePath(), $this->fileName);
+        if ($check->fileExistsInDir())
+            return true;
+        return false;
+    }
+
+    /**
+     * @return bool
      * Checks whether the file is evaluated as an image, whether it contains picture data
      * and whether the evaluated file type is allowed
      * Can be used when you just want to upload a pictures to the server by a script.
@@ -84,9 +98,9 @@ class Uploader
 
     /**
      * @return bool
-     * Checks whether this picture type is allowed to be uploaded to the server
+     * Checks whether this picture type is allowed to be uploaded to the server.
      */
-    public function pictureTypeAllowed()
+    private function pictureTypeAllowed()
     {
         foreach (Config::getAllowedImageTypes() as $type) {
             $imageType = explode("/", $this->type);
@@ -143,7 +157,7 @@ class Uploader
      */
     public function fileSizeAllowed()
     {
-        if($this->errorCode !== 1 || $this->errorCode !== 2) {
+        if ($this->errorCode !== 1 || $this->errorCode !== 2) {
             if (Config::getMaxFileSize() >= $this->fileSize) {
                 return true;
             }
@@ -163,11 +177,13 @@ class Uploader
         if ($this->errorCode === 0) {
             if ($this->fileSizeAllowed()) {
                 if ($this->fileTypeAllowed()) {
-                    $fileName = time() . $this->fileName;
+                    $fileName = $this->fileName;
                     $targetFilePath = $this->targetDir->getAbsolutePath() . $fileName;
-                    if (move_uploaded_file($this->tmpOnServer, $targetFilePath)) {
-                        $targetFile = new File($this->targetDir->getRelativePath(), $fileName);
-                        return $targetFile;
+                    $targetFile = new File($this->targetDir->getRelativePath(), $fileName);
+                    if (!$targetFile->fileExistsInDir()) {
+                        if (move_uploaded_file($this->tmpOnServer, $targetFilePath)) {
+                            return $targetFile;
+                        }
                     }
                 }
             }
