@@ -21,7 +21,7 @@ var_dump($file->addFileToDatabase());*/
 $table = new UserContent();
 var_dump($table);
 
-/*for($i=0;$i<10;$i++){
+/*for($i=0;$i<100;$i++){
     $u = new User(uniqid());
     $u->addUser("a@a.com", "123", 2);
 }*/

@@ -5,11 +5,6 @@
 class File
 {
     /**
-     * @var PDO
-     * Contains the a database handler to access the database
-     */
-    private $dbh;
-    /**
      * @var string
      * Contains the id from the database
      */
@@ -86,7 +81,6 @@ class File
      */
     public function __construct($dir, $filename)
     {
-        $this->dbh = Config::dbCon();
         $this->fileName = $filename;
         $this->dir = Config::getFolder() . $dir;
         $this->clearPath = $dir;
@@ -160,7 +154,7 @@ class File
     public function fileExistsInDatabase()
     {
         try {
-            $stmt = $this->dbh->prepare("SELECT * FROM files WHERE absolutePath=:absolutePath");
+            $stmt = Config::dbCon()->prepare("SELECT * FROM files WHERE absolutePath=:absolutePath");
             $stmt->bindParam(":absolutePath", $this->absolutePath);
             $stmt->execute();
             $res = $stmt->fetchAll();
@@ -191,7 +185,7 @@ class File
             if ($this->fileExistsInDir()) {
                 if (!$this->fileExistsInDatabase()) {
                     $encodedTags = $this->encodeTags();
-                    $stmt = $this->dbh->prepare("INSERT INTO files (fileName, dir, relativePath, absolutePath, description, tags) VALUES (:fileName, :dir, :relativePath, :absolutePath, :describtion, :tags)");
+                    $stmt = Config::dbCon()->prepare("INSERT INTO files (fileName, dir, relativePath, absolutePath, description, tags) VALUES (:fileName, :dir, :relativePath, :absolutePath, :describtion, :tags)");
                     $stmt->bindParam(":fileName", $this->fileName);
                     $stmt->bindParam(":dir", $this->clearPath);
                     $stmt->bindParam(":relativePath", $this->relativePath);
@@ -227,7 +221,7 @@ class File
         try {
             if ($this->fileExistsInDatabase()) {
                 $this->removeFileUserRelations();
-                $stmt = $this->dbh->prepare("DELETE from files where absolutePath=:absolutePath");
+                $stmt = Config::dbCon()->prepare("DELETE from files where absolutePath=:absolutePath");
                 $stmt->bindParam(":absolutePath", $this->absolutePath);
                 $stmt->execute();
                 return true;
@@ -306,7 +300,7 @@ class File
             var_dump($this->userIDs);
             foreach ($this->userIDs as $userID) {
                 ;
-                $stmt = $this->dbh->prepare("INSERT INTO user_has_file (user_id, file_id) VALUES (:user_id, :file_id)");
+                $stmt = Config::dbCon()->prepare("INSERT INTO user_has_file (user_id, file_id) VALUES (:user_id, :file_id)");
                 $stmt->bindParam(":file_id", $this->fileID);
                 $stmt->bindParam(":user_id", $userID);
                 $stmt->execute();
@@ -324,7 +318,7 @@ class File
     public function removeFileUserRelations()
     {
         try {
-            $stmt = $this->dbh->prepare("DELETE from user_has_file where file_id = :file_id");
+            $stmt = Config::dbCon()->prepare("DELETE from user_has_file where file_id = :file_id");
             $stmt->bindParam(":file_id", $this->fileID);
             $stmt->execute();
         } catch (PDOException $e) {
@@ -342,7 +336,7 @@ class File
     {
         try {
             if ($this->fileExistsInDatabase()) {
-                $stmt = $this->dbh->prepare("DELETE from user_has_file where file_id = :file_id AND user_id = :user_id");
+                $stmt = Config::dbCon()->prepare("DELETE from user_has_file where file_id = :file_id AND user_id = :user_id");
                 $stmt->bindParam(":file_id", $this->fileID);
                 $stmt->bindParam(":user_id", $user_ID);
                 $stmt->execute();
@@ -381,7 +375,7 @@ class File
     public function fetchUserRelationsToFileID()
     {
         try {
-            $stmt = $this->dbh->prepare("SELECT user_id from user_has_file where file_id=:file_id");
+            $stmt = Config::dbCon()->prepare("SELECT user_id from user_has_file where file_id=:file_id");
             $stmt->bindParam(":file_id", $this->fileID);
             $stmt->execute();
             $res = $stmt->fetchAll();
@@ -468,7 +462,7 @@ class File
     {
         try {
             if ($this->fileExistsInDatabase()) {
-                $stmt = $this->dbh->prepare("SELECT * from files where absolutePath=:absolutePath ");
+                $stmt = Config::dbCon()->prepare("SELECT * from files where absolutePath=:absolutePath ");
                 $stmt->bindParam(":absolutePath", $this->absolutePath);
                 $stmt->execute();
                 $res = $stmt->fetchAll();

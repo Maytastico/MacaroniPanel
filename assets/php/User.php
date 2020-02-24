@@ -8,10 +8,6 @@
 
 class User
 {
-    /**@var PDO
-     *Database connection
-     */
-    private $dbh;
     /**
      * @var int
      * Contains the user id
@@ -61,7 +57,6 @@ class User
     //It will get all user information, if the user exists
     function __construct($uid)
     {
-        $this->dbh = Config::dbCon();
 
         $this->username = $uid;
         if ($this->userExists() === true) {
@@ -104,7 +99,7 @@ class User
     public function userExists()
     {
         try {
-            $stmt = $this->dbh->prepare("SELECT * FROM users WHERE username=:uid");
+            $stmt = Config::dbCon()->prepare("SELECT * FROM users WHERE username=:uid");
             $stmt->bindParam(":uid", $this->username);
             $stmt->execute();
             $res = $stmt->fetchAll();
@@ -128,7 +123,7 @@ class User
     public function getUserData()
     {
         try {
-            $stmt = $this->dbh->prepare("SELECT * FROM users WHERE username=:uid");
+            $stmt = Config::dbCon()->prepare("SELECT * FROM users WHERE username=:uid");
             $stmt->bindParam(":uid", $this->username);
             $stmt->execute();
             $res = $stmt->fetchAll();
@@ -155,7 +150,7 @@ class User
         if ($this->userExists() === false) {
             $hashedPW = $this->hashPW($plainPassword);
             try {
-                $stmt = $this->dbh->prepare("INSERT INTO users (username, password, email, role_id) VALUES (:uid, :pw, :email, :u_roleID)");
+                $stmt = Config::dbCon()->prepare("INSERT INTO users (username, password, email, role_id) VALUES (:uid, :pw, :email, :u_roleID)");
                 $stmt->bindParam(":uid", $this->username);
                 $stmt->bindParam(":pw", $hashedPW);
                 $stmt->bindParam(":email", $email);
@@ -180,7 +175,7 @@ class User
     {
         if ($this->userExists() === false) {
             try {
-                $stmt = $this->dbh->prepare("DELETE FROM users WHERE user_id=:user_id");
+                $stmt = Config::dbCon()->prepare("DELETE FROM users WHERE user_id=:user_id");
                 $stmt->bindParam(":uid", $this->user_id);
                 $stmt->execute();
                 return true;
@@ -233,7 +228,7 @@ class User
     {
         try {
             $sessionID = $this->generateSessionID();
-            $stmt = $this->dbh->prepare("UPDATE users SET sessionID=:sessionID where username=:userID");
+            $stmt = Config::dbCon()->prepare("UPDATE users SET sessionID=:sessionID where username=:userID");
             $stmt->bindParam(":sessionID", $sessionID);
             $stmt->bindParam(":userID", $this->username);
             $stmt->execute();
@@ -266,7 +261,7 @@ class User
 
     /**
      * @param $file_id
-     * @return bool
+     * @return bool        Config::dbCon() = Config::dbCon();
      * Checks at first whether the file and user exists on the database.
      * and will
      */
@@ -276,7 +271,7 @@ class User
             if ($this->userExists()) {
                 if(FILE::userOwsFile($file_id, $this->user_id)){
                     try {
-                        $stmt = $this->dbh->prepare("UPDATE users set currentProfilePicture=:pb where user_id=:user_id");
+                        $stmt = Config::dbCon()->prepare("UPDATE users set currentProfilePicture=:pb where user_id=:user_id");
                         $stmt->bindParam(":pb", $file_id);
                         $stmt->bindParam(":user_id", $this->user_id);
                         $stmt->execute();
@@ -305,7 +300,7 @@ class User
         if ($newUser->userExists() === false) {
             try {
                 $this->username = $newUsername;
-                $stmt = $this->dbh->prepare("UPDATE users set username=:u_name where user_id=:user_id");
+                $stmt = Config::dbCon()->prepare("UPDATE users set username=:u_name where user_id=:user_id");
                 $stmt->bindParam(":u_name", $this->username);
                 $stmt->bindParam(":user_id", $this->user_id);
                 $stmt->execute();
@@ -334,7 +329,7 @@ class User
             try {
                 $newHashedPassword = $this->hashPW($newPassword);
                 $this->hashedPW = $newHashedPassword;
-                $stmt = $this->dbh->prepare("UPDATE users set password=:u_pw where user_id=:user_id");
+                $stmt = Config::dbCon()->prepare("UPDATE users set password=:u_pw where user_id=:user_id");
                 $stmt->bindParam(":u_pw", $this->hashedPW);
                 $stmt->bindParam(":user_id", $this->user_id);
                 $stmt->execute();
@@ -361,7 +356,7 @@ class User
         if ($this->userExists() === true) {
             try {
                 $this->email = $newEmail;
-                $stmt = $this->dbh->prepare("UPDATE users set email=:u_email where user_id=:user_id");
+                $stmt = Config::dbCon()->prepare("UPDATE users set email=:u_email where user_id=:user_id");
                 $stmt->bindParam(":u_email", $this->email);
                 $stmt->bindParam(":user_id", $this->user_id);
                 $stmt->execute();

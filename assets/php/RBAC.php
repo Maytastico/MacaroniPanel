@@ -13,10 +13,6 @@ class RBAC
      * Contains the status wheather a role exists or not
      */
     private $exists = false;
-    /**@var PDO
-     * Saves the database handler
-     */
-    private $dbh;
     /**@var array
      * Saves all permissions of a role as a number
      */
@@ -43,7 +39,6 @@ class RBAC
     function __construct($name)
     {
         $this->roleName = $name;
-        $this->dbh = Config::dbCon();
 
         if ($this->roleExists()) {
             $this->exists = true;
@@ -63,7 +58,7 @@ class RBAC
     public function roleExists()
     {
         try {
-            $stmt = $this->dbh->prepare("SELECT * FROM role WHERE id=:roleid OR name=:roleName");
+            $stmt = Config::dbCon()->prepare("SELECT * FROM role WHERE id=:roleid OR name=:roleName");
             $stmt->bindParam(":roleid", $this->roleID);
             $stmt->bindParam(":roleName", $this->roleName);
             $stmt->execute();
@@ -90,7 +85,7 @@ class RBAC
         try {
             if (count($this->permissionIDs) >= 1) {
                 if (!$this->roleExists()) {
-                    $stmt = $this->dbh->prepare("INSERT INTO role(name) VALUES (:roleName);");
+                    $stmt = Config::dbCon()->prepare("INSERT INTO role(name) VALUES (:roleName);");
                     $stmt->bindParam(":roleName", $this->roleName);
                     $stmt->execute();
                     $this->roleID = self::fetchRoleIDFromName($this->roleName);
@@ -114,7 +109,7 @@ class RBAC
     public function removeRole(){
         try {
             $this->removeRoleAndPermissionRealations();
-            $stmt = $this->dbh->prepare("DELETE FROM role WHERE id=:roleID");
+            $stmt = Config::dbCon()->prepare("DELETE FROM role WHERE id=:roleID");
             $stmt->bindParam(":roleID", $this->roleID);
             $stmt->execute();
             return true;
@@ -129,7 +124,7 @@ class RBAC
     private function addRoleAndPermissionRelations()
     {
         try {
-            $stmt = $this->dbh->prepare("INSERT INTO role_has_permission(role_id, permission_id) VALUES (:roleID, :permissionID)");
+            $stmt = Config::dbCon()->prepare("INSERT INTO role_has_permission(role_id, permission_id) VALUES (:roleID, :permissionID)");
             $stmt->bindParam(":roleID", $this->roleID);
             foreach ($this->permissionIDs as $permissionID){
                 $stmt->bindParam(":permissionID", $permissionID);
@@ -145,7 +140,7 @@ class RBAC
      */
     private function removeRoleAndPermissionRealations(){
         try {
-            $stmt = $this->dbh->prepare("DELETE FROM role_has_permission WHERE role_id=:roleID");
+            $stmt = Config::dbCon()->prepare("DELETE FROM role_has_permission WHERE role_id=:roleID");
             $stmt->bindParam(":roleID", $this->roleID);
             $stmt->execute();
         } catch (PDOException $e) {
@@ -225,7 +220,7 @@ class RBAC
     private function fetchPermissions(){
         try {
             if ($this->roleExists()) {
-                $stmt = $this->dbh->prepare("SELECT  permission_id FROM role INNER JOIN  role_has_permission ON role.id=role_has_permission.role_id WHERE role_id=:roleID");
+                $stmt = Config::dbCon()->prepare("SELECT  permission_id FROM role INNER JOIN  role_has_permission ON role.id=role_has_permission.role_id WHERE role_id=:roleID");
                 $stmt->bindParam("roleID", $this->roleID);
                 $stmt->execute();
                 $queryResults = $stmt->fetchAll();
@@ -275,7 +270,7 @@ class RBAC
      */
     private function fetchPermissionTable(){
         try {
-            $stmt = $this->dbh->prepare("SELECT * FROM permissions");
+            $stmt = Config::dbCon()->prepare("SELECT * FROM permissions");
             $stmt->execute();
             $queryResults = $stmt->fetchAll();
             $permissions = array();
