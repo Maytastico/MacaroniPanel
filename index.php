@@ -20,7 +20,7 @@ var_dump($file);
 var_dump($file->addFileToDatabase());*/
 $table = new UserContent();
 //var_dump($table);
-$table->setCurrentSite(3);
+$table->setCurrentSite(5);
 $table->drawTable();
 
 /*for($i=0;$i<100;$i++){

@@ -426,6 +426,12 @@ div#editUser div#picUpload.open{
     width: 100vw;
     overflow-x: scroll;
 }
+#admin #content #apply{
+    display: none;
+}
+#admin #content #apply.open{
+    display: inline-block;
+}
 
 /*---Media queries---*/
 @media screen and (min-width: 720px){
