@@ -10,7 +10,7 @@ abstract class Table
     /**
      * @var int
      */
-    protected $site;
+    protected $siteData;
     /**
      * @var int
      */
@@ -35,12 +35,16 @@ abstract class Table
     public function __construct($data)
     {
         $this->data = $data;
+        $this->maxEntries = 25;
+        $this->currentSite = 1;
+        $this->reloadData();
+    }
+    private function reloadData(){
         $this->entries = $this->evaluateAmountOfEntries();
         $this->evaluateHeader();
-        $this->maxEntries = 20;
+        $this->siteData = $this->evaluateSiteData();
         $this->sites = $this->evaluateAmountSites();
     }
-
     private function evaluateAmountOfEntries()
     {
         return count($this->data);
@@ -50,10 +54,7 @@ abstract class Table
 
         $sites = $this->entries / $this->maxEntries;
         $intSites = $sites;
-       /* if($sites<1){
-            $sites = 1;
-        }
-        */settype($intSites, "Integer");
+        settype($intSites, "Integer");
         settype($intSites, "Float");
         $calc = $intSites * $this->maxEntries;
         settype($calc, "Float");
@@ -66,13 +67,25 @@ abstract class Table
     abstract protected function evaluateHeader();
     abstract public function drawTable();
 
-
+    private function evaluateSiteData(){
+        $tableData = $this->data;
+        $siteData = array();
+        $begin = ($this->currentSite -1) * ($this->maxEntries);
+        $end = $this->currentSite * $this->maxEntries;
+        $index = 0;
+        for($i=$begin; $i <= $end; $i++){
+            $siteData[$index] = $tableData[$i];
+            $index++;
+        }
+        return $siteData;
+    }
     /**
      * @param mixed $maxEntries
      */
     public function setMaxEntries($maxEntries)
     {
         $this->maxEntries = $maxEntries;
+        $this->reloadData();
     }
 
     /**
@@ -81,6 +94,7 @@ abstract class Table
     public function setCurrentSite($currentSite)
     {
         $this->currentSite = $currentSite;
+        $this->reloadData();
     }
 
 }

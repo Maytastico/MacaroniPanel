@@ -242,7 +242,7 @@ nav img{
     filter: invert();
     width: 100%;
 }
-nav img.profilePicture{
+img.profilePicture{
     filter: none;
 }
 nav #button{
@@ -294,7 +294,7 @@ nav #user{
 nav #user div{
     padding: 10px;
 }
-nav #user div.profilePicture{
+div.profilePicture{
     width: 1.5em;
     height: 1.5em;
     border-radius: 100%;
@@ -303,7 +303,7 @@ nav #user div.profilePicture{
     display: flex;
     align-items: center;
 }
-nav #user div.profilePicture img.profilePicture{
+div.profilePicture img.profilePicture{
     filter: none;
     transform: scale(3);
 }

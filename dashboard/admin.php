@@ -16,7 +16,7 @@ if ($a->verifySession() === false) {
 /**Get Values**/
 $getPage = !empty($_GET['page']) ? $_GET['page'] : null;
 if ($getPage === null) {
-    header("Location: ?site=1&page=users");
+    header("Location: ?site=1&page=users&maxEntries=$getMaxEntries");
 }
 $getUid = !empty($_GET['uid']) ? $_GET['uid'] : null;
 $getEmail = !empty($_GET['email']) ? $_GET['email'] : null;
@@ -25,12 +25,17 @@ $getRoleModel = !empty($_GET['roleModel']) ? $_GET['roleModel'] : null;
 
 $getSite = !empty($_GET['site']) ? $_GET['site'] : null;
 if ($getSite === null) {
-    header("Location: ?site=1&page=$getPage");
+    header("Location: ?site=1&page=$getPage&maxEntries=$getMaxEntries");
 }
-$getMax = !empty($_GET['maxEntries']) ? $_GET['maxEntries'] : null;
+$getMaxEntries = !empty($_GET['maxEntries']) ? $_GET['maxEntries'] : null;
+var_dump($getMaxEntries);
+if($getMaxEntries == null){
+
+    header("Location: ?site=$getSite&page=$getPage&maxEntries=25");
+}
 
 /**Post Values**/
-$postMaxEntries = !empty($_POST['maxEntries']) ? $_POST['maxEntries'] : 20;
+$postMaxEntries = !empty($_POST['maxEntries']) ? $_POST['maxEntries'] : null;
 $postNextSite = isset($_POST['nextSite']);
 $postLastSite = isset($_POST['lastSite']);
 $postSearch = !empty($_POST['search']) ? $_POST['search'] : null;
@@ -40,52 +45,56 @@ settype($getSite, "Integer");
 settype($postMaxEntries, "Integer");
 
 /*Global header*/
-$header = "?site=$getSite&page=$getPage";
-
-if ($postNextSite === true) {
-    $getSite = $getSite + 1;
-    header("Location: ?site=$getSite&page=$getPage");
-} else if ($postLastSite === true) {
-    $getSite = $getSite - 1;
-    header("Location: ?site=$getSite&page=$getPage");
+$header = "?site=$getSite&page=$getPage&maxEntries=$getMaxEntries";
+var_dump($_POST);
+if ($postMaxEntries !== null) {
+    var_dump($postMaxEntries);
+    header("Location: ?site=$getSite&page=$getPage&maxEntries=$postMaxEntries");
+}else{
+    echo "hi";
+    if ($postNextSite === true) {
+        $getSite = $getSite + 1;
+        header("Location: ?site=$getSite&page=$getPage&maxEntries=$getMaxEntries");
+    } else if ($postLastSite === true) {
+        $getSite = $getSite - 1;
+        header("Location: ?site=$getSite&page=$getPage&maxEntries=$getMaxEntries");
+    }
 }
-var_dump($postPage);
 if ($postPage != null) {
-    header("Location: ?site=$getSite&page=$postPage");
+    header("Location: ?site=$getSite&page=$postPage&maxEntries=$getMaxEntries");
 }
+
 
 ?>
 
 <body id="admin">
-<nav class="navbar">
+<!--<nav class="navbar">
     <section class="buttons">
         <div class="left">
             <a href="index.php">
-                <div class="icon"><img src="<?php echo Loader::$jump; ?>/assets/icons/feather/skip-back.svg"></div>
+                <div class="icon"><img src="<?php /*echo Loader::$jump; */?>/assets/icons/feather/skip-back.svg"></div>
             </a>
         </div>
         <div class="middle">
-            <form action="admin.php?site=<?php echo $getSite . "&page=" . $getPage ?>" method="post">
+            <form action="admin.php?site=<?php /*echo $getSite . "&page=" . $getPage */?>" method="post">
                 <button name="page" type="submit" value="users" class="small icon">
-                    <div class="icon"><img src="<?php echo Loader::$jump; ?>/assets/icons/feather/user.svg"> Users</div>
+                    <div class="icon"><img src="<?php /*echo Loader::$jump; */?>/assets/icons/feather/user.svg"> Users</div>
                 </button>
                 <button name="page" type="submit" value="modules" class="small icon">
-                    <div class="icon"><img src="<?php echo Loader::$jump; ?>/assets/icons/feather/briefcase.svg">
+                    <div class="icon"><img src="<?php /*echo Loader::$jump; */?>/assets/icons/feather/briefcase.svg">
                         Modules
                     </div>
                 </button>
                 <button name="page" type="submit" value="permissions" class="small icon">
-                    <div class="icon"><img src="<?php echo Loader::$jump; ?>/assets/icons/feather/users.svg">
+                    <div class="icon"><img src="<?php /*echo Loader::$jump; */?>/assets/icons/feather/users.svg">
                         Permissions
                     </div>
                 </button>
             </form>
         </div>
     </section>
-</nav>
+</nav>-->
 <section id="content">
-
-    <?php var_dump($postMaxEntries); ?>
     <form method="post" action="admin.php?site=<?php echo $getSite . "&page=" . $getPage ?>">
         <div>
             <input name="search">
@@ -96,62 +105,37 @@ if ($postPage != null) {
                 echo '<button class="small"  name="lastSite"><img class="invert" src="' . Loader::$jump . '/assets/icons/feather/arrow-left.svg"></button>'; ?>
             <select name="maxEntries">
                 <option <?php
-                if ($postMaxEntries == 10)
-                    echo "selected"; ?>>10
+                if ($getMaxEntries == 10)
+                    echo " selected "; ?>>10
                 </option>
 
                 <option<?php
-                if ($postMaxEntries == 20)
-                    echo "selected";
+                if ($getMaxEntries  == 20)
+                    echo " selected ";
                 ?>>20
                 </option>
 
                 <option<?php
-                if ($postMaxEntries == 50)
-                    echo "selected";
+                if ($getMaxEntries == 50)
+                    echo " selected ";
                 ?>>50
                 </option>
 
-                <option<?php
-                if ($postMaxEntries == 100)
-                    echo "selected";
-                ?>>100
+                <option <?php if($getMaxEntries == 100)echo" selected ";?>>
+                    100
                 </option>
             </select>
-
-            <button class="small" name="nextSite"><img class="invert"
-                                                       src="<?php echo Loader::$jump; ?>/assets/icons/feather/arrow-right.svg">
-            </button>
+            <button class="small" name="nextSite"><img class="invert" src="<?php echo Loader::$jump; ?>/assets/icons/feather/arrow-right.svg"></button>
         </div>
     </form>
-    <table class="tableContent">
-        <tr>
-            <th>Profile</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Last Login</th>
-            <th>Role</th>
-            <th>Actions</th>
-        </tr>
-        <tr>
-            <td>pic</td>
-            <td>MacaroniJeff</td>
-            <td>MacaroniJeff@a.com</td>
-            <td>12.11.2012</td>
-            <td>Admin</td>
-            <td>
-                <form action="" method="post">
-                    <button class="radial red"><img src="<?php echo Loader::$jump; ?>/assets/icons/feather/trash-2.svg">
-                    </button>
-                    <button class="radial"><img src="<?php echo Loader::$jump; ?>/assets/icons/feather/edit.svg">
-                    </button>
-                </form>
-            </td>
-        </tr>
-    </table>
-
     <?php
-    if ($getPage)
+    if ($getPage == "users"){
+        $table = new UserContent();
+        $table->setCurrentSite($getSite);
+        $table->setMaxEntries($getMaxEntries);
+        $table->drawTable();
+    }
+
     ?>
 </section>
 </body>

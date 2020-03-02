@@ -36,6 +36,7 @@ class User
      *Hashed password form the database
      */
     private $hashedPW;
+    private $lastLogin;
     /**
      * @var string
      * Contains the Session ID that is generated after logging in into the dashboard.
@@ -72,6 +73,7 @@ class User
         $this->email = $userData['email'];
         $this->hashedPW = $userData['password'];
         $this->roleID = $userData['role_id'];
+        $this->lastLogin = $userData['lastLogin'];
         $this->sessionID = $userData['sessionID'];
         $this->rbac = new RBAC(RBAC::fetchRoleNameFormID($this->roleID));
         //Locks whether a profile picture exists
@@ -482,6 +484,13 @@ class User
         return $this->roleID;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getLastLogin()
+    {
+        return $this->lastLogin;
+    }
     /**
      * @return string
      * Returns the SessionID to authenticate the user
