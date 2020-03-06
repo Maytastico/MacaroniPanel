@@ -15,11 +15,21 @@ if ($a->verifySession() === false) {
 
 /**Get Values**/
 $getPage = !empty($_GET['page']) ? $_GET['page'] : null;
+if ($getPage === null) {
+    header("Location: ?site=1&page=users&maxEntries=$getMaxEntries");
+}
 $getUid = !empty($_GET['uid']) ? $_GET['uid'] : null;
 $getEmail = !empty($_GET['email']) ? $_GET['email'] : null;
 $getRoleModel = !empty($_GET['roleModel']) ? $_GET['roleModel'] : null;
+
+
 $getSite = !empty($_GET['site']) ? $_GET['site'] : null;
+if ($getSite === null) {
+    header("Location: ?site=1&page=$getPage&maxEntries=$getMaxEntries");
+}
 $getMaxEntries = !empty($_GET['maxEntries']) ? $_GET['maxEntries'] : null;
+var_dump($getMaxEntries);
+if($getMaxEntries == null){
 
 if ($getMaxEntries == null || $getPage == null || $getSite == null) {
     header("Location: ?site=1&page=users&maxEntries=10&oooooooh");

@@ -23,6 +23,17 @@ document.addEventListener("DOMContentLoaded", ()=>{
             closeElement(profileMenuPath);
         }
     });
+    const applyAdminSelect = document.querySelector("body#admin select");
+    const applyAdminChanges = document.querySelector("body#admin #apply");
+    applyAdminSelect.addEventListener("click", () =>{
+        if(!applyAdminChanges.classList.contains("open")){
+            //opens the profile menu
+            openElement(applyAdminChanges);
+        }else{
+            //closes the profile menu
+            closeElement(applyAdminChanges);
+        }
+    });
 });
 
 /**
