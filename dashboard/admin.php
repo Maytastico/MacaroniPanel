@@ -28,8 +28,6 @@ if ($getSite === null) {
     header("Location: ?site=1&page=$getPage&maxEntries=$getMaxEntries");
 }
 $getMaxEntries = !empty($_GET['maxEntries']) ? $_GET['maxEntries'] : null;
-var_dump($getMaxEntries);
-if($getMaxEntries == null){
 
 if ($getMaxEntries == null || $getPage == null || $getSite == null) {
     header("Location: ?site=1&page=users&maxEntries=10&oooooooh");
