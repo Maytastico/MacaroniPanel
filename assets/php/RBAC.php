@@ -184,7 +184,7 @@ class RBAC
             $queryResults = $stmt->fetchAll();
             //Error catching if the id does not exist
             if(count($queryResults)<=0){
-                return false;
+                return "None";
             }
             $roleName = $queryResults[0]["name"];
             settype($roleName, "String");

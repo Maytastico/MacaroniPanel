@@ -1,7 +1,17 @@
+//For Navigation
 const profileMenuPath = "nav #userMenue";
 
 document.addEventListener("DOMContentLoaded", ()=>{
-   //Event Listener for Navigation
+    //For Admin Page
+    let applyAdminSelect = document.querySelector("body#admin select[name='maxEntries']");
+    let adminSelectValue = applyAdminSelect.value;
+    applyAdminSelect.addEventListener("click", () =>{
+        if(adminSelectValue!=getMaxEntriesValue()){
+            triggerLoadingElement();
+            document.querySelector("body#admin #content form").submit();
+        }
+    });
+    //Event Listener for Navigation
    const navButton = document.querySelector("nav #button");
    const navElement = document.querySelector("nav");
     navButton.addEventListener("click", () =>{
@@ -23,19 +33,20 @@ document.addEventListener("DOMContentLoaded", ()=>{
             closeElement(profileMenuPath);
         }
     });
-    const applyAdminSelect = document.querySelector("body#admin select");
-    const applyAdminChanges = document.querySelector("body#admin #apply");
-    applyAdminSelect.addEventListener("click", () =>{
-        if(!applyAdminChanges.classList.contains("open")){
-            //opens the profile menu
-            openElement(applyAdminChanges);
-        }else{
-            //closes the profile menu
-            closeElement(applyAdminChanges);
-        }
-    });
+
+
 });
 
+
+function triggerLoadingElement(){
+    let loading = document.querySelector(".loading");
+    loading.classList.remove("hidden");
+}
+
+function getMaxEntriesValue(){
+    const applyAdminSelect = document.querySelector("body#admin select[name='maxEntries']");
+    return applyAdminSelect.value;
+}
 /**
  * Opens the navigation. Adds the open class to the nav button and nav element.
  */

@@ -47,7 +47,7 @@ abstract class Table
         $this->currentSite = 1;
         $this->reloadData();
     }
-    private function reloadData(){
+    public function reloadData(){
         $this->entries = $this->evaluateAmountOfEntries();
         $this->evaluateHeader();
         $this->siteData = $this->evaluateSiteData();
@@ -59,16 +59,17 @@ abstract class Table
     }
     private function evaluateAmountSites()
     {
-
-        $sites = $this->entries / $this->maxEntries;
-        $intSites = $sites;
-        settype($intSites, "Integer");
-        settype($intSites, "Float");
-        $calc = $intSites * $this->maxEntries;
-        settype($calc, "Float");
-        if($sites <= $calc)
-            $intSites++;
-
+        if($this->entries!==$this->maxEntries){
+            $sites = $this->entries / $this->maxEntries;
+            $intSites = $sites;
+            settype($intSites, "Integer");
+            settype($intSites, "Float");
+            $calc = $intSites * $this->maxEntries;
+            settype($calc, "Float");
+            if($sites <= $calc)
+                $intSites++;
+        }
+        $intSites = 1;
         return $intSites;
     }
 
@@ -92,8 +93,15 @@ abstract class Table
      */
     public function setMaxEntries($maxEntries)
     {
-        $this->maxEntries = $maxEntries;
-        $this->reloadData();
+        echo "Ohh";
+        if(($maxEntries*$this->currentSite)<=$this->entries){
+            $this->maxEntries = $maxEntries;
+            echo "hii";
+        }else{
+            echo "Uii";
+            $this->maxEntries = $this->entries;
+            $this->sites = 1;
+        }
     }
 
     /**
@@ -102,8 +110,35 @@ abstract class Table
      */
     public function setCurrentSite($currentSite)
     {
-        $this->currentSite = $currentSite;
-        $this->reloadData();
+        if($currentSite<=$this->sites){
+            $this->currentSite = $currentSite;
+        }
+    }
+    public function setTableToShow($currentSite, $maxEntries){
+        if($maxEntries*$currentSite<=$this->entries){
+            $this->maxEntries = $maxEntries;
+            $this->evaluateAmountSites();
+            if($currentSite<=$this->sites){
+                $this->currentSite=$currentSite;
+            }
+        }else{
+            $this->maxEntries = $this->entries;
+        }
+        echo "Ohhh no too much to handle!";
+    }
+    /**
+     * @return int
+     */
+    public function getSites()
+    {
+        return $this->sites;
     }
 
+    /**
+     * @return int
+     */
+    public function getCurrentSite()
+    {
+        return $this->currentSite;
+    }
 }

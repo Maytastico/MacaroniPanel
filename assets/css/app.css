@@ -39,6 +39,9 @@ body#dashboard{
     align-items: stretch;
     justify-content: center;
 }
+.flex{
+    display: flex;
+}
 .col{
     display: inline-block;
 }
@@ -105,6 +108,24 @@ button.icon{
     border:none;
 }
 /*Ui Elements*/
+.loading.hidden{
+    display: none;
+}
+.loadingContainer{
+    display: flex;
+    align-items: center;
+}
+.loading{
+    min-width: 1.5em;
+    min-height: 1.5em;
+    background-image: url("../icons/feather/loader.svg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    animation-name: rotation;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
 .radial{
     border-radius: 100%;
 }
@@ -433,6 +454,14 @@ div#editUser div#picUpload.open{
     display: inline-block;
 }
 
+@keyframes rotation {
+    from{
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(360deg);
+    }
+}
 /*---Media queries---*/
 @media screen and (min-width: 720px){
     .width50{

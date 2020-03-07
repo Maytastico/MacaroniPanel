@@ -30,22 +30,24 @@ class UserContent extends Table
         echo "</tr>";
 
         foreach ($siteData as $data){
-            echo "<tr>";
-            echo "<td><div class='row'><div class='profilePicture'>".$data->getCurrentProfilePicture()."</div></div></td>";
-            echo "<td>".$data->getUsername()."</td>";
-            echo "<td>".$data->getEmail()."</td>";
-            echo "<td>".$data->getLastLogin()."</td>";
-            echo "<td>".RBAC::fetchRoleNameFormID($data->getRoleID())."</td>";
-            echo '<td><form class="row" action="" method="post">
-                    <button class="col radial red"><img src="'.Loader::$jump.'/assets/icons/feather/trash-2.svg">
-                    </button>
-                    <button class="col radial"><img src="'.Loader::$jump .'/assets/icons/feather/edit.svg">
-                    </button>
-                </form></td>';
-            echo "</tr>";
-        }
+            //if($data!==null){
+                echo "<tr>";
+                echo "<td><div class='row'><div class='profilePicture'>".$data->getCurrentProfilePicture()."</div></div></td>";
+                echo "<td>".$data->getUsername()."</td>";
+                echo "<td>".$data->getEmail()."</td>";
+                echo "<td>".$data->getLastLogin()."</td>";
+                echo "<td>".RBAC::fetchRoleNameFormID($data->getRoleID())."</td>";
+                echo '<td><form class="row" action="" method="post">
+                        <button class="col radial red"><img src="'.Loader::$jump.'/assets/icons/feather/trash-2.svg">
+                        </button>
+                        <button class="col radial"><img src="'.Loader::$jump .'/assets/icons/feather/edit.svg">
+                        </button>
+                    </form></td>';
+                echo "</tr>";
+            }
 
-        echo "</table>";
-    }
+            echo "</table>";
+        }
+    //}
 
 }
