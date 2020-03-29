@@ -18,31 +18,45 @@ class Authenticator extends User
     public function __construct($uid)
     {
         parent::__construct($uid);
-        $this->fetchSessionData();
+        //Initializes a php session
+        self::initSession();
+        //If a session is active and available, it will get all the user data from the session container.
+        if (session_status() == PHP_SESSION_ACTIVE)
+            $this->fetchSessionData();
     }
 
+    /**
+     * If a session does not exist it will create one
+     */
+    static public function initSession(){
+        //If a session does not exist it will start a session
+        if (session_status() == PHP_SESSION_NONE)
+            session_start();
+    }
     /**
      * @return bool
      * The plain password has to be set first so the function can get the plain password from the object and is able to
      * to check whether the password is right. This function is used inside the login script to verify the password.
      */
-    public function checkPassword(){
+    public function checkPassword()
+    {
         $plainPassword = $this->plainPW;
         $hashedPassword = $this->getHashedPW();
         return password_verify($plainPassword, $hashedPassword);
     }
+
     /**
      * @param $permissionAttribute
      * @return bool
      * This function needs a string that contains a permission attribute like "usermanager.addUser" that should be checked.
-     * If it finds the permission attribute inside the permission array of the RBAC object it returns true.
-     * This function is used in scripts that have to check the priviliges of the user to grand access.
+     * If it finds the permission attribute inside the permission array of the RBAC object, it will returns true.
+     * This function is used in scripts that have to check the privileges of the user to grand access.
      * true: permission was found
      * false: user has no permission
      */
     public function hasPermission($permissionAttribute)
     {
-        if($this->userExists()===true){
+        if ($this->userExists() === true) {
             $permissionAttribute = trim($permissionAttribute);
             $u_permissions = $this->getRbac()->getPermissionsAsName();
             foreach ($u_permissions as $u_permission) {
@@ -101,7 +115,7 @@ class Authenticator extends User
 
     /**
      * @return bool|string
-     * This gets the username from the Session.
+     * This gets the username from the session container.
      * This will be used to construct the "User" or "Authenticator" Object inside a script,
      * because these objects need a username to be constructed
      * bool: is returned when a session wasn't created
@@ -109,43 +123,39 @@ class Authenticator extends User
      */
     static function fetchSessionUserName()
     {
-        session_start();
+        self::initSession();
         $s_username = false;
-        if(isset($_SESSION["u_name"]))
+        if (isset($_SESSION["u_name"]))
             $s_username = $_SESSION["u_name"];
-        session_write_close();
         return $s_username;
     }
 
     /**
-     *  Gets the data from the php-session
+     *  Gets the data from the php-session.
+     *  This is used to get all the session data from the container.
+     *  It is not necessary at all.
      */
     private function fetchSessionData()
     {
-        session_start();
         foreach ($_SESSION as $key => $sessionEntry) {
             $this->sessionData[$key] = $sessionEntry;
         }
-        session_write_close();
     }
 
     /**
      * This function writes some basic information of the user into the php-session.
-     * This function can be executed of a user logs into its account.
+     * This function will be executed by the user, if  logs into its account.
      */
     public function writeSessionData()
     {
-        //Opens a new session or continues a session
-        //This function is necessary to access the session data
-        session_start();
         //Writes the server time into the session for an auto logout feature
+        //todo auto logout feature
         $_SESSION["created"] = time();
         //Writes the username to the session for identify what user is meant
         $_SESSION["u_name"] = $this->getUsername();
         //Writes a random number that is to authenticate the user
         $this->updateSessionID();
         $_SESSION["u_sessionID"] = $this->getSessionID();
-        session_write_close();
     }
 
     /**
@@ -153,8 +163,8 @@ class Authenticator extends User
      * another sessionID into the database, so the old php-session is deprecated.
      * It is used to log a user out of its account
      */
-    public function resetSession(){
-        session_start();
+    public function resetSession()
+    {
         $_SESSION = array();
         session_destroy();
         $this->updateSessionID();

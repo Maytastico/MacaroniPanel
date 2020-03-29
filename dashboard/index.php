@@ -3,6 +3,7 @@ include_once "../_includes/autoloader.inc.php";
 Loader::jump(1);
 include_once "../_includes/header.inc.php";
 $aRes = Authenticator::fetchSessionUserName();
+
 $a = "";
 if($aRes !== true){
     $a = new Authenticator(Authenticator::fetchSessionUserName());
