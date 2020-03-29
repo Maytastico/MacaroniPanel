@@ -2,15 +2,6 @@
 const profileMenuPath = "nav #userMenue";
 
 document.addEventListener("DOMContentLoaded", ()=>{
-    //For Admin Page
-    let applyAdminSelect = document.querySelector("body#admin select[name='maxEntries']");
-    let adminSelectValue = applyAdminSelect.value;
-    applyAdminSelect.addEventListener("click", () =>{
-        if(adminSelectValue!=getMaxEntriesValue()){
-            triggerLoadingElement();
-            document.querySelector("body#admin #content form").submit();
-        }
-    });
     //Event Listener for Navigation
    const navButton = document.querySelector("nav #button");
    const navElement = document.querySelector("nav");

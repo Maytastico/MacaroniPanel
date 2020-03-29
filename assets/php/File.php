@@ -84,8 +84,7 @@ class File
         $this->fileName = $filename;
         $this->dir = Config::getFolder() . $dir;
         $this->clearPath = $dir;
-        $this->absolutePath = $this->evaluateAbsolutePath();
-        $this->relativePath = $this->evaluateRelativePath();
+        $this->evaluatePaths();
         if ($this->fileExistsInDatabase()) {
             $this->reloadingData();
             $this->userIDs = $this->fetchUserRelationsToFileID();
@@ -107,7 +106,10 @@ class File
         $this->fileID = $fileData["id"];
 
     }
-
+    public function evaluatePaths(){
+        $this->absolutePath = $this->evaluateAbsolutePath();
+        $this->relativePath = $this->evaluateRelativePath();
+    }
     /**
      * @return false|int
      * Reads the creation data from the file
@@ -181,7 +183,6 @@ class File
     public function addFileToDatabase()
     {
         try {
-            var_dump($this->userIDs);
             if ($this->fileExistsInDir()) {
                 if (!$this->fileExistsInDatabase()) {
                     $encodedTags = $this->encodeTags();
@@ -190,7 +191,7 @@ class File
                     $stmt->bindParam(":dir", $this->clearPath);
                     $stmt->bindParam(":relativePath", $this->relativePath);
                     $stmt->bindParam(":absolutePath", $this->absolutePath);
-                    $stmt->bindParam(":describtion", $this->description);
+                    $stmt->bindParam(":description", $this->description);
                     $stmt->bindParam(":tags", $encodedTags);
                     $stmt->execute();
 
@@ -422,7 +423,10 @@ class File
     }
         return false;
     }
-
+    public function setFileName($FileName){
+        $this->fileName = $FileName;
+        $this->evaluatePaths();
+    }
     /**
      * @param string $description
      * Will be used to add or change the description for a file inside the object.

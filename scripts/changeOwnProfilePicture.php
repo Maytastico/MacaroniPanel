@@ -9,6 +9,7 @@ $folder = Config::getFolder();
 //Initializes a new Authenticator object. To access and validate the user session.
 $u = new Authenticator(Authenticator::fetchSessionUserName());
 $file = new Uploader("profilePicture", "/userfiles/" . $u->getUserId());
+
 //Checks whether the user is logged in and whether the sessionID is valid
 if ($u->verifySession() === false || $u->hasPermission("usersettings.upload") === false) {
     //In case the sessionID isn't valid the script will give the user feedback
@@ -16,6 +17,7 @@ if ($u->verifySession() === false || $u->hasPermission("usersettings.upload") ==
     exit();
 } else if ($u->verifySession() === true) {
     if(!$file->doesTargetExists()){
+
         header("Location: " . $folder . $back . "?changeProfilePicture=userDir");
         exit();
     }else{
@@ -40,13 +42,11 @@ if ($u->verifySession() === false || $u->hasPermission("usersettings.upload") ==
                         $file->addUserID($u->getUserId());
                         $file->addFileToDatabase();
                         $file->reloadingData();
-                        var_dump($file->getFileID());
                         if($u->updateCurrentProfilePicture($file->getFileID())){
                             header("Location: " . $folder . $back . "?changeProfilePicture=success");
                             exit();
                         }
-                        header("Location: " . $folder . $back . "?changeProfilePicture=databaseError");
-                        exit();
+
                     }
                 }
             }

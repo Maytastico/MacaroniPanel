@@ -9,7 +9,7 @@ class Uploader
      */
     private $targetExists = false;
     /**
-     * @var string
+     * @var File
      * Contains the dir where the programmer wishes to move the uploaded file to.
      */
     private $targetDir;
@@ -179,7 +179,8 @@ class Uploader
                 if ($this->fileTypeAllowed()) {
                     $fileName = $this->fileName;
                     $targetFilePath = $this->targetDir->getAbsolutePath() . $fileName;
-                    $targetFile = new File($this->targetDir->getRelativePath(), $fileName);
+                    $this->targetDir->setFileName($fileName);
+                    $targetFile = $this->targetDir;
                     if (!$targetFile->fileExistsInDir()) {
                         if (move_uploaded_file($this->tmpOnServer, $targetFilePath)) {
                             return $targetFile;
