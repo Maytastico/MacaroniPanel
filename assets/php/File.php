@@ -186,7 +186,7 @@ class File
             if ($this->fileExistsInDir()) {
                 if (!$this->fileExistsInDatabase()) {
                     $encodedTags = $this->encodeTags();
-                    $stmt = Config::dbCon()->prepare("INSERT INTO files (fileName, dir, relativePath, absolutePath, description, tags) VALUES (:fileName, :dir, :relativePath, :absolutePath, :describtion, :tags)");
+                    $stmt = Config::dbCon()->prepare("INSERT INTO files (fileName, dir, relativePath, absolutePath, description, tags) VALUES (:fileName, :dir, :relativePath, :absolutePath, :description, :tags)");
                     $stmt->bindParam(":fileName", $this->fileName);
                     $stmt->bindParam(":dir", $this->clearPath);
                     $stmt->bindParam(":relativePath", $this->relativePath);

@@ -32,6 +32,10 @@ class Authenticator extends User
         //If a session does not exist it will start a session
         if (session_status() == PHP_SESSION_NONE)
             session_start();
+        if(session_status() == PHP_SESSION_DISABLED){
+            echo "No sessions module not available. Maybe disabled?";
+            error_log("Error while initializing php-sessions. Maybe disabled?");
+        }
     }
     /**
      * @return bool
