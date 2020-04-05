@@ -22,6 +22,9 @@ include_once "../_includes/header.inc.php";
 ?>
 
 <body id="dashboard">
+    <pre>
+        <?php var_dump($a);?>
+    </pre>
     <?php include_once "../templates/navigation.php"?>
     <?php include_once "../templates/userSettings.php"?>
 </body>

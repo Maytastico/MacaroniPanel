@@ -31,7 +31,10 @@ class Install
         $this->dbh = Config::dbCon();
     }
 
-//Writes all tables into the database.
+    /**
+     * Installs all tables onto the database.
+     * These queries have to be executed in a specific order.
+     */
     public function installTables()
     {
         $queries = array(
@@ -56,7 +59,10 @@ class Install
         }
     }
 
-//Deletes all Tables inside the array.
+    /**
+     * Deletes all tables inside the array.
+     * They have to executed in a specific order.
+     */
     public function deleteTables()
     {
         $queries = array(
@@ -81,7 +87,9 @@ class Install
         }
     }
 
-//Writes all entries into the settings table.
+    /**
+     * Writes all entries into the settings table.
+     */
     private function writeSettings()
     {
         $queries = array(
@@ -102,11 +110,13 @@ class Install
             echo "Writing to settings failed: " . $e->getMessage();
         }
     }
+
     /**
      * Writes the basic permission model that comes with the application.
      * This function will be used inside the script that handles the installation of the application
      */
-    public function removePermissions(){
+    public function removePermissions()
+    {
         $permissions = $this->basicPermissions;
 
         try {
@@ -120,11 +130,13 @@ class Install
             exit();
         }
     }
+
     /**
      * Writes the basic permission model that comes with the application.
      * This function will be used inside the script that handles the installation of the application
      */
-    public function writePermissions(){
+    public function writePermissions()
+    {
         $permissions = $this->basicPermissions;
 
         try {
@@ -144,14 +156,15 @@ class Install
      * true: Writing roles to the roles table was successful
      * false: Writing roles failed, because the Role already exists
      */
-    public function writeRoles(){
-        $permissions= $this->basicPermissions;
+    public function writeRoles()
+    {
+        $permissions = $this->basicPermissions;
         $rbac = new RBAC("Admin");
 
         foreach ($permissions as $p)
             $rbac->addPermission(RBAC::fetchPermissionID($p));
 
-        if($rbac->addRole()){
+        if ($rbac->addRole()) {
             return true;
         }
         return false;
@@ -163,19 +176,21 @@ class Install
      * true: Removing Roles was successful
      * false: Removing Roles failed
      */
-    public function removeRoles(){
+    public function removeRoles()
+    {
         $rbac = new RBAC("Admin");
-        if($rbac->removeRole()){
+        if ($rbac->removeRole()) {
             return true;
         }
         return false;
     }
+
     /**installAllowed() is a static function that returns the current installation mode
-    *from the database. This will be used to verify installation of tables or adding users inside the
-    * "Install UI"
-    *@return bool | null if no entry was found
-    *true will be returned, if installation mode if active.
-    *false will be returned, if installation mode was deactivated.
+     *from the database. This will be used to verify installation of tables or adding users inside the
+     * "Install UI"
+     * @return bool | null if no entry was found
+     *true will be returned, if installation mode if active.
+     *false will be returned, if installation mode was deactivated.
      */
     static function installAllowed()
     {
@@ -201,9 +216,12 @@ class Install
             return;
         }
     }
-//lockInstall() overwrites the value inside the settings table.
-//It sets the value of "installMode" to false so the install page isn't
-//accessible. And adding users or modifying tables is not possible
+
+    /**
+     * lockInstall() overwrites the value inside the settings table.
+     * It sets the value of "installMode" to false so the install page isn't
+     * accessible. And adding users or modifying tables is not possible
+     **/
     public function lockInstall()
     {
         try {

@@ -1,6 +1,7 @@
 <?php
 
 //The idea of this class is to make file uploads easier and more secure.
+//It checks for all certain conditions, before uploading a file
 class Uploader
 {
     /**
@@ -49,9 +50,12 @@ class Uploader
     {
         $targetDir_tmp = new File($targetDir, "");
         $fileData = $_FILES[$fieldName];
+        //Checks whether php actually evaluated some information
         if (count($fileData) > 0) {
+            //Checks whether the target folder exists
             if ($targetDir_tmp->fileExistsInDir()) {
                 $this->targetExists = true;
+                //Puts the evaluated information into the object
                 $this->errorCode = $fileData["error"];
                 $this->type = $fileData["type"];
                 $this->fileSize = $fileData["size"];
@@ -84,10 +88,15 @@ class Uploader
      */
     public function fileIsPicture()
     {
+        //Prepares the data form php that evaluate the file type for the check
         $imageType = explode("/", $this->type);
         $fileType = $imageType[0];
+        //Checks what php said about the file
         if ($fileType === "image") {
+            //Checks whether the file contains a valid ending
             if ($this->pictureTypeAllowed()) {
+                //Reads the file database and looks after a picture size
+                //If it finds something, the uploaded file is a valid picture
                 if ($this->validateContainsPictureData()) {
                     return true;
                 }
@@ -98,7 +107,9 @@ class Uploader
 
     /**
      * @return bool
-     * Checks whether this picture type is allowed to be uploaded to the server.
+     * Checks whether this picture type is allowed.
+     * Reads the allowed image types from the Config and looks whether
+     * the evaluated file type fit to the defined ones.
      */
     private function pictureTypeAllowed()
     {
@@ -138,6 +149,7 @@ class Uploader
     /**
      * @return bool
      * Checks whether the file type is allowed to be uploaded to the server
+     * Reads the file type, that was evaluated by php and the allowed file types defined by the developer
      */
     public function fileTypeAllowed()
     {
@@ -174,16 +186,23 @@ class Uploader
      */
     public function moveFileToTarget()
     {
+        //if the upload to the tmp dir is successful
         if ($this->errorCode === 0) {
+            //And the file is in between the defined range
             if ($this->fileSizeAllowed()) {
+                //And the file ending is allowed
                 if ($this->fileTypeAllowed()) {
-                    $fileName = $this->fileName;
-                    $targetFilePath = $this->targetDir->getAbsolutePath() . $fileName;
-                    $this->targetDir->setFileName($fileName);
-                    $targetFile = $this->targetDir;
-                    if (!$targetFile->fileExistsInDir()) {
+                    //The path where the file will be moved will be created
+                    $targetFilePath = $this->targetDir->getAbsolutePath() . $this->fileName;
+                    //A new filename will be written into the file object
+                    //And all paths will be regenerated
+                    $this->targetDir->setFileName($this->fileName);
+                    //Checks whether such a file does not exist inside the target directory
+                    if (!$this->targetDir->fileExistsInDir()) {
+                        //Moves the file form the temporary folder to the wished target dir
                         if (move_uploaded_file($this->tmpOnServer, $targetFilePath)) {
-                            return $targetFile;
+                            //And returns the object with all the necessary information of the file
+                            return $this->targetDir;
                         }
                     }
                 }
@@ -194,7 +213,7 @@ class Uploader
 
     /**
      * @return int
-     * Returns an error code that was evaluated by php
+     * Returns an error code that was evaluated by the php module
      */
     public function getErrorCode()
     {
@@ -203,6 +222,7 @@ class Uploader
 
     /**
      * @return bool
+     * Return whether a target exists
      */
     public function doesTargetExists()
     {

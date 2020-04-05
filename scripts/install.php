@@ -31,7 +31,7 @@ if (!$action || !$remove || Install::installAllowed() === false) {
     } else {
         if (Install::installAllowed() !== null) {
             //This should be executed, when tables were installed on the database
-            //And installAllowed doen't return null
+            //And installAllowed doesn't return null
             //NUll will returned if the tables do not exist
             //This action should be executed if the tables were installed.
             if ($action === "lockup") {

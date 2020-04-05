@@ -10,13 +10,13 @@ $back = empty(htmlspecialchars($_GET['r'])) ? "" : $_GET['r'];
 $folder = Config::getFolder();
 
 //Initializes a new Authenticator object. To access and validate the user session.
-$u = new Authenticator(Authenticator::fetchSessionUserName());
+$a = new Authenticator(Authenticator::fetchSessionUserName());
 //Checks whether the user is logged in and whether the sessionID is valid
-if ($u->verifySession() === false) {
+if ($a->verifySession() === false) {
     //In case the sessionID isn't valid the script will give the user feedback
     header("Location: " . $folder . $back . "?changeUserInfo=noPermission");
     exit();
-} else if ($u->verifySession() === true) {
+} else if ($a->verifySession() === true) {
     //Checks if all fields where set.
     if($oldPassword === false || $newPassword === false){
         header("Location: " . $folder . $back . "?changePassword=empty");
@@ -28,8 +28,8 @@ if ($u->verifySession() === false) {
             exit();
         }else{
             //Compares the old hash password with old password the user has put in.
-            //If it is right the method will update the old hash with the new hash
-            if($u->updatePassword($oldPassword, $newPassword)===false){
+            //If it is right the method will update the old hash with the new hash.
+            if($a->updatePassword($oldPassword, $newPassword)===false){
                 //Is the Password wrong the user will get a feedback.
                 header("Location: " . $folder . $back . "?changePassword=wrongPassword");
                 exit();

@@ -13,29 +13,38 @@ class User
      * Contains the user id
      */
     private $user_id;
-    /**@var string
-     *name of the user from the constructor
+    /**
+     * @var string
+     * Name of the user from the constructor
      */
     private $username;
-    /**@var string
-     *email form the database
+    /**
+     * @var string
+     * email form the database
      */
     private $email;
     /**
      * @var string
-     *The role id is in relation to the role table inside the database.
-     *This is to authorize actions of the user.
+     * The role id is in relation to the role table inside the database.
+     * This is to authorize actions of the user.
      */
     private $roleID;
-    /**@var string
-     *Stores the Password in plain text.
-     * This is for adding a new user to the database
+    /**
+     * @var string
+     * Stores the password in plain text.
+     * This is for adding a new user to the database.
+     * Or check whether a password is right that was put in by a user
      */
     protected $plainPW;
-    /**@var string
-     *Hashed password form the database
+    /**
+     * @var string
+     * Hashed password form the database
      */
     private $hashedPW;
+    /**
+     * @var string
+     * Contains a time
+     */
     private $lastLogin;
     /**
      * @var string
@@ -73,7 +82,7 @@ class User
         $this->email = $userData['email'];
         $this->hashedPW = $userData['password'];
         $this->roleID = $userData['role_id'];
-        $this->lastLogin = $userData['lastLogin'];
+        $this->lastLogin = $userData['UNIX_TIMESTAMP(lastLogin)'];
         $this->sessionID = $userData['sessionID'];
         $this->rbac = new RBAC(RBAC::fetchRoleNameFormID($this->roleID));
         //Locks whether a profile picture exists
@@ -125,7 +134,7 @@ class User
     public function getUserData()
     {
         try {
-            $stmt = Config::dbCon()->prepare("SELECT * FROM users WHERE username=:uid");
+            $stmt = Config::dbCon()->prepare("SELECT user_id, username, password, email, lastLogin ,UNIX_TIMESTAMP(lastLogin), sessionID, role_id, currentProfilePicture FROM users WHERE username=:uid");
             $stmt->bindParam(":uid", $this->username);
             $stmt->execute();
             $res = $stmt->fetchAll();
@@ -138,14 +147,15 @@ class User
             return $userData;
         } catch (PDOException $e) {
             echo "Getting data from users failed: " . $e->getMessage();
-            return;
+            exit();
         }
     }
 
-    /**This function will add a user to the database, if it does not exist.
+    /**
+     * This function will add a user to the database, if it does not exist.
      * @return bool
-     *true -> Adding user was successful
-     *false -> User already exist
+     * true -> Adding user was successful
+     * false -> User already exist
      */
     public function addUser($email, $plainPassword, $role)
     {
@@ -168,15 +178,17 @@ class User
         }
     }
 
-    /**This function will removes a user from the database, if it exists.
+    /**
+     * This function will removes a user from the database, if it exists.
      * @return bool
-     *true -> Removing user was successful
-     *false -> User does not exist
+     * true -> Removing user was successful
+     * false -> User does not exist
      */
     public function removeUser()
     {
         if ($this->userExists() === false) {
             try {
+
                 $stmt = Config::dbCon()->prepare("DELETE FROM users WHERE user_id=:user_id");
                 $stmt->bindParam(":uid", $this->user_id);
                 $stmt->execute();
@@ -327,7 +339,7 @@ class User
      */
     public function updatePassword($oldPassword, $newPassword)
     {
-        if (password_verify($this->hashedPW, $oldPassword) === true) {
+        if (password_verify($oldPassword, $this->hashedPW) === true) {
             try {
                 $newHashedPassword = $this->hashPW($newPassword);
                 $this->hashedPW = $newHashedPassword;

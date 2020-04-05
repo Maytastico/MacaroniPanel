@@ -20,7 +20,7 @@ class RBACContent
         }
         echo "</select>";
     }
-    static public function showSelectedRoleAsDropdown($rolename){
+    static public function showSelectedRoleAsDropdown($roleName){
         $roles = RBAC::fetchRoleTable();
 
         if($roles === false){
@@ -29,6 +29,10 @@ class RBACContent
         }else{
             echo "<select name='type'>";
             foreach ($roles as $entry){
+                if($roleName == $entry["name"]){
+                    echo '<option selected="selected" value="' . $entry['name'] . '">'. $entry['name'] . '</option>';
+                    continue;
+                }
                 echo "<option value=\"" . $entry['name'] . "\">". $entry['name'] . "</option>";
             }
         }

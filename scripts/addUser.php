@@ -1,5 +1,5 @@
 <?php
-//Loads all classes
+//Loads all php classes
 include_once "../_includes/autoloader.inc.php";
 //The Loader jumps one directories back
 Loader::jump(1);
@@ -43,10 +43,12 @@ if(Install::installAllowed() === false && ($u->verifySession() === false &&  $u-
                         //A new user will be created, if the username does not exist.
                         $u = new User($u_name);
                         if($u->addUser($u_email, $u_password, RBAC::fetchRoleIDFromName($u_type)) === true){
+                            //Creates a new user dir, if everything is right
                             $u->createUserDir();
                             header("Location: " . $folder . $back . "?signup=success");
                             exit();
                         }else{
+                            //Username already exists
                             header("Location: " . $folder . $back . "?signup=uidtaken&email=$u_email&uid=$u_name");
                             exit();
                         }

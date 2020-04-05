@@ -8,10 +8,14 @@
 
 class Config
 {
+    //The default user icon that will be shown on the dashboard
     private static $userIcon = "/assets/icons/feather/user.svg";
+    //A collection of all file endings that can be uploaded to filesystem
     private static $allowedImageTypes = array( "png","jpeg", "jpg");
     private static $allowedDocumentTypes = array("pdf");
     private static $allowedArchiveTypes = array("zip");
+    //The maximum file size for the application.
+    //Look at the php.ini file to specify a global maximum file size.
     private static $maxFileSize = 1000000;
     //Folder Destination
     //Add a "/" at the front your foldername
@@ -24,7 +28,9 @@ class Config
     private static $pdoPW = "";
 
 
-    //Handels and returns a PDO database object
+    /**
+     * Handles and returns a PDO database object
+     */
     public static function dbCon()
     {
         try {
@@ -39,7 +45,7 @@ class Config
 
     /**
      * @return string
-     * Returns the Destination of the application for scripts that have
+     * Returns the destination of the application for scripts that have
      * to jump to a certain destination back
      */
     public static function getFolder()
@@ -84,7 +90,7 @@ class Config
 
     /**
      * @return int
-     * Returns the defined maximum size of a file
+     * Returns the defined maximum file size
      */
     public static function getMaxFileSize()
     {

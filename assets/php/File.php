@@ -2,6 +2,7 @@
 
 //If you are curious about how this work, you can find the documentation to this class on my GitHub page
 //https://github.com/MacaroniDamage/macaronipanel-development/blob/master/Fileusage.md
+
 class File
 {
     /**
@@ -14,29 +15,25 @@ class File
      * Contains the tags from the database
      */
     private $tags = array();
-
     /**
      * @var string
      * Contains the filename of the file. This variable will be written inside the constructor.
      */
     private $fileName;
-
     /**
      * @var string
-     * Contains the concatenated filepath from the root of the webbrowser to the file.
+     * Contains the concatenated filepath from the root directory of the web browser to the file.
      */
     private $dir;
-
     /**
      * @var string
-     * Contains the not concatenated filepath from the root of the webbrowser to the file.
+     * Contains the not concatenated filepath from the root of the web browser to the file.
      */
     private $clearPath;
-
     /**
      * @var string
      * Contains the absolute path to the file.
-     * This is string is used as an unique identifier inside the database
+     * This is string is used as an unique identifier inside the database.
      */
     private $absolutePath;
     /**
@@ -50,7 +47,6 @@ class File
      * Contains the description of the file form the database
      */
     private $description;
-
     /**
      * @var array
      * Contains the userIDs that can see this file
@@ -63,7 +59,6 @@ class File
      * Will be read during the construction of the object
      */
     private $creationTimestamp;
-
     /**
      * @var false|int
      * Contains the file size of the the file
@@ -104,15 +99,20 @@ class File
         $this->description = $fileData["description"];
         $this->tags = $this->decodeTags($fileData["tags"]);
         $this->fileID = $fileData["id"];
-
     }
-    public function evaluatePaths(){
+
+    /**
+     * Can be executed to update the Paths to the file
+     */
+    public function evaluatePaths()
+    {
         $this->absolutePath = $this->evaluateAbsolutePath();
         $this->relativePath = $this->evaluateRelativePath();
     }
+
     /**
      * @return false|int
-     * Reads the creation data from the file
+     * Reads the creation timestamp from the file
      */
     private function readCreationTime()
     {
@@ -139,8 +139,8 @@ class File
 
     /**
      * @return bool
-     * Checks whether a file can be written by the program
-     * Is useful before you delete a file, to check whether it is possible
+     * Checks whether a file and can be written by the program
+     * Is useful check before you delete, modify a file
      */
     public function fileIsWritable()
     {
@@ -175,10 +175,10 @@ class File
 
     /**
      * @return bool
-     * This method check whether a file exist on the hard disk and adds it when it does not already exist inside the database
+     * This method checks whether a file exist on the hard disk and adds it when it does not already exist inside the database
      * true -> The entry for this file does not exist inside the database and was added
      * false -> The entry for this absolute path was already saved inside the database
-     * You can use this method to add a file that was uploaded by a user to the database, so it is accessible inside the Panel
+     * You can use this method to add a file that was uploaded by a user to the database, so it is accessible inside the panel
      */
     public function addFileToDatabase()
     {
@@ -275,25 +275,27 @@ class File
      * Returns true when a user has the permission to take the file and show it.
      * Returns false when a user does not own a file.
      */
-    static function userOwsFile($file_id, $user_id){
+    static function userOwsFile($file_id, $user_id)
+    {
         try {
-                $stmt = Config::dbCon()->prepare("SELECT * from user_has_file where file_id = :file_id AND user_id = :user_id");
-                $stmt->bindParam(":file_id", $file_id);
-                $stmt->bindParam(":user_id", $user_id);
-                $stmt->execute();
-                $res = $stmt->fetchAll();
-                if(count($res)>0){
-                    return true;
-                }
-                return false;
+            $stmt = Config::dbCon()->prepare("SELECT * from user_has_file where file_id = :file_id AND user_id = :user_id");
+            $stmt->bindParam(":file_id", $file_id);
+            $stmt->bindParam(":user_id", $user_id);
+            $stmt->execute();
+            $res = $stmt->fetchAll();
+            if (count($res) > 0) {
+                return true;
+            }
+            return false;
         } catch (PDOException $e) {
             echo "Failed removing file user relations: " . $e->getMessage();
             exit();
         }
     }
+
     /**
      * Creates relations between users and and a file
-     * Will be used to determine whether a user can see a file inside its filemanager
+     * Will be used to determine whether a user can see a file inside its file manager
      */
     private function addFileUserRelations()
     {
@@ -313,8 +315,8 @@ class File
     }
 
     /**
-     * Deletes all relations to a file id.
-     * This will be useful when a user wants to delete a file.
+     * Deletes all user/file relations to a specific file id.
+     * This will be useful to delete a file.
      */
     public function removeFileUserRelations()
     {
@@ -352,7 +354,7 @@ class File
 
     /**
      * @param $user_ID
-     * removes all file permissions of a user.
+     * Removes all file permissions of a user according to the user id.
      * Deleting all permissions to a file for a user is useful, when a user will be deleted.
      */
     static public function removeAllUserRelationsToFile($user_ID)
@@ -367,10 +369,13 @@ class File
         }
     }
 
+    static public function getAllFilesOwnedByUser($user_id){
+
+    }
 
     /**
      * @return array
-     * Returns the user id that can access the file
+     * Returns all user ids that can access the file
      * Will be used to share a file between users.
      */
     public function fetchUserRelationsToFileID()
@@ -393,6 +398,12 @@ class File
         }
     }
 
+    /**
+     * @param $file_id
+     * @return array|bool
+     *  Gets all information of a file that is saved on the database.
+     * This is useful to construct a "File" object
+     */
     static function fetchFileDataFromID($file_id)
     {
         try {
@@ -416,20 +427,33 @@ class File
         }
     }
 
+    /**
+     * @param $file_id
+     * @return bool
+     * Checks whether a file id exists on the database
+     */
     static function fileIDExistsInDatabase($file_id)
     {
-        if (count(self::fetchFileDataFromID($file_id)) > 0){
+        if (count(self::fetchFileDataFromID($file_id)) > 0) {
             return true;
-    }
+        }
         return false;
     }
-    public function setFileName($FileName){
+
+    /**
+     * @param $FileName
+     * Sets the file name of a file and refreshes the paths to the file
+     */
+    public function setFileName($FileName)
+    {
         $this->fileName = $FileName;
         $this->evaluatePaths();
     }
+
     /**
      * @param string $description
      * Will be used to add or change the description for a file inside the object.
+     * The input will be escaped. So no html or javascript injection is possible
      */
     public function setDescription($description)
     {
@@ -588,6 +612,7 @@ class File
 
     /**
      * @return string
+     * Returns the file id of a "File" instance
      */
     public function getFileID()
     {

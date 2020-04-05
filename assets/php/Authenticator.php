@@ -26,7 +26,8 @@ class Authenticator extends User
     }
 
     /**
-     * If a session does not exist it will create one
+     * If a session does not exist it will create one.
+     * It will show an error message, if the session-module is disabled.
      */
     static public function initSession(){
         //If a session does not exist it will start a session
@@ -60,9 +61,12 @@ class Authenticator extends User
      */
     public function hasPermission($permissionAttribute)
     {
+        //Checks whether the user exists
         if ($this->userExists() === true) {
             $permissionAttribute = trim($permissionAttribute);
             $u_permissions = $this->getRbac()->getPermissionsAsName();
+            //Goes through the permission array and compares it to the searched
+            //permission attribute.
             foreach ($u_permissions as $u_permission) {
                 if ($u_permission === $permissionAttribute) {
                     return true;

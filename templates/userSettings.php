@@ -14,9 +14,12 @@ $getPbChange = !empty($_GET['changeProfilePicture']) ? $_GET['changeProfilePictu
 
     <section id="profilePicture" class="changePic">
         <?php
+        //Checks whether a profile picture exist.
             if($u->profilePictureExists()){
+                //Gets the profile picture from the database
                 echo $u->getCurrentProfilePicture();
             }else{
+                //Displays an icon instead
                 echo '<img src="'. Loader::$jump .'/assets/icons/feather/user-plus.svg">';
             }
         ?>
@@ -45,12 +48,11 @@ $getPbChange = !empty($_GET['changeProfilePicture']) ? $_GET['changeProfilePictu
         }
 
         ?>
-
-
         <button class="link changePw" type="button">Change password</button>
         <button type="submit" name="submit">Save changes</button>
     </form>
 
+<!--For changing its own password-->
     <div id="pwBox" class=" box <?php if (!empty($getPwChange)) {
         echo "open";
     } ?>">
@@ -76,14 +78,15 @@ $getPbChange = !empty($_GET['changeProfilePicture']) ? $_GET['changeProfilePictu
             ?>
         </form>
     </div>
-
+<!--Handles profile picture upload-->
     <div id="picUpload" class="box <?php if (!empty($getPbChange)) echo "open"; ?>">
         <button class="changePic icon">
             <img src="<?php echo Loader::$jump ?>/assets/icons/feather/x-circle.svg">
         </button>
         <form method="post" enctype="multipart/form-data"
               action="<?php echo Loader::$jump ?>/scripts/changeOwnProfilePicture.php?r=/dashboard">
-            <input type="file" name="profilePicture">
+
+            <input type="file" id="file" name="profilePicture">
             <button type="submit">Upload Photo</button>
 
             <?php

@@ -10,7 +10,7 @@ class RBAC
 {
     /**
      * @var bool
-     * Contains the status wheather a role exists or not
+     * Contains the status whether a role exists or not
      */
     private $exists = false;
     /**@var array
@@ -77,8 +77,8 @@ class RBAC
     }
     /**
      * @return bool
-     * true = if everything was successful
-     * false = if the role exists or there were no permissions set
+     * true -> if everything was successful
+     * false -> if the role exists or there were no permissions set
      */
     public function addRole()
     {
@@ -172,8 +172,8 @@ class RBAC
      * @param $id
      * Gets the role id
      * @return bool|string
-     * false: Role id was not found
-     * string: Returns the Role Name
+     * false -> Role id was not found
+     * string -> Returns the Role Name
      */
     static public function fetchRoleNameFormID($id)
     {
@@ -194,6 +194,11 @@ class RBAC
         }
     }
 
+    /**
+     * @param $permissionAttribute
+     * @return bool|mixed
+     * Gets the id form a permission attribute
+     */
     static public function fetchPermissionID($permissionAttribute){
         try {
             $stmt = Config::dbCon()->prepare("SELECT id FROM permissions WHERE name=:permissionAttribute");

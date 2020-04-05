@@ -1,7 +1,6 @@
 <?php
 include_once "../_includes/autoloader.inc.php";
 Loader::jump(1);
-include_once "../_includes/header.inc.php";
 $aRes = Authenticator::fetchSessionUserName();
 $a = "";
 if ($aRes !== true) {
@@ -67,18 +66,18 @@ if($getPage == "users") {
     $table->reloadData();
 
 }
-
+include_once "../_includes/header.inc.php";
 ?>
 
 <body id="admin">
 <nav class="navbar">
-    <section class="buttons">
-        <div class="left">
+    <main class="buttons">
+        <section class="left">
             <a href="index.php">
                 <div class="icon"><img src="<?php echo Loader::$jump; ?>/assets/icons/feather/skip-back.svg"></div>
             </a>
-        </div>
-        <div class="middle">
+        </section>
+        <section class="middle">
             <form action="admin.php<?php echo $header?>" method="post">
                 <button name="page" type="submit" value="users" class="small icon">
                     <div class="icon"><img src="<?php echo Loader::$jump; ?>/assets/icons/feather/user.svg"> Users</div>
@@ -94,8 +93,8 @@ if($getPage == "users") {
                     </div>
                 </button>
             </form>
-        </div>
-    </section>
+        </section>
+    </main>
 </nav>
 <section id="content">
     <form method="post" action="admin.php<?php echo $header?>">

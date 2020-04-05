@@ -2,120 +2,167 @@
     font-family: Ubuntu;
     src: url("../fonts/Ubuntu-R.ttf");
 }
-body{
+
+body {
     min-height: 100vh;
     color: black;
     background: white;
     font-family: Ubuntu !important;
 }
-*{
+img{
+    width: 100%;
+}
+* {
     scroll-behavior: smooth;
 }
+
 /*background properties for the install page*/
-body#install{
-    background-image: linear-gradient(to top,#ac887b, #c8ad7f);
+body#install {
+    background-image: linear-gradient(to top, #ac887b, #c8ad7f);
     background-size: cover;
     background-repeat: no-repeat;
     color: white;
 }
+
 /*background properties for the install page*/
-body#login{
+body#login {
     background-image: url("../img/macaroni.jpg");
     background-size: cover;
     background-repeat: no-repeat;
     color: white;
 }
-body#dashboard{
+
+body#dashboard {
     background-color: white;
 }
-.container{
+
+/*Basic grid properties*/
+.container {
     width: 100%;
     position: relative;
 }
-.row{
+
+.row {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
     align-items: stretch;
     justify-content: center;
 }
-.flex{
+
+.flex {
     display: flex;
 }
-.col{
+
+.col {
     display: inline-block;
 }
-h2{
-    font-size: 1.7em;
-}
-img.invert{
+
+/*Element modifications*/
+img.invert {
     filter: invert();
 }
+
+.radial {
+    border-radius: 100%;
+}
+
+button.radial {
+    border-radius: 100%;
+    min-width: 50px;
+    max-width: 50px;
+    max-height: 50px;
+    display: inline-block;
+    overflow: hidden;
+}
+
+button.radial img {
+    filter: invert();
+}
+
+/*Font sizes*/
+h2 {
+    font-size: 1.7em;
+}
+
 /*Feedback message properties*/
-div.messages{
+div.messages {
     text-align: center;
 }
-div.install{
+
+div.install {
     margin: 0 auto;
     text-align: center;
-    padding: 5px  0;
+    padding: 5px 0;
     box-shadow: 0px 0px 4px gray;
 }
 
 /*Feedback Colors*/
-.red{
+.red {
     border-radius: 3px;
 }
-input.red{
+
+input.red {
     border-bottom-color: #e22a45;
 
 }
-button.red{
+
+button.red {
     background-color: #AA5E42;
     border-bottom-color: #AA5E42;
     border-left-color: #AA5E42;
 }
-button.red:hover{
+
+button.red:hover {
     border-bottom-color: #99553B;
     border-left-color: #99553B;
 }
-div.red{
+
+div.red {
     padding: 3px;
     color: white;
     background: #e22a45;
 }
-.success{
+
+.success {
     border-radius: 3px;
 }
-div.success{
+
+div.success {
     padding: 3px;
     color: white;
     background: #3DB39B;
     margin-top: 0.5em;
 }
-button.link{
+
+button.link {
     border: none;
     background-color: transparent;
     color: #0064f7;
     text-decoration: underline;
     transition: 0.5s;
 }
-button.link:hover{
+
+button.link:hover {
     text-shadow: 0 0 1px grey;
 }
-button.icon{
+
+button.icon {
     background-color: transparent;
-    border:none;
+    border: none;
 }
+
 /*Ui Elements*/
-.loading.hidden{
+.loading.hidden {
     display: none;
 }
-.loadingContainer{
+
+.loadingContainer {
     display: flex;
     align-items: center;
 }
-.loading{
+
+.loading {
     min-width: 1.5em;
     min-height: 1.5em;
     background-image: url("../icons/feather/loader.svg");
@@ -126,40 +173,17 @@ button.icon{
     animation-iteration-count: infinite;
     animation-timing-function: linear;
 }
-.radial{
-    border-radius: 100%;
-}
-button.radial{
-     border-radius: 100%;
-    min-width: 50px;
-    max-width: 50px;
-    max-height: 50px;
-    display: inline-block;
-    overflow: hidden;
- }
-button.radial img{
-    filter: invert();
-}
 
-.tableContent{
-    width: 100%;
-}
-.tableContent td{
-    text-align: center;
-    margin: auto;
-    border-bottom: 1px solid rgba(0,0,0,0.2);
-}
-.tableContent th{
-    border-bottom: 1px solid rgba(0,0,0,0.2);
-}
-.box.centered{
+/*Box properties*/
+.box.centered {
     position: fixed;
     top: -50vh;
     left: 50%;
     transform: translate(-50%, -50%);
 }
-.box{
-    background-color: rgb(240,240,240);
+
+.box {
+    background-color: rgb(240, 240, 240);
     box-shadow: 1px 1px 10px grey;
     border-radius: 3px;
     padding: 10px;
@@ -167,8 +191,24 @@ button.radial img{
     opacity: 0;
     margin: 15px;
 }
+
+    /*Table properties*/
+    .tableContent {
+        width: 100%;
+    }
+
+    .tableContent td {
+        text-align: center;
+        margin: auto;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
+    .tableContent th {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
 /*---Sign up form---*/
-.signUp{
+.signUp {
     margin: auto;
     position: relative;
     display: flex;
@@ -178,25 +218,26 @@ button.radial img{
     padding: 3px;
     text-align: center;
 }
-.install{
+
+.install {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
 
 }
-/*---Global input element properties---*/
-div.icon{
+
+/*---Global form element properties---*/
+div.icon {
     display: flex;
 }
-form{
+
+form {
     overflow: hidden;
 }
-form a, form input, form input::placeholder,form select,form  button{
-    flex-direction: column;
-    max-width: 100%;
+
+form input, form input::placeholder, form select, form button, div a {
     transition: 0.3s;
     color: black;
-    background-color: white;
     margin: 0.3em;
     padding: 0.3em;
     font-size: 1.1em;
@@ -207,45 +248,54 @@ form a, form input, form input::placeholder,form select,form  button{
 }
 
 
-form input, form select{
+form input, form select {
     border: none;
     text-align: left !important;
     border-bottom: 2px gray solid;
 }
-form input:focus, form select:hover, form select:focus{
+
+form input:focus, form select:hover, form select:focus {
     border-bottom: 2px black solid;
     transform: scale(1.05);
 }
 
-form input[type=file]{
+form input[type=file] {
     border: none;
+    background-color: white;
+    color: black;
 }
-form input[type=file]:focus{
+
+form input[type=file]:focus {
     transform: none;
 }
-/*Contains properties for links and buttons*/
-form button, form a{
-    background-color: #7b7b7b;
-    color: white;
-    border: none;
-    border-left: 3px solid #7b7b7b;
-    border-bottom: 5px solid #7b7b7b;
-    min-width: 10em;
-    text-align: center;
-}
-form button.small{
-    min-width: 0;
-}
-form button:hover, a:hover, a:focus{
-    border-bottom-color: #656666;
-    border-left-color: #656666;
-    /*box-shadow: -5px 2px 5px black;*/
-}
+
+    /*Contains properties for links and buttons*/
+    form button, div a {
+        background-color: #7b7b7b;
+        color: white;
+        border: none;
+        border-left: 3px solid #7b7b7b;
+        border-bottom: 5px solid #7b7b7b;
+        min-width: 10em;
+        text-align: center;
+    }
+
+    form button.small {
+        min-width: 0;
+    }
+
+    form button:hover, div a:hover, div a:focus {
+        border-bottom-color: #656666;
+        border-left-color: #656666;
+        /*box-shadow: -5px 2px 5px black;*/
+    }
+
 /*---Login page properties---*/
-#login h2{
+#login h2 {
     text-align: center;
 }
-#loginBox{
+
+#loginBox {
     color: white;
     position: fixed;
     top: 50%;
@@ -254,35 +304,37 @@ form button:hover, a:hover, a:focus{
     transform: translate(-50%, -50%);
     border-radius: 3px;
     padding: 10px;
-    background-image: linear-gradient(to top,#ac887b, #c8ad7f);
+    background-image: linear-gradient(to top, #ac887b, #c8ad7f);
     box-shadow: 0 0 10px grey;
     display: inline-block;
 }
+
 /*---Navigation properties---*/
-nav img{
+nav img {
     filter: invert();
-    width: 100%;
+    display:block;
 }
-img.profilePicture{
+
+img.profilePicture {
     filter: none;
 }
-nav #button{
+
+nav #button {
     transition: 0.3s;
     position: fixed;
-    background-image: linear-gradient(to right,#ac887b, rgba(200, 173, 127, 0.7));
+    background-image: linear-gradient(to right, #ac887b, rgba(200, 173, 127, 0.7));
     left: 0;
+    top:0;
     padding: 0.7em;
     border-bottom-right-radius: 3px;
 }
-nav #button.open{
-    left: 20em;
-}
-nav{
+
+nav {
     z-index: 99999999999;
     overflow-x: hidden;
     transition: 0.5s;
     bottom: 0;
-    left: -40em;
+    left: -100vw;
     position: fixed;
     color: white;
     display: flex;
@@ -294,16 +346,19 @@ nav{
     border-bottom-right-radius: 3px;
     width: 100%;
 }
-nav.open{
+
+nav.open {
     left: 0;
 }
-nav #content{
-    background-color: rgba(0,0,0,0.1);
+
+nav #content {
+    background-color: rgba(0, 0, 0, 0.1);
     width: 100%;
     max-height: calc(100% - 3.5em);
     overflow: hidden;
 }
-nav #user{
+
+nav #user {
     width: 100%;
     padding: 15px;
     display: flex;
@@ -312,10 +367,12 @@ nav #user{
     flex-direction: row;
     align-self: flex-end;
 }
-nav #user div{
+
+nav #user div {
     padding: 10px;
 }
-div.profilePicture{
+
+div.profilePicture {
     width: 1.5em;
     height: 1.5em;
     border-radius: 100%;
@@ -324,17 +381,21 @@ div.profilePicture{
     display: flex;
     align-items: center;
 }
-div.profilePicture img.profilePicture{
+
+div.profilePicture img.profilePicture {
     filter: none;
     transform: scale(3);
 }
-nav #userButton{
+
+nav #userButton {
     transition: 0.5s;
 }
-nav #userButton:hover{
-    background-color: rgba(0,0,0,0.1);
+
+nav #userButton:hover {
+    background-color: rgba(0, 0, 0, 0.1);
 }
-nav section#userMenue{
+
+nav section#userMenue {
     position: fixed;
     transition: 0.5s;
     right: 0;
@@ -342,25 +403,29 @@ nav section#userMenue{
     right: 100vw;
     bottom: 4em;
 }
-nav section#userMenue.open{
+
+nav section#userMenue.open {
     bottom: 4em;
     left: 0;
     right: 0;
 }
-nav section#userMenue form{
+
+nav section#userMenue form {
     text-align: right;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
 }
-nav section#userMenue button:nth-child(n){
+
+nav section#userMenue button:nth-child(n) {
     transition-delay: 0.5s;
 }
+
 /*Contains information about the nav bar that is is
 used inside the administration panel for example
  */
-nav.navbar{
-    background-image: linear-gradient(to bottom,#ac887b, #c8ad7f);
+nav.navbar {
+    background-image: linear-gradient(to bottom, #ac887b, #c8ad7f);
     width: 100vw;
     position: fixed;
     left: 0;
@@ -368,49 +433,63 @@ nav.navbar{
     top: 0;
     height: 3em;
 }
-nav.navbar .buttons{
+
+nav.navbar .buttons {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
     align-items: center;
     width: 100%;
 }
-nav.navbar a{
+
+nav.navbar a {
     color: white;
+    background-color: transparent;
+    border: 0;
+    width: auto;
+    height: auto;
     display: inline-block;
     margin: 0.5em 0.7em;
 }
-nav.navbar .middle{
+
+nav.navbar .middle {
     margin: 0 auto;
 }
-nav.navbar .buttons .middle{
+
+nav.navbar .buttons .middle {
     border-left: 1px solid white;
     border-right: 1px solid white;
     display: flex;
 }
-nav.navbar .buttons .left{
+
+nav.navbar .buttons .left {
     border-right: 1px solid white;
 }
+
 /*---Edit user Ui*/
-div#editUser{
+div#editUser {
     z-index: 0;
     display: none;
     max-width: 30em;
 }
-div#pwBox{
+
+div#pwBox {
     display: none;
     position: relative;
 }
-div#pwBox.open{
+
+div#pwBox.open {
     display: flex;
     opacity: 1;
 }
-div#editUser.open{
+
+div#editUser.open {
     opacity: 1;
-    top:50%;
+    top: 50%;
     display: block;
 }
-div#editUser #profilePicture{
+
+div#editUser #profilePicture {
     height: 60px;
     width: 60px;
     margin: 15px auto;
@@ -421,60 +500,75 @@ div#editUser #profilePicture{
     align-items: center;
     cursor: pointer;
 }
-div#editUser #profilePicture img{
+
+div#editUser #profilePicture img {
     width: 100%;
 }
-div#editUser #profilePicture img.profilePicture{
+
+div#editUser #profilePicture img.profilePicture {
     width: 100%;
     transform: scale(3);
 }
-div#editUser button.userSettings{
+
+div#editUser button.userSettings {
     background-color: transparent;
-    border:none;
+    border: none;
 }
 
-div#editUser div#picUpload{
+div#editUser div#picUpload {
     display: none;
     overflow: hidden;
 }
-div#editUser div#picUpload.open{
+
+div#editUser div#picUpload.open {
     display: flex;
     opacity: 1;
 }
-#admin #content{
+
+#admin #content {
     margin: 5em auto;
     max-width: 1280px;
     width: 100vw;
     overflow-x: scroll;
 }
-#admin #content #apply{
+
+#admin #content #apply {
     display: none;
 }
-#admin #content #apply.open{
+
+#admin #content #apply.open {
     display: inline-block;
 }
 
 @keyframes rotation {
-    from{
+    from {
         transform: rotate(0deg);
     }
-    to{
+    to {
         transform: rotate(360deg);
     }
 }
+
 /*---Media queries---*/
-@media screen and (min-width: 720px){
-    .width50{
+@media screen and (min-width: 720px) {
+    .width50 {
         max-width: calc(50%);
         margin: auto;
     }
-    .signUp{
+
+    .signUp {
         width: 20em;
     }
-    nav{
+
+    nav {
         width: 20em;
     }
-    nav section#userMenue{
+
+    nav #button.open {
+        left: 20em;
+    }
+
+    nav section#userMenue {
         max-width: 20em;
     }
 }
