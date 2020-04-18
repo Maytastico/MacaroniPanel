@@ -20,7 +20,7 @@ $getPbChange = !empty($_GET['changeProfilePicture']) ? $_GET['changeProfilePictu
                 echo $u->getCurrentProfilePicture();
             }else{
                 //Displays an icon instead
-                echo '<img src="'. Loader::$jump .'/assets/icons/feather/user-plus.svg">';
+                echo '<img style="transform: scale(0.5)" src="'. Loader::$jump .'/assets/icons/feather/file-plus.svg">';
             }
         ?>
     </section>

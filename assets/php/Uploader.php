@@ -46,6 +46,11 @@ class Uploader
      */
     private $fileSize;
 
+    /**
+     * Uploader constructor.
+     * @param $fieldName
+     * @param $targetDir
+     */
     public function __construct($fieldName, $targetDir)
     {
         $targetDir_tmp = new File($targetDir, "");

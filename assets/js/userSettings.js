@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     //Contains the path to the setting buttons
     let settingsButtonPath = "button.userSettings";
     //Settings dialog path
-    let settingsElementPath = "div#editUser";
+    let settingsElementPath = "div#editUser, div#editDialog";
     //Password dialog Element
     let pwDialogPath = "div#pwBox";
     //Password dialog button

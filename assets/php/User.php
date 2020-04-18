@@ -74,6 +74,9 @@ class User
         }
     }
 
+    /**
+     * Gets the data from the database and puts the data into the object
+     */
     private function reloadData()
     {
         //Gets all the Data from the Database and loads it into the object
@@ -275,9 +278,9 @@ class User
 
     /**
      * @param $file_id
-     * @return bool        Config::dbCon() = Config::dbCon();
-     * Checks at first whether the file and user exists on the database.
-     * and will
+     * @return bool
+     * Checks at first whether the file and user exists on the database
+     * and will updates the database.
      */
     public function updateCurrentProfilePicture($file_id)
     {
@@ -429,6 +432,11 @@ class User
         }
     }
 
+    /**
+     * @return array
+     * Returns all users from the user table as an array
+     * Useful for tables that will show some users
+     */
     static function getUserTable(){
         try {
             $stmt = Config::dbCon()->prepare("SELECT * from users");
@@ -441,6 +449,11 @@ class User
             exit();
         }
     }
+
+    /**
+     * @return array
+     * Return all users inside the user table as an instance of an user object
+     */
     static function getUserTableAsUserObj(){
         $userData = User::getUserTable();
         $userObj = array();
@@ -498,11 +511,13 @@ class User
 
     /**
      * @return mixed
+     * Returns the timestamp when the user logged in
      */
     public function getLastLogin()
     {
         return $this->lastLogin;
     }
+
     /**
      * @return string
      * Returns the SessionID to authenticate the user
@@ -546,6 +561,10 @@ class User
         return "<img src='" . Config::getUserIcon() . "'>";
     }
 
+    /**
+     * @return bool
+     * Checks whether a the current profile picture is a File object
+     */
     public function profilePictureExists(){
         if($this->currentProfilePicture instanceof File){
             return true;

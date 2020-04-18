@@ -10,11 +10,16 @@ body {
     font-family: Ubuntu !important;
 }
 img{
-    width: 100%;
+    max-width: 100%;
+    display: inline-block;
+    vertical-align: middle;
+    height: auto;
 }
+
 * {
     scroll-behavior: smooth;
 }
+
 
 /*background properties for the install page*/
 body#install {
@@ -53,6 +58,12 @@ body#dashboard {
 .flex {
     display: flex;
 }
+.flex.between{
+    justify-content: space-between;
+}
+.flex.left{
+    justify-content: left;
+}
 
 .col {
     display: inline-block;
@@ -66,17 +77,21 @@ img.invert {
 .radial {
     border-radius: 100%;
 }
+.radial:hover{
+    box-shadow: 0px 0px 3px grey;
+}
 
-button.radial {
+button.radial, a.radial {
     border-radius: 100%;
-    min-width: 50px;
+    min-width: 20px;
     max-width: 50px;
+    min-height: 20px;
     max-height: 50px;
     display: inline-block;
     overflow: hidden;
 }
 
-button.radial img {
+button.radial img, a.radial img {
     filter: invert();
 }
 
@@ -98,22 +113,21 @@ div.install {
 }
 
 /*Feedback Colors*/
+
 .red {
     border-radius: 3px;
 }
 
 input.red {
     border-bottom-color: #e22a45;
-
 }
 
-button.red {
+button.red, a.red {
     background-color: #AA5E42;
-    border-bottom-color: #AA5E42;
-    border-left-color: #AA5E42;
+    border-color: #AA5E42;
 }
 
-button.red:hover {
+button.red:hover, a.red:hover {
     border-bottom-color: #99553B;
     border-left-color: #99553B;
 }
@@ -122,6 +136,26 @@ div.red {
     padding: 3px;
     color: white;
     background: #e22a45;
+}
+
+button.blue, a.blue{
+    background-color: #87B3C9;
+    border-color: #87B3C9;
+}
+
+button.blue:hover, a.blue:hover{
+    border-bottom-color: #769DB0;
+    border-left-color: #769DB0;
+}
+
+button.green, a.green{
+    background-color:#75BD86;
+    border-color: #75BD86;
+}
+
+button.green:hover, a.green:hover{
+    border-bottom-color: #6DB07D;
+    border-left-color: #6DB07D;
 }
 
 .success {
@@ -135,9 +169,10 @@ div.success {
     margin-top: 0.5em;
 }
 
-button.link {
+button.link, a.link{
     border: none;
     background-color: transparent;
+    box-shadow: none;
     color: #0064f7;
     text-decoration: underline;
     transition: 0.5s;
@@ -147,7 +182,8 @@ button.link:hover {
     text-shadow: 0 0 1px grey;
 }
 
-button.icon {
+button.icon, a.icon{
+    box-shadow: none;
     background-color: transparent;
     border: none;
 }
@@ -174,6 +210,17 @@ button.icon {
     animation-timing-function: linear;
 }
 
+a.selected{
+    background-color: #C7C7C7;
+    border-color: #C7C7C7;
+    box-shadow: 0 0 5px grey;
+}
+a.selected:hover{
+    background-color: #C7C7C7;
+    border-color: #ADADAD;
+
+}
+
 /*Box properties*/
 .box.centered {
     position: fixed;
@@ -190,6 +237,9 @@ button.icon {
     transition: 0.5s;
     opacity: 0;
     margin: 15px;
+}
+.box.open{
+    opacity: 1;
 }
 
     /*Table properties*/
@@ -235,10 +285,17 @@ form {
     overflow: hidden;
 }
 
-form input, form input::placeholder, form select, form button, div a {
+form input,
+form input::placeholder,
+form select,
+form button,
+div input,
+div select,
+div button,
+div a {
     transition: 0.3s;
     color: black;
-    margin: 0.3em;
+    margin: 0.2em 0.4em;
     padding: 0.3em;
     font-size: 1.1em;
     border-radius: 3px;
@@ -248,13 +305,13 @@ form input, form input::placeholder, form select, form button, div a {
 }
 
 
-form input, form select {
+form input, div input, form select, div select {
     border: none;
     text-align: left !important;
     border-bottom: 2px gray solid;
 }
 
-form input:focus, form select:hover, form select:focus {
+form input:focus, div input:focus, form select:hover, div select:hover, form select:focus, div select:focus {
     border-bottom: 2px black solid;
     transform: scale(1.05);
 }
@@ -270,7 +327,7 @@ form input[type=file]:focus {
 }
 
     /*Contains properties for links and buttons*/
-    form button, div a {
+    form button, div button, div a {
         background-color: #7b7b7b;
         color: white;
         border: none;
@@ -280,11 +337,11 @@ form input[type=file]:focus {
         text-align: center;
     }
 
-    form button.small {
+    form button.small, div button.small, a.small {
         min-width: 0;
     }
 
-    form button:hover, div a:hover, div a:focus {
+    div button:hover ,form button:hover, div a:hover, div a:focus {
         border-bottom-color: #656666;
         border-left-color: #656666;
         /*box-shadow: -5px 2px 5px black;*/
@@ -333,7 +390,7 @@ nav {
     z-index: 99999999999;
     overflow-x: hidden;
     transition: 0.5s;
-    bottom: 0;
+    top: 0;
     left: -100vw;
     position: fixed;
     color: white;
@@ -467,12 +524,11 @@ nav.navbar .buttons .left {
 }
 
 /*---Edit user Ui*/
-div#editUser {
+div#editUser, div.editDialog {
     z-index: 0;
     display: none;
     max-width: 30em;
 }
-
 div#pwBox {
     display: none;
     position: relative;
@@ -483,7 +539,7 @@ div#pwBox.open {
     opacity: 1;
 }
 
-div#editUser.open {
+div#editUser.open, div.editDialog.open{
     opacity: 1;
     top: 50%;
     display: block;
@@ -524,14 +580,19 @@ div#editUser div#picUpload.open {
     display: flex;
     opacity: 1;
 }
-
+/*--Admin Panel--*/
 #admin #content {
     margin: 5em auto;
     max-width: 1280px;
     width: 100vw;
-    overflow-x: scroll;
+    /*overflow-x: scroll;*/
 }
-
+#admin table{
+    padding: 5px;
+    margin: 1em 0;
+    border-radius: 6px;
+    background-color: #FCFCFC;
+}
 #admin #content #apply {
     display: none;
 }
@@ -563,6 +624,7 @@ div#editUser div#picUpload.open {
     nav {
         width: 20em;
     }
+
 
     nav #button.open {
         left: 20em;
