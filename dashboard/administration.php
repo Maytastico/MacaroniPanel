@@ -1,4 +1,4 @@
-<?php
+  <?php
 include_once "../_includes/autoloader.inc.php";
 Loader::jump(1);
 $aRes = Authenticator::fetchSessionUserName();
@@ -38,9 +38,9 @@ include_once "../_includes/header.inc.php";
 
     <div class="row signUp">
         <h2>Edit an user</h2>
-        <input type="text" name="uid" placeholder="Username" value="test">
-        <input type="text" name="e-mail" placeholder="E-Mail" value="d@d.com">
-        <input type="password" name="pw" placeholder="Password" value="12345678">
+        <input type="text" name="uid" placeholder="Username" >
+        <input type="text" name="email" placeholder="E-Mail" >
+        <input type="password" name="pw" placeholder="Password">
         <input id="csrfToken" type="hidden" value="<?php echo $a->getSessionID();?>">
         <div><?php RBACContent::showAvailableRolesAsDropdown(); ?></div>
         <div class="dialog"></div>

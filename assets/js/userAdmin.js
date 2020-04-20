@@ -85,7 +85,7 @@ class Table {
     static currentSite = 1;
 
     static getDataFromApi() {
-        fetch('http://localhost/MacaroniPanel/scripts/userAdmin.php')
+        fetch('http://localhost:8080/scripts/userAdmin.php')
             .then((response) => {
                 return response.json();
             })
@@ -171,12 +171,14 @@ class Table {
         editAction.dataset.username = element.username;
         editAction.dataset.email = element.email;
         editAction.dataset.role = element.role;
-        editAction.addEventListener("click", ()=>{
+        editAction.addEventListener("click", (element)=>{
             if (document.querySelector(editDialog).classList.contains("open")) {
                 closeElement(editDialog);
             } else {
                 openElement(editDialog);
-                document.querySelector('input[name="uid"]').value = element.username;
+                document.querySelector('input[name="uid"]').value = element.dataset.username;
+                console.log(element.dataset.username);
+                document.querySelector('input[name="email"]').value = element.dataset.email;
             }
         });
         const editIcon = document.createElement("img");
