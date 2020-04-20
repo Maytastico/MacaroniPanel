@@ -64,6 +64,15 @@ body#dashboard {
 .flex.left{
     justify-content: left;
 }
+.left{
+    text-align: left;
+}
+.center{
+    text-align: center;
+}
+.right{
+    text-align: right;
+}
 
 .col {
     display: inline-block;
@@ -189,7 +198,7 @@ button.icon, a.icon{
 }
 
 /*Ui Elements*/
-.loading.hidden {
+.hidden{
     display: none;
 }
 
@@ -257,8 +266,18 @@ a.selected:hover{
         border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     }
 
+
+
+.install {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+
+}
+
+/*---Global form element properties---*/
 /*---Sign up form---*/
-.signUp {
+.userInput {
     margin: auto;
     position: relative;
     display: flex;
@@ -269,14 +288,6 @@ a.selected:hover{
     text-align: center;
 }
 
-.install {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-
-}
-
-/*---Global form element properties---*/
 div.icon {
     display: flex;
 }
@@ -338,7 +349,7 @@ form input[type=file]:focus {
     }
 
     form button.small, div button.small, a.small {
-        min-width: 0;
+        min-width: 1.5em;
     }
 
     div button:hover ,form button:hover, div a:hover, div a:focus {
@@ -617,7 +628,7 @@ div#editUser div#picUpload.open {
         margin: auto;
     }
 
-    .signUp {
+    .userInput {
         width: 20em;
     }
 

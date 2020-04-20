@@ -8,7 +8,7 @@ $getPbChange = !empty($_GET['changeProfilePicture']) ? $_GET['changeProfilePictu
      class="box centered width50 main-wrapper <?php if (!empty($getChange) || !empty($getPwChange) || !empty($getPbChange)) {
          echo "open";
      } ?>">
-    <button class="userSettings icon">
+    <button class="userSettings icon small">
         <img src="<?php echo Loader::$jump ?>/assets/icons/feather/x-circle.svg">
     </button>
 
@@ -56,7 +56,7 @@ $getPbChange = !empty($_GET['changeProfilePicture']) ? $_GET['changeProfilePictu
     <div id="pwBox" class=" box <?php if (!empty($getPwChange)) {
         echo "open";
     } ?>">
-        <button class="changePw icon">
+        <button class="changePw icon small">
             <img src="<?php echo Loader::$jump ?>/assets/icons/feather/x-circle.svg">
         </button>
         <form action="<?php echo Loader::$jump ?>scripts/changeOwnPassword.php?r=/dashboard" method="post">
@@ -80,7 +80,7 @@ $getPbChange = !empty($_GET['changeProfilePicture']) ? $_GET['changeProfilePictu
     </div>
 <!--Handles profile picture upload-->
     <div id="picUpload" class="box <?php if (!empty($getPbChange)) echo "open"; ?>">
-        <button class="changePic icon">
+        <button class="changePic icon small">
             <img src="<?php echo Loader::$jump ?>/assets/icons/feather/x-circle.svg">
         </button>
         <form method="post" enctype="multipart/form-data"

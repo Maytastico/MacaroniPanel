@@ -1,6 +1,30 @@
 /*------------Add user event handler------------*/
+const apiUrl = "http://localhost/MacaroniPanel/scripts/userAdmin.php";
+
+let pwInputName = "showPW";
+let editPWName = "#editUserDialog input[name=\"pw\"]";
+
+let pageBackButton = "pageBack";
+let pageForwardButton = "pageForward";
+
 //If the site has loaded, the event listeners will be added to the elements
 document.addEventListener("DOMContentLoaded", () => {
+    editPWName = document.getElementById(pwInputName);
+    pwInputName = document.querySelector("#editUserDialog input[name=\"pw\"]");
+
+    pageBackButton = document.getElementById(pageBackButton);
+    pageForwardButton = document.getElementById(pageForwardButton);
+
+    pageBackButton.addEventListener("click", ()=>{
+        Table.currentSite--;
+        Table.drawSite();
+    });
+
+    pageForwardButton.addEventListener("click", ()=>{
+        Table.currentSite++;
+        Table.drawSite();
+    });
+
     //Setting up max entries
     const maxEntriesSelect = document.querySelector('select[name="maxEntries"]');
     let before = maxEntriesSelect.value;
@@ -9,12 +33,15 @@ document.addEventListener("DOMContentLoaded", () => {
         if (before != maxEntriesSelect.value) {
             Table.maxEntries = maxEntriesSelect.value;
             before = maxEntriesSelect.value;
+            Table.currentSite = 1;
             Table.drawSite();
         }
     });
+
     //Getting Data from API
     Table.drawTableHeader();
     Table.getDataFromApi();
+
     //points at buttons that opens and closes the dialog
     const userAddButton = ".addUserButton";
     const userAddDialog = "#addUserDialog";
@@ -28,20 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 closeElement(userAddDialog);
             } else {
                 openElement(userAddDialog);
-            }
-        });
-    }
-    //points at buttons that opens and closes the dialog
-    const userEditButtonName = ".editUser";
-    const userEditElements = document.querySelectorAll(userEditButtonName);
-    const userEditDialog = "#editUserDialog";
-    for (const userEditButton of userEditElements) {
-        userEditButton.addEventListener("click", (element) => {
-            console.log(element);
-            if (userEditButton.classList.contains("open")) {
-                closeElement(userEditDialog);
-            } else {
-                openElement(userEditDialog);
             }
         });
     }
@@ -77,38 +90,79 @@ document.addEventListener("DOMContentLoaded", () => {
         //xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
         xhr.send(params);
     });
+
+    //Selectors above
+    //opens the password field
+    editPWName.addEventListener("click", ()=>{
+        togglePWField();
+    });
+    const editUserButton = document.getElementById("editUser");
+    editUserButton.addEventListener("click", ()=>{
+        const uid = document.querySelectorAll('#editUserDialog input[name="uid"]').value;
+        console.log(uid);
+
+    });
+
+
 });
 
+function togglePWField() {
+    if(pwInputName.classList.contains("hidden")){
+        editPWName.classList.add("hidden");
+        pwInputName.classList.remove("hidden");
+    }else{
+        editPWName.classList.remove("hidden");
+        pwInputName.classList.add("hidden");
+    }
+    console.log(editPWName);
+}
+
 class Table {
+    /**
+     * @type array
+     * Contains the data, that was requested from userUser.php script
+     */
     static data;
+    /**
+     * @type {number}
+     * maxEntries will be set when the site was loaded.
+     * Will be modified, if the user changes the select input field of the page
+     */
     static maxEntries;
+    /**
+     * @type {number}
+     * The first page will be shown at default. Will be modified by the site button on the button.
+     */
     static currentSite = 1;
 
     static getDataFromApi() {
-        fetch('http://localhost:8080/scripts/userAdmin.php')
+        fetch(apiUrl)
             .then((response) => {
                 return response.json();
             })
             .then((data) => {
                 self.data = data;
-                Table.drawSite(this.currentSite);
-                Table.drawSiteButtons();
+                Table.drawSite();
             });
     }
 
     static drawSiteButtons() {
         const buttonContainer = document.querySelector("#clickableSites");
         buttonContainer.innerHTML = "";
+        if(Number(this.currentSite) === 1) pageBackButton.classList.add("hidden");
+        else pageBackButton.classList.remove("hidden");
+        if(Number(this.currentSite) === Table.numOfPages()) pageForwardButton.classList.add("hidden");
+        else pageForwardButton.classList.remove("hidden");
+
         for (let i = 1; i <= this.numOfPages(); i++) {
             let pageButtonContainer = document.createElement("div");
             let pageButton = document.createElement("a");
             pageButton.dataset.id = i;
-            if (i === Table.currentSite) Number(pageButton.classList.add("selected"));
+            if (i === Number(Table.currentSite)) pageButton.classList.add("selected");
 
             pageButton.addEventListener("click", (element) => {
                 this.currentSite = element.target.dataset.id;
-                this.drawSite(this.currentSite);
-                this.drawSiteButtons();
+                this.drawSite();
             });
             let page = document.createTextNode(i);
             buttonContainer.appendChild(pageButtonContainer).appendChild(pageButton).appendChild(page);
@@ -174,13 +228,16 @@ class Table {
         editAction.addEventListener("click", (element)=>{
             if (document.querySelector(editDialog).classList.contains("open")) {
                 closeElement(editDialog);
-            } else {
-                openElement(editDialog);
-                document.querySelector('input[name="uid"]').value = element.dataset.username;
-                console.log(element.dataset.username);
-                document.querySelector('input[name="email"]').value = element.dataset.email;
+            } else{
+                if(element.explicitOriginalTarget.parentElement.dataset.username != undefined){
+                    openElement(editDialog);
+                    document.querySelector('#editUserDialog input[name="uid"]').placeholder = element.explicitOriginalTarget.parentElement.dataset.username;
+                    document.querySelector('#editUserDialog input[name="email"]').placeholder = element.explicitOriginalTarget.parentElement.dataset.email;
+                    document.querySelector('#editUserDialog select[name="type"]').value = element.explicitOriginalTarget.parentElement.dataset.role;
+                }
             }
         });
+
         const editIcon = document.createElement("img");
         editIcon.src = "../assets/icons/feather/edit.svg";
         buttonContainer.appendChild(editAction).appendChild(editIcon);

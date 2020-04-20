@@ -1,5 +1,5 @@
 <div class="width50 main-wrapper">
-    <form class="signUp" action="<?php echo Loader::$jump?>scripts/addUser.php?r=/install/index.php" method="post">
+    <form class="userInput" action="<?php echo Loader::$jump?>scripts/addUser.php?r=/install/index.php" method="post">
         <h2>Add a account</h2>
         <?php
         if ($getSignup == "uidtaken") {

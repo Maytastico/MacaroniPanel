@@ -16,11 +16,11 @@ include_once "../_includes/header.inc.php";
 
 <body id="admin">
 <div id="addUserDialog" class="editDialog box centered width50 main-wrapper">
-    <button class="flex left addUserButton icon">
+    <button class="flex left addUserButton icon small">
         <img src="<?php echo Loader::$jump ?>/assets/icons/feather/x-circle.svg">
     </button>
 
-    <div class="row signUp">
+    <div class="row userInput">
         <h2>Add an user</h2>
         <input type="text" name="uid" placeholder="Username" value="test">
         <input type="text" name="e-mail" placeholder="E-Mail" value="d@d.com">
@@ -32,19 +32,21 @@ include_once "../_includes/header.inc.php";
     </div>
 </div>
 <div id="editUserDialog" class="editDialog box centered width50 main-wrapper">
-    <button class="flex left icon" onclick="closeElement('#editUserDialog')">
+    <button class="flex left icon small" onclick="closeElement('#editUserDialog');togglePWField();">
         <img src="<?php echo Loader::$jump ?>/assets/icons/feather/x-circle.svg">
     </button>
 
-    <div class="row signUp">
+    <div class="row userInput">
         <h2>Edit an user</h2>
+        <a id="showPW" class="link text left">Change Password</a>
+        <input class="hidden" type="password" name="pw" placeholder="New password">
         <input type="text" name="uid" placeholder="Username" >
         <input type="text" name="email" placeholder="E-Mail" >
-        <input type="password" name="pw" placeholder="Password">
+
         <input id="csrfToken" type="hidden" value="<?php echo $a->getSessionID();?>">
         <div><?php RBACContent::showAvailableRolesAsDropdown(); ?></div>
         <div class="dialog"></div>
-        <button id="addUser">Add User</button>
+        <button id="editUser">Edit User</button>
     </div>
 </div>
 <section id="content">
@@ -73,11 +75,11 @@ include_once "../_includes/header.inc.php";
     </table>
 
     <section id="sites" class="flex">
-        <div id="back"><a class="small"><img class="invert"
+        <div id="pageBack"><a class="small"><img class="invert"
                                              src="<?php echo Loader::$jump ?>/assets/icons/feather/arrow-left.svg"></a>
         </div>
         <section class="flex" id="clickableSites"></section>
-        <div id="forward"><a class="small"><img class="invert"
+        <div id="pageForward"><a class="small"><img class="invert"
                                                 src="<?php echo Loader::$jump ?>/assets/icons/feather/arrow-right.svg"></a>
         </div>
     </section>

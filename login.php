@@ -17,7 +17,7 @@ if($aRes !== false){
             <section class="row main-container">
                 <div class="col main-wrapper">
                     <h2>Macaroni Dashboard<br> Login</h2>
-                    <form class="signUp" action="./scripts/login.php" method="post">
+                    <form class="userInput" action="./scripts/login.php" method="post">
                         <?php
                         if($getFeedback == "noUid"){
                             echo '<div class="red"><input type="text" name="uid" placeholder="Username" class="red" value="'.$uid.'"> This user does not exist!</div>';
