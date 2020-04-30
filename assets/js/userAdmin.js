@@ -15,12 +15,12 @@ document.addEventListener("DOMContentLoaded", () => {
     pageBackButton = document.getElementById(pageBackButton);
     pageForwardButton = document.getElementById(pageForwardButton);
 
-    pageBackButton.addEventListener("click", ()=>{
+    pageBackButton.addEventListener("click", () => {
         Table.currentSite--;
         Table.drawSite();
     });
 
-    pageForwardButton.addEventListener("click", ()=>{
+    pageForwardButton.addEventListener("click", () => {
         Table.currentSite++;
         Table.drawSite();
     });
@@ -52,9 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
         userAddButton.addEventListener("click", (element) => {
             console.log(element);
             if (userAddDialogElement.classList.contains("open")) {
-                closeElement(userAddDialog);
+                Dialog.closeElement(userAddDialog);
             } else {
-                openElement(userAddDialog);
+                Dialog.openElement(userAddDialog);
             }
         });
     }
@@ -93,13 +93,73 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //Selectors above
     //opens the password field
-    editPWName.addEventListener("click", ()=>{
+    editPWName.addEventListener("click", () => {
         togglePWField();
     });
     const editUserButton = document.getElementById("editUser");
-    editUserButton.addEventListener("click", ()=>{
-        const uid = document.querySelectorAll('#editUserDialog input[name="uid"]').value;
-        console.log(uid);
+    editUserButton.addEventListener("click", () => {
+        let uid = document.querySelector('#editUserDialog input[name="uid"]');
+        let pw = document.querySelector('#editUserDialog input[name="pw"]');
+        let role = document.querySelector('#editUserDialog select[name="type"]');
+        let email = document.querySelector('#editUserDialog input[name="email"]');
+        const dialogField = document.querySelector('#editUserDialog .dialog');
+        const params = {
+            ["csrf"]: getCSRFToken(),
+            ["identifierUid"]: uid.placeholder,
+            ["newUid"]: uid.value,
+            ["newPW"]: pw.value,
+            ["role"]: role.value,
+            ["newEmail"]: email.value
+        };
+        let responseStatus;
+        fetch(apiUrl, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': getSessionID(),
+            },
+            body: JSON.stringify(params),
+        }).then((response) => {
+            if(response.status === 401){
+                location.reload(true);
+            }else if(response.status === 403){
+                dialogField.classList.add("red");
+                dialogField.innerHTML = "You are not authorized to edit an user";
+            }else if(response.status === 200){
+                dialogField.innerHTML = "Edited user successfully";
+                dialogField.classList.remove("red");
+                dialogField.classList.add("success");
+                uid.value = "";
+                pw.value = "";
+                email.value = "";
+                Table.getDataFromApi();
+            }
+            responseStatus = response.status;
+            return response.json();
+        })
+            .then((data) => {
+                if(responseStatus === 400){
+                    dialogField.classList.remove("success");
+                    if (data.error === "empty"){
+                        dialogField.classList.add("red");
+                        dialogField.innerHTML = "You have forgot to enter something into the fields";
+                    }else if(data.error === "admin" ){
+                        dialogField.classList.add("red");
+                        dialogField.innerHTML = "You are not allowed to enter \"admin\" as a username!";
+                    }else if(data.error === "pw" ){
+                        dialogField.classList.add("red");
+                        dialogField.innerHTML = "The password you have entered is too short";
+                    }else if(data.error === "usernameExists" ){
+                        dialogField.classList.add("red");
+                        dialogField.innerHTML = "This username already exists!";
+                    }else if(data.error === "email" ){
+                        dialogField.classList.add("red");
+                        dialogField.innerHTML = "This email format is not right";
+                    }
+                }
+                console.log("Success: ", data);
+            }).catch((error) => {
+        });
 
     });
 
@@ -107,20 +167,31 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function togglePWField() {
-    if(pwInputName.classList.contains("hidden")){
+    if (pwInputName.classList.contains("hidden")) {
         editPWName.classList.add("hidden");
         pwInputName.classList.remove("hidden");
-    }else{
+    } else {
         editPWName.classList.remove("hidden");
         pwInputName.classList.add("hidden");
     }
-    console.log(editPWName);
+}
+
+function toggleLoading() {
+    const overlay = document.createElement("div");
+    overlay.classList.add("overlay");
+    overlay.classList.add("open");
+    overlay.classList.add("loadingContainer");
+    const loading = document.createElement("div");
+    loading.classList.add("loading");
+    loading.classList.add("center");
+    loading.classList.add("icon");
+    const body = document.querySelector("body").appendChild(overlay).appendChild(loading);
 }
 
 class Table {
     /**
      * @type array
-     * Contains the data, that was requested from userUser.php script
+     * Contains the data, that was requested from the userUser.php script
      */
     static data;
     /**
@@ -136,22 +207,38 @@ class Table {
     static currentSite = 1;
 
     static getDataFromApi() {
-        fetch(apiUrl)
+        let dialog = new Dialog();
+        dialog.loadingDialog();
+        dialog.message("Loading Data");
+        dialog.open();
+        fetch(`${apiUrl}?csrf=${getCSRFToken()}`, {
+            headers: {
+                'Authorization': getSessionID()
+            }
+        })
             .then((response) => {
+                if(response.status === 401){
+                    location.reload(true);
+                }else if(response.status === 200){
+                    dialog.close();
+                }
                 return response.json();
             })
             .then((data) => {
                 self.data = data;
                 Table.drawSite();
-            });
+            }).catch(()=>{
+                location.reload(true);
+            }
+        );
     }
 
     static drawSiteButtons() {
         const buttonContainer = document.querySelector("#clickableSites");
         buttonContainer.innerHTML = "";
-        if(Number(this.currentSite) === 1) pageBackButton.classList.add("hidden");
+        if (Number(this.currentSite) === 1) pageBackButton.classList.add("hidden");
         else pageBackButton.classList.remove("hidden");
-        if(Number(this.currentSite) === Table.numOfPages()) pageForwardButton.classList.add("hidden");
+        if (Number(this.currentSite) === Table.numOfPages()) pageForwardButton.classList.add("hidden");
         else pageForwardButton.classList.remove("hidden");
 
         for (let i = 1; i <= this.numOfPages(); i++) {
@@ -225,12 +312,12 @@ class Table {
         editAction.dataset.username = element.username;
         editAction.dataset.email = element.email;
         editAction.dataset.role = element.role;
-        editAction.addEventListener("click", (element)=>{
+        editAction.addEventListener("click", (element) => {
             if (document.querySelector(editDialog).classList.contains("open")) {
-                closeElement(editDialog);
-            } else{
-                if(element.explicitOriginalTarget.parentElement.dataset.username != undefined){
-                    openElement(editDialog);
+                Dialog.closeElement(editDialog);
+            } else {
+                if (element.explicitOriginalTarget.parentElement.dataset.username != undefined) {
+                    Dialog.openElement(editDialog);
                     document.querySelector('#editUserDialog input[name="uid"]').placeholder = element.explicitOriginalTarget.parentElement.dataset.username;
                     document.querySelector('#editUserDialog input[name="email"]').placeholder = element.explicitOriginalTarget.parentElement.dataset.email;
                     document.querySelector('#editUserDialog select[name="type"]').value = element.explicitOriginalTarget.parentElement.dataset.role;

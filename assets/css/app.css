@@ -64,11 +64,19 @@ body#dashboard {
 .flex.left{
     justify-content: left;
 }
+.flex.center{
+    align-items: center;
+    justify-content: center;
+}
+.flex.column{
+    flex-direction: column;
+}
 .left{
     text-align: left;
 }
 .center{
     text-align: center;
+    margin: auto;
 }
 .right{
     text-align: right;
@@ -208,9 +216,10 @@ button.icon, a.icon{
 }
 
 .loading {
-    min-width: 1.5em;
-    min-height: 1.5em;
+    height: 25vw;
+    width: 25vw;
     background-image: url("../icons/feather/loader.svg");
+    filter: invert();
     background-repeat: no-repeat;
     background-size: cover;
     animation-name: rotation;
@@ -218,7 +227,20 @@ button.icon, a.icon{
     animation-iteration-count: infinite;
     animation-timing-function: linear;
 }
-
+.overlay{
+    display: none;
+    color: white;
+    font-size: 1.5em;
+}
+.overlay.open{
+    display: block;
+    background-color: rgba(0,0,0,0.5);
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+}
 a.selected{
     background-color: #C7C7C7;
     border-color: #C7C7C7;

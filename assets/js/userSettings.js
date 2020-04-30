@@ -20,19 +20,19 @@ document.addEventListener("DOMContentLoaded", ()=>{
         settingsButton.addEventListener("click", () =>{
             if(!settingsElement.classList.contains("open")){
                 //Opens the "Settings" dialog
-                openElement(settingsElementPath);
+                Dialog.openElement(settingsElementPath);
 
                 //Closes the profilemenu from the navigation
-                closeElement(profileMenuPath);
+                Dialog.closeElement(profileMenuPath);
                 //Closes the navigation
                 closeNav();
             }else{
                 //If the Settings dialog was opened and the user
                 //triggers the event if will close setting, password or
                 // profile picture dialog
-                closeElement(settingsElementPath);
-                closeElement(pwDialogPath);
-                closeElement(picUploadElement);
+                Dialog.closeElement(settingsElementPath);
+                Dialog.closeElement(pwDialogPath);
+                Dialog.closeElement(picUploadElement);
             }
         });
     }
@@ -44,10 +44,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
     for (const changePWButton of changePWButtons){
         changePWButton.addEventListener("click", () =>{
             if(!changePWElement.classList.contains("open")){
-                openElement(pwDialogPath);
-                closeElement(picUploadElement);
+                Dialog.openElement(pwDialogPath);
+                Dialog.closeElement(picUploadElement);
             }else{
-                closeElement(pwDialogPath);
+                Dialog.closeElement(pwDialogPath);
             }
         });
     }
@@ -59,10 +59,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
     for (const changePicButton of changePicButtons){
         changePicButton.addEventListener("click", () =>{
             if(!changePicElement.classList.contains("open")){
-                openElement(picUploadElement);
-                closeElement(pwDialogPath);
+                Dialog.openElement(picUploadElement);
+                Dialog.closeElement(pwDialogPath);
             }else{
-                closeElement(picUploadElement);
+                Dialog.closeElement(picUploadElement);
             }
         });
     }

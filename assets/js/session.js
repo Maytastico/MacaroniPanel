@@ -10,6 +10,6 @@ function getSessionID() {
 }
 
 function getCSRFToken(){
-    const CSRFContainer = document.getElementById("csrfToken");
-    return CSRFContainer.value;
+    const CSRFContainer = document.querySelector("body");
+    return CSRFContainer.dataset.csrf;
 }

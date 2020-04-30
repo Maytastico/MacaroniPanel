@@ -18,10 +18,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
     profileButton.addEventListener("click", () =>{
         if(!profileMenue.classList.contains("open")){
             //opens the profile menu
-            openElement(profileMenuPath);
+            Dialog.openElement(profileMenuPath);
         }else{
             //closes the profile menu
-            closeElement(profileMenuPath);
+            Dialog.closeElement(profileMenuPath);
         }
     });
 

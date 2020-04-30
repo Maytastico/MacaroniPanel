@@ -307,7 +307,8 @@ class User
      * @param $newUsername
      * @return bool
      * $newUsername should contain the new username of the user
-     * Changes the username of a user. This method is used in scripts that change properties of a user.
+     * Changes the username of a user. It also checks whether there is already a user with the new username.
+     * This method is used in scripts that change properties of users.
      * true: The username was changed successful.
      * false: The user does not exist or something went wrong during the changing process.
      */

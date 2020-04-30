@@ -27,7 +27,7 @@
                 <?php
                 //will shows a button that redirectes to an adminpanel when the user has the permission to show the adminpanel
                 if ($a->hasPermission("adminpanel.show")) {
-                    echo '<a id="adminButton" href="'.Config::getFolder().'/dashboard/admin.php">Admin Panel</a>';
+                    echo '<a id="adminButton" href="'.Config::getFolder().'/dashboard/administration.php">Admin Panel</a>';
                 }
                 ?>
             </form>
