@@ -15,6 +15,7 @@ class userAdmin
         try {
             $input = json_decode(file_get_contents('php://input'), true);
             if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+                //todo check whether a get request was send
                 $this->authorize($_GET["csrf"]);
                 if ($this->requestFromUser->hasPermission("adminpanel.show"))
                     $result = $this->get();

@@ -7,8 +7,14 @@ let editPWName = "#editUserDialog input[name=\"pw\"]";
 let pageBackButton = "pageBack";
 let pageForwardButton = "pageForward";
 
+let loading = new Dialog(false, false);
 //If the site has loaded, the event listeners will be added to the elements
 document.addEventListener("DOMContentLoaded", () => {
+    loading.generateOverlay();
+    loading.generateLoadingDialog();
+    loading.addMessage("dataLoading", "Loading Data");
+
+
     editPWName = document.getElementById(pwInputName);
     pwInputName = document.querySelector("#editUserDialog input[name=\"pw\"]");
 
@@ -132,6 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 uid.value = "";
                 pw.value = "";
                 email.value = "";
+                loading.editMessage("dataLoading", "Refreshing Data");
                 Table.getDataFromApi();
             }
             responseStatus = response.status;
@@ -176,18 +183,6 @@ function togglePWField() {
     }
 }
 
-function toggleLoading() {
-    const overlay = document.createElement("div");
-    overlay.classList.add("overlay");
-    overlay.classList.add("open");
-    overlay.classList.add("loadingContainer");
-    const loading = document.createElement("div");
-    loading.classList.add("loading");
-    loading.classList.add("center");
-    loading.classList.add("icon");
-    const body = document.querySelector("body").appendChild(overlay).appendChild(loading);
-}
-
 class Table {
     /**
      * @type array
@@ -207,10 +202,7 @@ class Table {
     static currentSite = 1;
 
     static getDataFromApi() {
-        let dialog = new Dialog();
-        dialog.loadingDialog();
-        dialog.message("Loading Data");
-        dialog.open();
+        loading.open();
         fetch(`${apiUrl}?csrf=${getCSRFToken()}`, {
             headers: {
                 'Authorization': getSessionID()
@@ -220,7 +212,7 @@ class Table {
                 if(response.status === 401){
                     location.reload(true);
                 }else if(response.status === 200){
-                    dialog.close();
+                    loading.close();
                 }
                 return response.json();
             })
@@ -300,6 +292,45 @@ class Table {
         deleteAction.classList.add("red");
         deleteAction.classList.add("deleteUser");
         deleteAction.dataset.username = element.username;
+        deleteAction.addEventListener("click", ()=> {
+            let deleteDialog = new Dialog();
+            deleteDialog.generateOverlay();
+            deleteDialog.addMessage(`delete${element.username}`, `Do you really want to delete ${element.username}?`);
+            deleteDialog.generateButtonContainer();
+            deleteDialog.addButton("deleteUser", "red", "Delete User").addEventListener("click", () => {
+                const params = {
+                    ["csrf"]: getCSRFToken(),
+                    ["identifierUid"]: element.username
+                };
+                fetch(apiUrl, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': getSessionID(),
+                    },
+                    body: JSON.stringify(params),
+                }).then((response) => {
+                    deleteDialog.destroy();
+                    if (response.status === 401) {
+                        location.reload(true);
+                    } else if (response.status === 403) {
+                        let nope = new Dialog(true, true);
+                        nope.generateOverlay();
+                        nope.generateExclamationMarkDialog();
+                        nope.addMessage("nope", "You do not have the permission to delete this user!");
+                        nope.open();
+                    } else if (response.status === 200) {
+                        loading.editMessage("dataLoading", "Refreshing Data");
+                        Table.getDataFromApi();
+                    }
+                    return response.json();
+                });
+            });
+            deleteDialog.addButton("Cancel", "", "Cancel").addEventListener("click", () => {
+                deleteDialog.destroy();
+            });
+            deleteDialog.open();
+        });
         const deleteIcon = document.createElement("img");
         deleteIcon.src = "../assets/icons/feather/trash-2.svg";
         buttonContainer.appendChild(deleteAction).appendChild(deleteIcon);
@@ -324,11 +355,9 @@ class Table {
                 }
             }
         });
-
         const editIcon = document.createElement("img");
         editIcon.src = "../assets/icons/feather/edit.svg";
         buttonContainer.appendChild(editAction).appendChild(editIcon);
-
     }
 
     static numOfPages() {
