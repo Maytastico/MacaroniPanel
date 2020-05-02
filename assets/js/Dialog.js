@@ -34,15 +34,21 @@ class Dialog {
                 case "exclamationMark":
                     this.generateExclamationMarkDialog();
                     break;
+                default:
+                    this.generateTextDialog(settings["type"]);
+                    break;
             }
         }
         if (settings.hasOwnProperty("feedbackMsg"))
             this.addMessage("feedback", settings["feedbackMsg"]);
-        if(settings.hasOwnProperty("generateButtonContainer"))
-            if(settings["generateButtonContainer"]===true)
+        if (settings.hasOwnProperty("generateButtonContainer"))
+            if (settings["generateButtonContainer"] === true)
                 this.generateButtonContainer()
-
+        if (settings.hasOwnProperty("open"))
+            if (settings["open"] === true)
+                this.open();
     }
+
 
     /**
      * @param properties
@@ -55,7 +61,8 @@ class Dialog {
      * Adds an close button to the dialog. Will be executed inside the constructor.
      */
     generateCloseButton(properties) {
-        let closeButton = document.createElement("a");
+        const closeButtonContainer = document.createElement("div");
+        const closeButton = document.createElement("a");
         closeButton.classList.add("flex");
         closeButton.classList.add("center");
         let icon = document.createTextNode("X");
@@ -85,17 +92,17 @@ class Dialog {
             icon.src = properties["customIcon"];
         }
         if (properties.hasOwnProperty("action")) {
-            if(properties["action"]==="destroy"){
+            if (properties["action"] === "destroy") {
                 closeButton.addEventListener("click", () => {
                     this.destroy();
                 });
-                this.dialog.appendChild(closeButton).appendChild(icon);
+                this.dialog.appendChild(closeButtonContainer).appendChild(closeButton).appendChild(icon);
             }
         } else {
             closeButton.addEventListener("click", () => {
                 this.close();
             });
-            this.dialog.appendChild(closeButton).appendChild(icon);
+            this.dialog.appendChild(closeButtonContainer).appendChild(closeButton).appendChild(icon);
         }
 
     }
@@ -137,6 +144,19 @@ class Dialog {
         loading.style = "font-size: 5em;";
         loading.classList.add("center");
         const exclamationMark = document.createTextNode("!");
+        this.dialog.appendChild(loading).appendChild(exclamationMark);
+    }
+
+    /**
+     * Adds an element to the overlay that contains a text to give feedback to the user.
+     * You can imply that something went wrong.
+     */
+    generateTextDialog(text) {
+        const loading = document.createElement("section");
+        loading.dataset.name = "textDialog";
+        loading.style = "font-size: 5em;";
+        loading.classList.add("center");
+        const exclamationMark = document.createTextNode(text);
         this.dialog.appendChild(loading).appendChild(exclamationMark);
     }
 

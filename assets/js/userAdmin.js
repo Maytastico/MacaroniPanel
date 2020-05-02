@@ -56,7 +56,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const userAddDialogElement = document.querySelector(userAddDialog);
     for (const userAddButton of userAddToggleElement) {
         userAddButton.addEventListener("click", (element) => {
-            console.log(element);
             if (userAddDialogElement.classList.contains("open")) {
                 Dialog.closeElement(userAddDialog);
             } else {
@@ -68,33 +67,76 @@ document.addEventListener("DOMContentLoaded", () => {
     /*------User Add Send data----*/
     const addUserSendButton = document.querySelector(addUserSend);
     addUserSendButton.addEventListener("click", () => {
-        const uid = document.querySelector('.signUp input[name="uid"]').value;
-        const eMail = document.querySelector('.signUp input[name="e-mail"]').value;
-        const pw = document.querySelector('.signUp input[name="pw"]').value;
-        const type = document.querySelector('.signUp select[name="type"]').value;
-        const publicCSRF = document.querySelector('#csrfToken').value;
-        const xhr = new XMLHttpRequest();
-        const url = `https://localhost/MacaroniPanel/scripts/userAdmin.php`;
-        const params = `PHPSESSID=${getSessionID()}&uid=${uid}&email=${eMail}&pw=${pw}&type=${type}`;
-        console.log(params);
-        xhr.addEventListener("readystatechange", function () {
-            console.log(this.readyState);
-            if (this.readyState === 4) {
-                console.log("Response from API");
-                console.log(this.responseText);
+        const uid = document.querySelector('#addUserDialog input[name="uid"]').value;
+        const email = document.querySelector('#addUserDialog input[name="e-mail"]').value;
+        const pw = document.querySelector('#addUserDialog input[name="pw"]').value;
+        const role = document.querySelector('#addUserDialog select[name="type"]').value;
+        const dialogField = document.querySelector('#addUserDialog .dialog');
+        let params = {
+            ["csrf"]: getCSRFToken(),
+            ["uid"]: uid.value,
+            ["pw"]: pw.value,
+            ["email"]: email.value,
+            ["role"]: role.value,
+            ["newEmail"]: email.value
+        };
+        let responseStatus;
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': getSessionID(),
+            },
+            body: JSON.stringify(params),
+        }).then((response) => {
+            if (response.status === 401) {
+                location.reload(true);
+            } else if (response.status === 403) {
+                dialogField.classList.add("red");
+                dialogField.classList.remove("success");
+                dialogField.innerHTML = "You are not authorized to edit an user";
+            } else if (response.status === 200) {
+                dialogField.innerHTML = "Edited user successfully";
+                dialogField.classList.remove("red");
+                dialogField.classList.add("success");
+                uid.placeholder = params["newUid"];
+                uid.value = "";
+                pw.value = "";
+                email.value = "";
+                loading.editMessage("dataLoading", "Refreshing Data");
+                Table.getDataFromApi();
             }
-            if (this.status === 200) {
-                const dialog = document.querySelector(".signUp .dialog");
-                dialog.innerHTML = "Success";
-                dialog.classList.add("success");
-            }
+            responseStatus = response.status;
+            return response.json();
+        })
+            .then((data) => {
+                if (responseStatus === 400) {
+                    dialogField.classList.remove("success");
+                    if (data.error === "empty") {
+                        dialogField.classList.add("red");
+                        dialogField.innerHTML = "You have forgot to enter something into the fields";
+                    } else if (data.error === "admin") {
+                        dialogField.classList.add("red");
+                        dialogField.innerHTML = "You are not allowed to enter \"admin\" as a username!";
+                    } else if (data.error === "pw") {
+                        dialogField.classList.add("red");
+                        dialogField.innerHTML = "The password you have entered is too short";
+                    } else if (data.error === "usernameExists") {
+                        dialogField.classList.add("red");
+                        dialogField.innerHTML = "This username already exists!";
+                    } else if (data.error === "email") {
+                        dialogField.classList.add("red");
+                        dialogField.innerHTML = "This email format is not right";
+                    }else if(data.error === "userNotExist"){
+                        dialogField.classList.add("red");
+                        dialogField.innerHTML = "The user you wanted to edit does not exist!";
+                    }else{
+                        dialogField.classList.add("red");
+                        dialogField.innerHTML = "Something went wrong";
+                    }
+                }
+            }).catch((error) => {
         });
-        // Add the required HTTP header for form data POST requests
-
-        xhr.open("PUT", url, true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        //xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
-        xhr.send(params);
     });
 
     //Selectors above
@@ -130,11 +172,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 location.reload(true);
             } else if (response.status === 403) {
                 dialogField.classList.add("red");
+                dialogField.classList.remove("success");
                 dialogField.innerHTML = "You are not authorized to edit an user";
             } else if (response.status === 200) {
                 dialogField.innerHTML = "Edited user successfully";
                 dialogField.classList.remove("red");
                 dialogField.classList.add("success");
+                uid.placeholder = params["newUid"];
                 uid.value = "";
                 pw.value = "";
                 email.value = "";
@@ -162,9 +206,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     } else if (data.error === "email") {
                         dialogField.classList.add("red");
                         dialogField.innerHTML = "This email format is not right";
+                    }else if(data.error === "userNotExist"){
+                        dialogField.classList.add("red");
+                        dialogField.innerHTML = "The user you wanted to edit does not exist!";
+                    }else{
+                        dialogField.classList.add("red");
+                        dialogField.innerHTML = "Something went wrong";
                     }
                 }
-                console.log("Success: ", data);
             }).catch((error) => {
         });
 
@@ -210,7 +259,7 @@ class Table {
         })
             .then((response) => {
                 if (response.status === 401) {
-                    location.reload(true);
+                    //location.reload(true);
                 } else if (response.status === 200) {
                     loading.close();
                 }
@@ -220,7 +269,12 @@ class Table {
                 self.data = data;
                 Table.drawSite();
             }).catch(() => {
-                location.reload(true);
+                let error = new Dialog({
+                    type: ":/",
+                    generateOverlay: true,
+                    feedbackMsg: "Getting data failed",
+                    open: true
+                })
             }
         );
     }
@@ -318,14 +372,22 @@ class Table {
                     if (response.status === 200) {
                         loading.editMessage("dataLoading", "Refreshing Data");
                         Table.getDataFromApi();
-                    } else {
+                    } else if(response.status === 403){
                         let nope = new Dialog({
                             generateOverlay: true,
                             close: {action: "destroy"},
                             feedbackMsg: "You do not have the permission to delete this user!",
-                            type: "exclamationMark"
+                            type: "exclamationMark",
+                            open: true
                         });
-                        nope.open();
+                    }else{
+                        let error = new Dialog({
+                            generateOverlay: true,
+                            close: {action: "destroy"},
+                            feedbackMsg: "Something went wrong :/",
+                            type: "exclamationMark",
+                            open : true
+                        });
                     }
                 });
             });

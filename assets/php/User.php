@@ -189,11 +189,10 @@ class User
      */
     public function removeUser()
     {
-        if ($this->userExists() === false) {
+        if ($this->userExists() === true) {
             try {
-
                 $stmt = Config::dbCon()->prepare("DELETE FROM users WHERE user_id=:user_id");
-                $stmt->bindParam(":uid", $this->user_id);
+                $stmt->bindParam(":user_id", $this->user_id);
                 $stmt->execute();
                 return true;
             } catch (PDOException $e) {
@@ -362,6 +361,32 @@ class User
     }
 
     /**
+     * @param $newPassword
+     * Contains the password, that the user wants.
+     * @return bool
+     * This method generates a new password for a specified user.
+     * Should be used, if a user has the right to do this. For example an administrator.
+     */
+    public function updatePasswordAsAdmin($newPassword)
+    {
+        if ($this->userExists() === true) {
+            try {
+                $newHashedPassword = $this->hashPW($newPassword);
+                $this->hashedPW = $newHashedPassword;
+                $stmt = Config::dbCon()->prepare("UPDATE users set password=:u_pw where user_id=:user_id");
+                $stmt->bindParam(":u_pw", $this->hashedPW);
+                $stmt->bindParam(":user_id", $this->user_id);
+                $stmt->execute();
+                return true;
+            } catch (PDOException $e) {
+                echo "Updating username failed: " . $e->getMessage();
+                exit();
+            }
+        }
+        return false;
+    }
+
+    /**
      * @param $newEmail
      * @return bool
      * $newEmail should contain the new email address of the user
@@ -388,6 +413,29 @@ class User
         }
     }
 
+    /**
+     * @param $roleID
+     * @return bool
+     * Modifies the role id of an user
+     */
+    public function updateRoleID($roleID)
+    {
+        if ($this->userExists() === true) {
+            try {
+                $this->roleID = $roleID;
+                $stmt = Config::dbCon()->prepare("UPDATE users set role_id=:u_role where user_id=:user_id");
+                $stmt->bindParam(":u_role", $this->roleID);
+                $stmt->bindParam(":user_id", $this->user_id);
+                $stmt->execute();
+                return true;
+            } catch (PDOException $e) {
+                echo "Updating email failed: " . $e->getMessage();
+                exit();
+            }
+        } else {
+            return false;
+        }
+    }
     /**
      * @param $id
      * @return bool|mixed

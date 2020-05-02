@@ -29,7 +29,6 @@ class userAdmin
             else
                 $this->ForbiddenError();
         } elseif ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
-            $this->ForbiddenError();
             $this->authorize($input["csrf"]);
             if ($this->requestFromUser->hasPermission("usermanager.removeUser"))
                 $this->delete($input);
@@ -67,46 +66,58 @@ class userAdmin
 
     private function update($data)
     {
-        if (empty($data["identifierUid"]) || (empty($data["newUid"]) && empty($data["newPW"]) && empty($data["newEmail"]))) {
-            $error = ["error" => "empty"];
-            echo json_encode($error);
+        if (empty($data["identifierUid"])) {
             $this->BadRequestError();
         } else {
-            if (strtolower($data["newUid"]) == "admin") {
-                $error = ["error" => "admin"];
+            $userToEdit = new Authenticator($data["identifierUid"]);
+            if (!$userToEdit->userExists()) {
+                $error = ["error" => "userNotExist"];
                 echo json_encode($error);
                 $this->BadRequestError();
             } else {
-                if (strlen($data["newPW"]) <= 8 && !empty($data["newPW"])) {
-                    $error = ["error" => "pw"];
+                if (empty($data["newUid"]) && empty($data["newPW"]) && empty($data["newEmail"]) && ($userToEdit->getRbac()->getRoleName() === $data["role"])) {
+                    $error = ["error" => "empty"];
                     echo json_encode($error);
                     $this->BadRequestError();
                 } else {
-                    if (!filter_var($data["newEmail"], FILTER_VALIDATE_EMAIL) && !empty($data["newEmail"])) {
-                        $error = ["error" => "email"];
+                    if (strtolower($data["newUid"]) == "admin") {
+                        $error = ["error" => "admin"];
                         echo json_encode($error);
                         $this->BadRequestError();
                     } else {
-                        //todo password!
-                        $userToEdit = new Authenticator($data["identifierUid"]);
-                        if (!empty($data["newUid"])) {
-                            if (!$userToEdit->updateUsername($data["newUid"])) {
-                                $error = ["error" => "usernameExists"];
+                        if (strlen($data["newPW"]) <= 8 && !empty($data["newPW"])) {
+                            $error = ["error" => "pw"];
+                            echo json_encode($error);
+                            $this->BadRequestError();
+                        } else {
+                            if (!filter_var($data["newEmail"], FILTER_VALIDATE_EMAIL) && !empty($data["newEmail"])) {
+                                $error = ["error" => "email"];
                                 echo json_encode($error);
                                 $this->BadRequestError();
+                            } else {
+                                if (!empty($data["newUid"])) {
+                                    if (!$userToEdit->updateUsername($data["newUid"])) {
+                                        $error = ["error" => "usernameExists"];
+                                        echo json_encode($error);
+                                        $this->BadRequestError();
+                                    }
+                                    $this->SuccessMessage();
+                                }
+                                if (!empty($data["newEmail"])) {
+                                    if (!$userToEdit->updateEmail($data["newEmail"])) {
+                                        $error = ["error" => "uidDoesNotExist"];
+                                        echo json_encode($error);
+                                        $this->BadRequestError();
+                                    }
+                                    $this->SuccessMessage();
+                                }
+                                if ($userToEdit->getRbac()->getRoleName() != $data["role"]) {
+                                    $userToEdit->updateRoleID(RBAC::fetchRoleIDFromName($data["role"]));
+                                }
+                                if (!empty($data["newPW"])) {
+                                    $userToEdit->updatePasswordAsAdmin($data["newPW"]);
+                                }
                             }
-                            $this->SuccessMessage();
-                        }
-                        if (!empty($data["newEmail"])) {
-                            if (!$userToEdit->updateEmail($data["newEmail"])) {
-                                $error = ["error" => "uidDoesNotExist"];
-                                echo json_encode($error);
-                                $this->BadRequestError();
-                            }
-                            $this->SuccessMessage();
-                        }
-                        if ($userToEdit->getRbac()->getRoleName() != $data["role"]) {
-
                         }
                     }
                 }
@@ -117,7 +128,12 @@ class userAdmin
 
     private function delete($data)
     {
-
+        $userToDelete = new User($data["identifierUid"]);
+        if ($userToDelete->removeUser() === true) {
+            $this->SuccessMessage();
+        } else {
+            $this->BadRequestError();
+        }
     }
 
     private function authorize($csrfToken)
