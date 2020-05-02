@@ -1,5 +1,6 @@
 //If the site has loaded, the event listeners will be added to the elements
 document.addEventListener("DOMContentLoaded", ()=>{
+
     //Contains the path to the setting buttons
     let settingsButtonPath = "button.userSettings";
     //Settings dialog path

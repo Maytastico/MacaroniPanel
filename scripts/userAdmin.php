@@ -11,33 +11,30 @@ class userAdmin
 
     public function indexAction()
     {
+        $input = json_decode(file_get_contents('php://input'), true);
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            //todo check whether a get request was send
+            $this->authorize($_GET["csrf"]);
+            if ($this->requestFromUser->hasPermission("adminpanel.show"))
+                $result = $this->get();
+            else
+                $this->ForbiddenError();
 
-        try {
-            $input = json_decode(file_get_contents('php://input'), true);
-            if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-                //todo check whether a get request was send
-                $this->authorize($_GET["csrf"]);
-                if ($this->requestFromUser->hasPermission("adminpanel.show"))
-                    $result = $this->get();
-                else
-                    $this->ForbiddenError();
-
-            } elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                $result = $this->create($_POST);
-            } elseif ($_SERVER['REQUEST_METHOD'] == 'PUT') {
-                $this->authorize($input["csrf"]);
-                if ($this->requestFromUser->hasPermission("usermanager.editUser"))
-                    $result = $this->update($input);
-                else
-                    $this->ForbiddenError();
-            } elseif ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
-                $result = $this->delete($input);
-            }
-
-        } catch (ApiException $e) {
-            if ($e->getCode() == ApiException::MALFORMED_INPUT) {
-                header('HTTP/1.0 409 Bad Request');
-            }
+        } elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $result = $this->create($_POST);
+        } elseif ($_SERVER['REQUEST_METHOD'] == 'PUT') {
+            $this->authorize($input["csrf"]);
+            if ($this->requestFromUser->hasPermission("usermanager.editUser"))
+                $result = $this->update($input);
+            else
+                $this->ForbiddenError();
+        } elseif ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
+            $this->ForbiddenError();
+            $this->authorize($input["csrf"]);
+            if ($this->requestFromUser->hasPermission("usermanager.removeUser"))
+                $this->delete($input);
+            else
+                $this->ForbiddenError();
         }
         header("Access-Control-Allow-Origin: *");
         header("Access-Control-Allow-Methods: POST, GET, PUT, DELETE");
@@ -62,53 +59,53 @@ class userAdmin
         return $response;
     }
 
-    private function create($input)
+    private
+    function create($input)
     {
         return $input;
     }
 
     private function update($data)
     {
-
-        if (empty($data["identifierUid"]) || (empty($data["newUid"]) && empty($data["newPW"]) && empty($data["newEmail"]))){
+        if (empty($data["identifierUid"]) || (empty($data["newUid"]) && empty($data["newPW"]) && empty($data["newEmail"]))) {
             $error = ["error" => "empty"];
             echo json_encode($error);
             $this->BadRequestError();
-        }else{
-            if(strtolower($data["newUid"]) == "admin"){
+        } else {
+            if (strtolower($data["newUid"]) == "admin") {
                 $error = ["error" => "admin"];
                 echo json_encode($error);
                 $this->BadRequestError();
-            }else{
-                if(strlen($data["newPW"])<=8 && !empty($data["newPW"])){
+            } else {
+                if (strlen($data["newPW"]) <= 8 && !empty($data["newPW"])) {
                     $error = ["error" => "pw"];
                     echo json_encode($error);
                     $this->BadRequestError();
-                }else{
-                    if(!filter_var($data["newEmail"], FILTER_VALIDATE_EMAIL) && !empty($data["newEmail"])){
+                } else {
+                    if (!filter_var($data["newEmail"], FILTER_VALIDATE_EMAIL) && !empty($data["newEmail"])) {
                         $error = ["error" => "email"];
                         echo json_encode($error);
                         $this->BadRequestError();
-                    }else{
+                    } else {
                         //todo password!
                         $userToEdit = new Authenticator($data["identifierUid"]);
-                        if(!empty($data["newUid"])){
-                            if(!$userToEdit->updateUsername($data["newUid"])){
+                        if (!empty($data["newUid"])) {
+                            if (!$userToEdit->updateUsername($data["newUid"])) {
                                 $error = ["error" => "usernameExists"];
                                 echo json_encode($error);
                                 $this->BadRequestError();
                             }
                             $this->SuccessMessage();
                         }
-                        if(!empty($data["newEmail"])){
-                            if(!$userToEdit->updateEmail($data["newEmail"])){
+                        if (!empty($data["newEmail"])) {
+                            if (!$userToEdit->updateEmail($data["newEmail"])) {
                                 $error = ["error" => "uidDoesNotExist"];
                                 echo json_encode($error);
                                 $this->BadRequestError();
                             }
                             $this->SuccessMessage();
                         }
-                        if($userToEdit->getRbac()->getRoleName() != $data["role"]){
+                        if ($userToEdit->getRbac()->getRoleName() != $data["role"]) {
 
                         }
                     }
@@ -120,7 +117,7 @@ class userAdmin
 
     private function delete($data)
     {
-        return array("success" => "poor user");
+
     }
 
     private function authorize($csrfToken)
@@ -168,6 +165,7 @@ class userAdmin
         header("HTTP/1.0 403 Forbidden");
         exit();
     }
+
     private function BadRequestError()
     {
         header("HTTP/1.0 400 Bad Request");

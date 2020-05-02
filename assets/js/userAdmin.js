@@ -7,7 +7,7 @@ let editPWName = "#editUserDialog input[name=\"pw\"]";
 let pageBackButton = "pageBack";
 let pageForwardButton = "pageForward";
 
-let loading = new Dialog(false, false);
+let loading = new Dialog();
 //If the site has loaded, the event listeners will be added to the elements
 document.addEventListener("DOMContentLoaded", () => {
     loading.generateOverlay();
@@ -126,12 +126,12 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             body: JSON.stringify(params),
         }).then((response) => {
-            if(response.status === 401){
+            if (response.status === 401) {
                 location.reload(true);
-            }else if(response.status === 403){
+            } else if (response.status === 403) {
                 dialogField.classList.add("red");
                 dialogField.innerHTML = "You are not authorized to edit an user";
-            }else if(response.status === 200){
+            } else if (response.status === 200) {
                 dialogField.innerHTML = "Edited user successfully";
                 dialogField.classList.remove("red");
                 dialogField.classList.add("success");
@@ -145,21 +145,21 @@ document.addEventListener("DOMContentLoaded", () => {
             return response.json();
         })
             .then((data) => {
-                if(responseStatus === 400){
+                if (responseStatus === 400) {
                     dialogField.classList.remove("success");
-                    if (data.error === "empty"){
+                    if (data.error === "empty") {
                         dialogField.classList.add("red");
                         dialogField.innerHTML = "You have forgot to enter something into the fields";
-                    }else if(data.error === "admin" ){
+                    } else if (data.error === "admin") {
                         dialogField.classList.add("red");
                         dialogField.innerHTML = "You are not allowed to enter \"admin\" as a username!";
-                    }else if(data.error === "pw" ){
+                    } else if (data.error === "pw") {
                         dialogField.classList.add("red");
                         dialogField.innerHTML = "The password you have entered is too short";
-                    }else if(data.error === "usernameExists" ){
+                    } else if (data.error === "usernameExists") {
                         dialogField.classList.add("red");
                         dialogField.innerHTML = "This username already exists!";
-                    }else if(data.error === "email" ){
+                    } else if (data.error === "email") {
                         dialogField.classList.add("red");
                         dialogField.innerHTML = "This email format is not right";
                     }
@@ -209,9 +209,9 @@ class Table {
             }
         })
             .then((response) => {
-                if(response.status === 401){
+                if (response.status === 401) {
                     location.reload(true);
-                }else if(response.status === 200){
+                } else if (response.status === 200) {
                     loading.close();
                 }
                 return response.json();
@@ -219,7 +219,7 @@ class Table {
             .then((data) => {
                 self.data = data;
                 Table.drawSite();
-            }).catch(()=>{
+            }).catch(() => {
                 location.reload(true);
             }
         );
@@ -292,12 +292,16 @@ class Table {
         deleteAction.classList.add("red");
         deleteAction.classList.add("deleteUser");
         deleteAction.dataset.username = element.username;
-        deleteAction.addEventListener("click", ()=> {
-            let deleteDialog = new Dialog();
-            deleteDialog.generateOverlay();
-            deleteDialog.addMessage(`delete${element.username}`, `Do you really want to delete ${element.username}?`);
-            deleteDialog.generateButtonContainer();
-            deleteDialog.addButton("deleteUser", "red", "Delete User").addEventListener("click", () => {
+        deleteAction.addEventListener("click", () => {
+            let deleteDialog = new Dialog({
+                generateOverlay: true,
+                feedbackMsg: `Do you really want to delete ${element.username}?`,
+                generateButtonContainer: true
+            });
+            deleteDialog.addButton("deleteUser", {
+                "additionalClasses": ["red"],
+                "msg": "Delete User"
+            }).addEventListener("click", () => {
                 const params = {
                     ["csrf"]: getCSRFToken(),
                     ["identifierUid"]: element.username
@@ -311,22 +315,21 @@ class Table {
                     body: JSON.stringify(params),
                 }).then((response) => {
                     deleteDialog.destroy();
-                    if (response.status === 401) {
-                        location.reload(true);
-                    } else if (response.status === 403) {
-                        let nope = new Dialog(true, true);
-                        nope.generateOverlay();
-                        nope.generateExclamationMarkDialog();
-                        nope.addMessage("nope", "You do not have the permission to delete this user!");
-                        nope.open();
-                    } else if (response.status === 200) {
+                    if (response.status === 200) {
                         loading.editMessage("dataLoading", "Refreshing Data");
                         Table.getDataFromApi();
+                    } else {
+                        let nope = new Dialog({
+                            generateOverlay: true,
+                            close: {action: "destroy"},
+                            feedbackMsg: "You do not have the permission to delete this user!",
+                            type: "exclamationMark"
+                        });
+                        nope.open();
                     }
-                    return response.json();
                 });
             });
-            deleteDialog.addButton("Cancel", "", "Cancel").addEventListener("click", () => {
+            deleteDialog.addButton("Cancel", {"msg": "Cancel"}).addEventListener("click", () => {
                 deleteDialog.destroy();
             });
             deleteDialog.open();
