@@ -47,6 +47,9 @@ class userAdmin
         $response = null;
         $i = 0;
         foreach ($userObj as $user) {
+            if($this->requestFromUser->getUsername() === $user["username"]){
+                continue;
+            }
             $u = new User($user["username"]);
             $response[$i]["profilePicture"] = $u->getCurrentProfilePicture();
             $response[$i]["username"] = $u->getUsername();
@@ -66,56 +69,63 @@ class userAdmin
 
     private function update($data)
     {
+
         if (empty($data["identifierUid"])) {
             $this->BadRequestError();
         } else {
-            $userToEdit = new Authenticator($data["identifierUid"]);
-            if (!$userToEdit->userExists()) {
-                $error = ["error" => "userNotExist"];
+            if ($this->requestFromUser->getUsername() === $data["identifierUid"]) {
+                $error = ["error" => "sameUser"];
                 echo json_encode($error);
                 $this->BadRequestError();
             } else {
-                if (empty($data["newUid"]) && empty($data["newPW"]) && empty($data["newEmail"]) && ($userToEdit->getRbac()->getRoleName() === $data["role"])) {
-                    $error = ["error" => "empty"];
+                $userToEdit = new Authenticator($data["identifierUid"]);
+                if (!$userToEdit->userExists()) {
+                    $error = ["error" => "userNotExist"];
                     echo json_encode($error);
                     $this->BadRequestError();
                 } else {
-                    if (strtolower($data["newUid"]) == "admin") {
-                        $error = ["error" => "admin"];
+                    if (empty($data["newUid"]) && empty($data["newPW"]) && empty($data["newEmail"]) && ($userToEdit->getRbac()->getRoleName() === $data["role"])) {
+                        $error = ["error" => "empty"];
                         echo json_encode($error);
                         $this->BadRequestError();
                     } else {
-                        if (strlen($data["newPW"]) <= 8 && !empty($data["newPW"])) {
-                            $error = ["error" => "pw"];
+                        if (strtolower($data["newUid"]) == "admin") {
+                            $error = ["error" => "admin"];
                             echo json_encode($error);
                             $this->BadRequestError();
                         } else {
-                            if (!filter_var($data["newEmail"], FILTER_VALIDATE_EMAIL) && !empty($data["newEmail"])) {
-                                $error = ["error" => "email"];
+                            if (strlen($data["newPW"]) <= 8 && !empty($data["newPW"])) {
+                                $error = ["error" => "pw"];
                                 echo json_encode($error);
                                 $this->BadRequestError();
                             } else {
-                                if (!empty($data["newUid"])) {
-                                    if (!$userToEdit->updateUsername($data["newUid"])) {
-                                        $error = ["error" => "usernameExists"];
-                                        echo json_encode($error);
-                                        $this->BadRequestError();
+                                if (!filter_var($data["newEmail"], FILTER_VALIDATE_EMAIL) && !empty($data["newEmail"])) {
+                                    $error = ["error" => "email"];
+                                    echo json_encode($error);
+                                    $this->BadRequestError();
+                                } else {
+                                    if (!empty($data["newUid"])) {
+                                        if (!$userToEdit->updateUsername($data["newUid"])) {
+                                            $error = ["error" => "usernameExists"];
+                                            echo json_encode($error);
+                                            $this->BadRequestError();
+                                        }
+                                        $this->SuccessMessage();
                                     }
-                                    $this->SuccessMessage();
-                                }
-                                if (!empty($data["newEmail"])) {
-                                    if (!$userToEdit->updateEmail($data["newEmail"])) {
-                                        $error = ["error" => "uidDoesNotExist"];
-                                        echo json_encode($error);
-                                        $this->BadRequestError();
+                                    if (!empty($data["newEmail"])) {
+                                        if (!$userToEdit->updateEmail($data["newEmail"])) {
+                                            $error = ["error" => "uidDoesNotExist"];
+                                            echo json_encode($error);
+                                            $this->BadRequestError();
+                                        }
+                                        $this->SuccessMessage();
                                     }
-                                    $this->SuccessMessage();
-                                }
-                                if ($userToEdit->getRbac()->getRoleName() != $data["role"]) {
-                                    $userToEdit->updateRoleID(RBAC::fetchRoleIDFromName($data["role"]));
-                                }
-                                if (!empty($data["newPW"])) {
-                                    $userToEdit->updatePasswordAsAdmin($data["newPW"]);
+                                    if ($userToEdit->getRbac()->getRoleName() != $data["role"]) {
+                                        $userToEdit->updateRoleID(RBAC::fetchRoleIDFromName($data["role"]));
+                                    }
+                                    if (!empty($data["newPW"])) {
+                                        $userToEdit->updatePasswordAsAdmin($data["newPW"]);
+                                    }
                                 }
                             }
                         }
@@ -128,11 +138,17 @@ class userAdmin
 
     private function delete($data)
     {
-        $userToDelete = new User($data["identifierUid"]);
-        if ($userToDelete->removeUser() === true) {
-            $this->SuccessMessage();
-        } else {
+        if ($this->requestFromUser->getUsername() === $data["identifierUid"]) {
+            $error = ["error" => "sameUser"];
+            echo json_encode($error);
             $this->BadRequestError();
+        } else {
+            $userToDelete = new User($data["identifierUid"]);
+            if ($userToDelete->removeUser() === true) {
+                $this->SuccessMessage();
+            } else {
+                $this->BadRequestError();
+            }
         }
     }
 

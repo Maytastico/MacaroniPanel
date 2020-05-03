@@ -405,19 +405,15 @@ class Table {
         editAction.classList.add("col");
         editAction.classList.add("radial");
         editAction.classList.add("editUser");
-        editAction.dataset.username = element.username;
-        editAction.dataset.email = element.email;
-        editAction.dataset.role = element.role;
-        editAction.addEventListener("click", (element) => {
+        editAction.addEventListener("click", () => {
             if (document.querySelector(editDialog).classList.contains("open")) {
                 Dialog.closeElement(editDialog);
             } else {
-                if (element.explicitOriginalTarget.parentElement.dataset.username != undefined) {
-                    Dialog.openElement(editDialog);
-                    document.querySelector('#editUserDialog input[name="uid"]').placeholder = element.explicitOriginalTarget.parentElement.dataset.username;
-                    document.querySelector('#editUserDialog input[name="email"]').placeholder = element.explicitOriginalTarget.parentElement.dataset.email;
-                    document.querySelector('#editUserDialog select[name="type"]').value = element.explicitOriginalTarget.parentElement.dataset.role;
-                }
+                console.log(element);
+                Dialog.openElement(editDialog);
+                document.querySelector('#editUserDialog input[name="uid"]').placeholder = element.username;
+                document.querySelector('#editUserDialog input[name="email"]').placeholder = element.email;
+                document.querySelector('#editUserDialog select[name="type"]').value = element.role;
             }
         });
         const editIcon = document.createElement("img");
