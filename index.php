@@ -10,6 +10,7 @@ include_once "_includes/autoloader.inc.php";
 Loader::jump(0);
 include_once "_includes/header.inc.php";
 
-$u = new User("890");
-var_dump($u->removeUser());
+$rbac = new RBAC("Moderator");
+$rbac->addPermission(2);
+$rbac->addRole();
 

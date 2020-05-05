@@ -10,6 +10,7 @@ let pageForwardButton = "pageForward";
 let loading = new Dialog();
 //If the site has loaded, the event listeners will be added to the elements
 document.addEventListener("DOMContentLoaded", () => {
+
     loading.generateOverlay();
     loading.generateLoadingDialog();
     loading.addMessage("dataLoading", "Loading Data");
@@ -67,19 +68,19 @@ document.addEventListener("DOMContentLoaded", () => {
     /*------User Add Send data----*/
     const addUserSendButton = document.querySelector(addUserSend);
     addUserSendButton.addEventListener("click", () => {
-        const uid = document.querySelector('#addUserDialog input[name="uid"]').value;
-        const email = document.querySelector('#addUserDialog input[name="e-mail"]').value;
-        const pw = document.querySelector('#addUserDialog input[name="pw"]').value;
+        let uid = document.querySelector('#addUserDialog input[name="uid"]').value;
+        let email = document.querySelector('#addUserDialog input[name="e-mail"]').value;
+        let pw = document.querySelector('#addUserDialog input[name="pw"]').value;
         const role = document.querySelector('#addUserDialog select[name="type"]').value;
         const dialogField = document.querySelector('#addUserDialog .dialog');
         let params = {
-            ["csrf"]: getCSRFToken(),
-            ["uid"]: uid.value,
-            ["pw"]: pw.value,
-            ["email"]: email.value,
-            ["role"]: role.value,
-            ["newEmail"]: email.value
+            csrf: getCSRFToken(),
+            uid :  uid,
+            pw: pw,
+            email: email,
+            role: role,
         };
+        console.log(params);
         let responseStatus;
         fetch(apiUrl, {
             method: 'POST',
@@ -94,22 +95,20 @@ document.addEventListener("DOMContentLoaded", () => {
             } else if (response.status === 403) {
                 dialogField.classList.add("red");
                 dialogField.classList.remove("success");
-                dialogField.innerHTML = "You are not authorized to edit an user";
+                dialogField.innerHTML = "You are not authorized to add an user";
             } else if (response.status === 200) {
-                dialogField.innerHTML = "Edited user successfully";
+                dialogField.innerHTML = "Added user successfully";
                 dialogField.classList.remove("red");
                 dialogField.classList.add("success");
-                uid.placeholder = params["newUid"];
-                uid.value = "";
-                pw.value = "";
-                email.value = "";
+                uid = "";
+                pw = "";
+                email = "";
                 loading.editMessage("dataLoading", "Refreshing Data");
                 Table.getDataFromApi();
             }
             responseStatus = response.status;
             return response.json();
-        })
-            .then((data) => {
+        }).then((data) => {
                 if (responseStatus === 400) {
                     dialogField.classList.remove("success");
                     if (data.error === "empty") {
@@ -136,6 +135,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
             }).catch((error) => {
+                let err = new Dialog({
+                    generateOverlay: true,
+                    close: {action:"destroy"},
+                    feedbackMsg: `An error occurred while adding an user!`,
+                    type: ":/",
+                    open: true
+                });
+                err.addMessage("error", error);
         });
     });
 
@@ -168,6 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             body: JSON.stringify(params),
         }).then((response) => {
+            console.log(params)
             if (response.status === 401) {
                 location.reload(true);
             } else if (response.status === 403) {
@@ -178,7 +186,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 dialogField.innerHTML = "Edited user successfully";
                 dialogField.classList.remove("red");
                 dialogField.classList.add("success");
-                uid.placeholder = params["newUid"];
+                ;
+                if(params["newUid"] === "")
+                    uid.placeholder = params["identifierUid"];
+                else
+                    uid.placeholder = params["newUid"];
                 uid.value = "";
                 pw.value = "";
                 email.value = "";

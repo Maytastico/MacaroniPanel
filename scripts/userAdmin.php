@@ -19,9 +19,12 @@ class userAdmin
                 $result = $this->get();
             else
                 $this->ForbiddenError();
-
         } elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $result = $this->create($_POST);
+            $this->authorize($input['csrf']);
+            if ($this->requestFromUser->hasPermission("usermanager.addUser"))
+                $result = $this->create($input);
+            else
+                $this->ForbiddenError();
         } elseif ($_SERVER['REQUEST_METHOD'] == 'PUT') {
             $this->authorize($input["csrf"]);
             if ($this->requestFromUser->hasPermission("usermanager.editUser"))
@@ -47,9 +50,8 @@ class userAdmin
         $response = null;
         $i = 0;
         foreach ($userObj as $user) {
-            if($this->requestFromUser->getUsername() === $user["username"]){
+            if ($this->requestFromUser->getUsername() === $user["username"])
                 continue;
-            }
             $u = new User($user["username"]);
             $response[$i]["profilePicture"] = $u->getCurrentProfilePicture();
             $response[$i]["username"] = $u->getUsername();
@@ -61,13 +63,51 @@ class userAdmin
         return $response;
     }
 
-    private
-    function create($input)
+    private function create($input)
     {
-        return $input;
+        $rbac = new RBAC($input["role"]);
+        if (empty($input["uid"]) && empty($input["email"]) && empty($input["pw"])) {
+            $error = ["error" => "empty"];
+            echo json_encode($error);
+            $this->BadRequestError();
+        } else {
+            if (!$rbac->roleExists()) {
+                $error = ["error" => "roleNotExist"];
+                echo json_encode($error);
+                $this->BadRequestError();
+            } else {
+                $u = new User($input["uid"]);
+                if ($u->userExists()) {
+                    $error = ["error" => "usernameExists"];
+                    echo json_encode($error);
+                    $this->BadRequestError();
+                } else {
+                    if (!filter_var($input["email"], FILTER_VALIDATE_EMAIL)) {
+                        $error = ["error" => "email"];
+                        echo json_encode($error);
+                        $this->BadRequestError();
+                    } else {
+                        if (strlen($input["pw"]) < 8) {
+                            $error = ["error" => "pw"];
+                            echo json_encode($error);
+                            $this->BadRequestError();
+                        } else {
+                            if (strtolower($input["uid"]) == "admin") {
+                                $error = ["error" => "admin"];
+                                echo json_encode($error);
+                                $this->BadRequestError();
+                            } else {
+                                $u->addUser($input["email"], $input["pw"], RBAC::fetchRoleIDFromName($input["role"]));
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    private function update($data)
+    private
+    function update($data)
     {
 
         if (empty($data["identifierUid"])) {
@@ -136,7 +176,8 @@ class userAdmin
         return $data;
     }
 
-    private function delete($data)
+    private
+    function delete($data)
     {
         if ($this->requestFromUser->getUsername() === $data["identifierUid"]) {
             $error = ["error" => "sameUser"];
@@ -152,7 +193,8 @@ class userAdmin
         }
     }
 
-    private function authorize($csrfToken)
+    private
+    function authorize($csrfToken)
     {
         $authKey = $this->getAuthKey();
         session_id($authKey);
@@ -169,7 +211,8 @@ class userAdmin
         $this->AuthenticationError();
     }
 
-    private function getAuthKey()
+    private
+    function getAuthKey()
     {
         if (function_exists('getallheaders')) {
             $header = getallheaders();
@@ -180,25 +223,29 @@ class userAdmin
         return false;
     }
 
-    private function SuccessMessage()
+    private
+    function SuccessMessage()
     {
         header("HTTP/1.0 200 OK");
         exit();
     }
 
-    private function AuthenticationError()
+    private
+    function AuthenticationError()
     {
         header("HTTP/1.0 401 Unauthorized");
         exit();
     }
 
-    private function ForbiddenError()
+    private
+    function ForbiddenError()
     {
         header("HTTP/1.0 403 Forbidden");
         exit();
     }
 
-    private function BadRequestError()
+    private
+    function BadRequestError()
     {
         header("HTTP/1.0 400 Bad Request");
         exit();
