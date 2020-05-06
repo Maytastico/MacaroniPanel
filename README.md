@@ -1,18 +1,19 @@
-**Description**<br>
-This is an application for people who want to easily modify content on their website or manage certain applications on their server.
+#Description<br>
+This is an application for people who want to modify content on their website or manage certain applications on their server.
+It comes with a simple permission system that is fully customizable. There is an administration panel for users, that is able to search, add, delete and edit
+your users as an administrator. There will come an administration panel for the permission system as well.
+A normal is just able to edit its own information as well as its profile picture yet.  
 <br>
-This Panel will be able to add user roles and modules, so everyone is able to customize this application for his needs.
-<br>
-It will come with a permission system, that makes it easy to specify the rights of an user.
+The next stage in this learning project will be a module system that adds more functions to this application.
 
-**Install**<br>
+#Install<br>
 
-*Permissions*<br>
+##File and executing permissions<br>
 You will have to modify the permissions of the php-scripts on an unix system or you won't be able to execute the php scripts.
 The command **chmod -R * 755** should help. Not recommended is to use **chmod -R * 777**, but it can be a quick fix in 
 some cases. 
 <br><br>
-*Enviroment*<br>
+##Enviroment<br>
 Installing this application on a webserver is fairly simple.
 At first you have to install a SQL Server, a Webserver (e.q Apache) and php with an php-mysql extension.
 A short description for this is LAMP.
@@ -25,15 +26,15 @@ Do you want to use this application on a Linux Machine?<br>
 That isn't a problem a well. However I won't go into detail on how to install these things listed above.
 There are bunche of tutorials on how to install a LAMP environment.<br>
 
-Quick guides for LAMP:<br>
+**Quick guides for LAMP:**<br>
 * For [Ubuntu](https://www.linode.com/docs/web-servers/lamp/install-lamp-stack-on-ubuntu-18-04/)<br>
 * For [Debian](https://www.linuxbabe.com/debian/install-lamp-stack-debian-9-stretch)<br><br>
 
-Quick guides for phpmyadmin:<br>
+**Quick guides for phpmyadmin:**<br>
 * For [Ubuntu](https://www.hostingadvice.com/how-to/install-phpmyadmin-on-ubuntu/)<br>
 * For [Debian](https://tecadmin.net/install-phpmyadmin-on-debian/)
 
-*Database*<br>
+##Database<br>
 If everything is ready, you will be able to add a database.
 I will explain it with phpmyadmin.<br>
 The first step is to log into your phpmyadmin account.
@@ -55,12 +56,26 @@ domain.eu    |  mysql:host=domain.eu;port=3306;dbname=dashboard
 192.168.2.1  | mysql:host=192.168.2.1;port=3306;dbname=dashboard
 
 
-*Installing Panel*<br>
-If everything is right, you will be able to install the tables and add a user.
-Open **/install** on your internet browser and press **"Install Tables"**.
-Now you can add a new account to the dashboard!
+##Installing Panel<br>
+![installation](https://raw.githubusercontent.com/MacaroniDamage/macaronipanel-development/master/img/installation.jpg "Logo Title")
 
-If you add an new account to the database, you will have to press **"Finish installation"**.<br>
-This will edit an entry inside the database and this site won't be useable anymore.
+<br>
+If everything went good, you will be able to see the the install page above.
+Type the destination of the panel into internet browser and append install  at the end.
 
-The next step is to login. Press **"Login"** and you will be redirected to a login mask, where you can put in your login information.
+###Install
+1. Step: Confirming installation. 
+    - Press the checkbox, so the script knows that you are sure whether you want to install the table inside the database.
+
+2. Step: Install tables.
+    - Press the button that says **Install Tables**
+    
+3. Step: Type in your account credentials.
+    - Note that your username should be called "admin" and that your password is longer than 8 characters.
+    - Remember your account information
+    
+4. Step: Submit form.
+
+5. Step: Press the login button.
+
+6. Step: Enter login credentials.
