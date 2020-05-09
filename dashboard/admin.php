@@ -5,141 +5,84 @@ $aRes = Authenticator::fetchSessionUserName();
 $a = "";
 if ($aRes !== true) {
     $a = new Authenticator(Authenticator::fetchSessionUserName());
+    include_once "../_includes/header.inc.php";
+    Loader::importJavaScript("Dialog.js");
+    Loader::importJavaScript("userAdmin.js");
 }
-if ($a->verifySession() === false) {
+
+if ($a->verifySession() === false || !($a->hasPermission("adminpanel.show"))) {
     $a->resetSession();
     header("Location: ../login.php");
 }
-
-
-/**Get Values**/
-$getPage = !empty($_GET['page']) ? $_GET['page'] : null;
-$getUid = !empty($_GET['uid']) ? $_GET['uid'] : null;
-$getEmail = !empty($_GET['email']) ? $_GET['email'] : null;
-$getRoleModel = !empty($_GET['roleModel']) ? $_GET['roleModel'] : null;
-$getSite = !empty($_GET['site']) ? $_GET['site'] : null;
-$getMaxEntries = !empty($_GET['maxEntries']) ? $_GET['maxEntries'] : null;
-
-if ($getMaxEntries == null || $getPage == null || $getSite == null) {
-    header("Location: ?site=1&page=users&maxEntries=10&oooooooh");
-}
-
-/**Post Values**/
-$postMaxEntries = !empty($_POST['maxEntries']) ? $_POST['maxEntries'] : null;
-$postNextSite = isset($_POST['nextSite']);
-$postLastSite = isset($_POST['lastSite']);
-$postSearch = !empty($_POST['search']) ? $_POST['search'] : null;
-$postPage = !empty($_POST['page']) ? $_POST['page'] : null;
-/**Defining Datatypes**/
-settype($getSite, "Integer");
-settype($postMaxEntries, "Integer");
-settype($getMaxEntries, "Integer");
-
-
-/**Global redirect values**/
-$header = "?site=$getSite&page=$getPage&maxEntries=$getMaxEntries";
-
-/*User interaction*/
-if ($postPage !== null) {
-    header("Location: ?site=$getSite&page=$postPage&maxEntries=$getMaxEntries");
-    exit();
-}
-if ($postMaxEntries != $getMaxEntries && $postMaxEntries >= 10) {
-    header("Location: ?site=$getSite&page=$getPage&maxEntries=$postMaxEntries");
-}
-if ($postNextSite === true) {
-    $getSite = $getSite + 1;
-    header("Location: ?site=$getSite&page=$getPage&maxEntries=$getMaxEntries");
-} else if ($postLastSite === true) {
-    $getSite = $getSite - 1;
-    header("Location: ?site=$getSite&page=$getPage&maxEntries=$getMaxEntries");
-}
-if ($postPage != null) {
-    header("Location: ?site=$getSite&page=$postPage&maxEntries=$getMaxEntries");
-}
-
-/*Table element that should be shown*/
-$table = null;
-if($getPage == "users") {
-    $table = new UserContent();
-    $table->setTableToShow($getSite, $getMaxEntries);
-    $table->reloadData();
-
-}
-include_once "../_includes/header.inc.php";
 ?>
 
-<body id="admin">
-<nav class="navbar">
-    <main class="buttons">
-        <section class="left">
-            <a href="index.php">
-                <div class="icon"><img src="<?php echo Loader::$jump; ?>/assets/icons/feather/skip-back.svg"></div>
-            </a>
-        </section>
-        <section class="middle">
-            <form action="admin.php<?php echo $header?>" method="post">
-                <button name="page" type="submit" value="users" class="small icon">
-                    <div class="icon"><img src="<?php echo Loader::$jump; ?>/assets/icons/feather/user.svg"> Users</div>
-                </button>
-                <button name="page" type="submit" value="modules" class="small icon">
-                    <div class="icon"><img src="<?php echo Loader::$jump; ?>/assets/icons/feather/briefcase.svg">
-                        Modules
-                    </div>
-                </button>
-                <button name="page" type="submit" value="permissions" class="small icon">
-                    <div class="icon"><img src="<?php echo Loader::$jump;?>/assets/icons/feather/users.svg">
-                        Permissions
-                    </div>
-                </button>
-            </form>
-        </section>
-    </main>
-</nav>
+<body id="admin" data-csrf="<?php echo $a->getSessionID() ?>">
+<div id="addUserDialog" class="editDialog box centered width50 main-wrapper">
+    <button class="flex left addUserButton icon small">
+        <img src="<?php echo Loader::$jump ?>/assets/icons/feather/x-circle.svg">
+    </button>
+
+    <div class="row userInput">
+        <h2>Add an user</h2>
+        <input type="text" name="uid" placeholder="Username">
+        <input type="text" name="e-mail" placeholder="E-Mail">
+        <input type="password" name="pw" placeholder="Password">
+        <div><?php RBACContent::showAvailableRolesAsDropdown(); ?></div>
+        <div class="dialog"></div>
+        <button id="addUser">Add User</button>
+    </div>
+</div>
+<div id="editUserDialog" class="editDialog box centered width50 main-wrapper">
+    <button class="flex left icon small" onclick="Dialog.closeElement('#editUserDialog');togglePWField();">
+        <img src="<?php echo Loader::$jump ?>/assets/icons/feather/x-circle.svg">
+    </button>
+
+    <div class="row userInput">
+        <h2>Edit an user</h2>
+        <a id="showPW" class="link text left">Change Password</a>
+        <input class="hidden" type="password" name="pw" placeholder="New password">
+        <input type="text" name="uid" placeholder="Username">
+        <input type="text" name="email" placeholder="E-Mail">
+        <div><?php RBACContent::showAvailableRolesAsDropdown(); ?></div>
+        <div class="dialog"></div>
+        <button id="editUser">Edit User</button>
+    </div>
+</div>
 <section id="content">
-    <form method="post" action="admin.php<?php echo $header?>">
+    <form class="flex between">
         <div>
-            <input name="search">
-            <button>Search</button>
-        </div>
-        <div>
-            <section class="flex">
-                <?php if ($getSite > 1)
-                    echo '<button onclick="triggerLoadingElement()" class="small"  name="lastSite"><img class="invert" src="' . Loader::$jump . '/assets/icons/feather/arrow-left.svg"></button>';
-                ?>
-                <section class="loadingContainer"><div class="loading hidden"></div></section>
+            <section class="row">
                 <select name="maxEntries">
-                    <option <?php
-                    if ($getMaxEntries == 10)
-                        echo " selected "; ?>>10
-                    </option>
-
-                    <option<?php
-                    if ($getMaxEntries == 20)
-                        echo " selected ";
-                    ?>>20
-                    </option>
-
-                    <option<?php
-                    if ($getMaxEntries == 50)
-                        echo " selected ";
-                    ?>>50
-                    </option>
-
-                    <option <?php if ($getMaxEntries == 100) echo " selected "; ?>>
-                        100
-                    </option>
+                    <option>10</option>
+                    <option>20</option>
+                    <option>50</option>
                 </select>
-            <?php
-                if($getSite<=$table->getSites())
-                    echo '<button onclick="triggerLoadingElement()" class="small" name="nextSite"><img class="invert" src="'.Loader::$jump.'/assets/icons/feather/arrow-right.svg"></button>';
-                echo "Site: " . $table->getCurrentSite() . "/" . $table->getSites();
-            ?>
-        </section>
+            </section>
+        </div>
+        <div class="flex">
+            <div class="addUserButton">
+                <a class="blue small radial"><img src="<?php echo Loader::$jump ?>/assets/icons/feather/user-plus.svg"></a>
+            </div>
+            <input class="search" name="search" placeholder="Search:">
+            <a class="search small">Search</a>
         </div>
     </form>
-    <?php
-        $table->drawTable();
-    ?>
+
+    <table class='tableContent'>
+        <thead></thead>
+        <tbody></tbody>
+    </table>
+
+    <section id="sites" class="flex">
+        <div id="pageBack"><a class="small"><img class="invert"
+                                                 src="<?php echo Loader::$jump ?>/assets/icons/feather/arrow-left.svg"></a>
+        </div>
+        <section class="flex" id="clickableSites"></section>
+        <div id="pageForward"><a class="small"><img class="invert"
+                                                    src="<?php echo Loader::$jump ?>/assets/icons/feather/arrow-right.svg"></a>
+        </div>
+    </section>
+
+
 </section>
 </body>

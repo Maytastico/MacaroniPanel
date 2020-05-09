@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
             openNav();
         }else{
             closeNav();
-            closeElement(profileMenuPath)
+            Dialog.closeElement(profileMenuPath)
         }
     });
     const profileButton = document.querySelector("nav #userButton");
@@ -29,15 +29,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 
-function triggerLoadingElement(){
-    let loading = document.querySelector(".loading");
-    loading.classList.remove("hidden");
-}
-
-function getMaxEntriesValue(){
-    const applyAdminSelect = document.querySelector("body#admin select[name='maxEntries']");
-    return applyAdminSelect.value;
-}
 /**
  * Opens the navigation. Adds the open class to the nav button and nav element.
  */

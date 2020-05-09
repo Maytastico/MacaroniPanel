@@ -1,5 +1,5 @@
 /*------------Add user event handler------------*/
-const apiUrl = "http://localhost/MacaroniPanel/scripts/userAdmin.php";
+const apiUrl =  `${apiFolderDestination}/userAdmin.php`;
 
 let pwInputName = "showPW";
 let editPWName = "#editUserDialog input[name=\"pw\"]";
@@ -281,6 +281,7 @@ class Table {
                 self.data = data;
                 Table.drawSite();
             }).catch(() => {
+                loading.close();
                 let error = new Dialog({
                     type: ":/",
                     generateOverlay: true,

@@ -11,6 +11,9 @@ class Loader
      */
     static public $jump = "";
 
+    static private $importantScripts = ["session.js", "folder.js"];
+
+
     /**
      * @param $className
      * Loads a specific class into a script
@@ -66,6 +69,38 @@ class Loader
             return true;
         }
         return false;
+    }
+
+    /**
+     * @param $filename
+     * $filename: e.q userAdmin.js
+     * Loads specific javascript file from the assets folder
+     * @return bool
+     * true: File was able to be added into the HTML document.
+     * false: File doesn't exist.
+     */
+    static function importJavaScript($filename){
+        $filepath = self::$jump . "assets/js/" . $filename;
+        if(file_exists($filepath)){
+            echo "<script src=\"" . $filepath . "\"></script>\n";
+            return true;
+        }
+        echo($filepath . " couldn't be loaded!");
+        return false;
+    }
+
+    /**
+     * @param $filename
+     * $filename: e.q userAdmin.js
+     * Loads specific javascript file from the assets folder
+     * @return bool
+     * true: File was able to be added into the HTML document.
+     * false: File doesn't exist.
+     */
+    static function importBasicScripts(){
+        foreach (self::$importantScripts as $filename){
+            self::importJavaScript($filename);
+        }
     }
 
     //Creates the jump back prefixes

@@ -6,6 +6,10 @@ $aRes = Authenticator::fetchSessionUserName();
 $a = "";
 if($aRes !== true){
     $a = new Authenticator(Authenticator::fetchSessionUserName());
+    include_once "../_includes/header.inc.php";
+    Loader::importJavaScript("Dialog.js");
+    Loader::importJavaScript("userSettings.js");
+    Loader::importJavaScript("navigation.js");
 }
 if($a->verifySession()===false){
     $a->resetSession();
@@ -18,7 +22,7 @@ $getreinstall = !empty($_GET['reinstall']) ? $_GET['reinstall'] : null ;
 $getSignup = !empty($_GET['signup']) ? $_GET['signup'] : null ;
 $getRoleModel = !empty($_GET['roleModel']) ? $_GET['roleModel'] : null ;
 
-include_once "../_includes/header.inc.php";
+
 ?>
 
 <body id="dashboard">
