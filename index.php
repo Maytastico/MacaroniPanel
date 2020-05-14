@@ -10,7 +10,9 @@ include_once "_includes/autoloader.inc.php";
 Loader::jump(0);
 include_once "_includes/header.inc.php";
 
-$rbac = new RBAC("Moderator");
-$rbac->addPermission(2);
-$rbac->addRole();
+Loader::importJavaScript("Table.js");
+?>
+<body>
 
+</body>
+<script>let tablee = new Table({header: ["hi", "makaroni", "was"], drawHeader:true});</script>

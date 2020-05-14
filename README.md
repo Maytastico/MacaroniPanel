@@ -63,7 +63,7 @@ domain.eu    |  ```mysql:host=domain.eu;port=3306;dbname=dashboard```
 If everything went good, you will be able to see the the install page above.
 Type the destination of the panel into internet browser and append install  at the end.
 
-###Install
+### Install
 1. Step: Confirming installation. 
     - Press the checkbox, so the script knows that you are sure whether you want to install the table inside the database.
 
