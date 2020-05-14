@@ -21,11 +21,11 @@ class Config
     //Add a "/" at the front your foldername
     //Example: foldername is Dashboard
     //The Variable has to look like "/Dashboard"
-    private static $folder = "/MacaroniPanel"/*DIRECTORY_SEPARATOR . "MacaroniPanel"*/;
+    private static $folder = ""/*DIRECTORY_SEPARATOR . "MacaroniPanel"*/;
     //Database Configuration
     private static $pdoDNS = "mysql:host=localhost;port=3306;dbname=dashboard";
-    private static $pdoUser = "root";
-    private static $pdoPW = "";
+    private static $pdoUser = "manuel";
+    private static $pdoPW = "123";
 
 
     /**
