@@ -59,6 +59,70 @@ class Table {
      */
     drawSiteButtons() {
 
+=======
+    static versions = 0;
+
+    constructor(tableInformation = {}) {
+        Table.versions++;
+        this.version = Table.versions;
+        /*
+         * Initializes and declares all attributes of the object.
+         */
+
+        //contains the Strings that will be shown inside the header
+        if (tableInformation.hasOwnProperty("tableHeader"))
+            this.tableHeader = tableInformation["tableHeader"];
+
+        //Contains a list of information that can be shown inside the table
+        if (tableInformation.hasOwnProperty("tableData"))
+            this.tableData = tableInformation["tableData"];
+
+        //If a developer wishes to specify a default max entries value,
+        //the developer should use this key during declaration.
+        if (tableInformation.hasOwnProperty("maxEntries"))
+            this.maxEntries = tableInformation["maxEntries"];
+        else
+            this.maxEntries = 10;
+
+        //If a developer wishes to specify a default site that should be displayed,
+        //the developer should use this key during declaration.
+        if(tableInformation.hasOwnProperty("site"))
+            this.currentSite = tableInformation["site"];
+        else
+            this.currentSite = 1;
+
+        if(tableInformation.hasOwnProperty("container"))
+            this.containerRef = tableInformation["container"];
+        else
+            this.containerRef = "body";
+    }
+
+    generateTableContainer(containerRef){
+        const genRef = document.querySelector(containerRef);
+        let tableTag = document.createElement("table");
+        tableTag.classList.add("tableContent");
+        tableTag.dataset.id = Table.versions;
+
+        const tableHeadTag = document.createElement("thead");
+        const tableBodyTag = document.createElement("tbody");
+        tableTag = genRef.appendChild(tableTag);
+        tableTag.appendChild(tableHeadTag);
+        tableTag.appendChild(tableBodyTag);
+    }
+
+    numOfPages() {
+        return Math.ceil(this.tableData.length / this.maxEntries);
+    }
+
+    static drawTableHeader() {
+        const table = document.querySelector(`.tableContent[data-id="${this.version}"] thead`);
+        const entry = document.createElement("tr");
+        headers.forEach((element) => {
+            const header = document.createElement("th");
+            const profile = document.createTextNode(element);
+            table.appendChild(entry).appendChild(header).appendChild(profile);
+        })
+>>>>>>> Table class added
     }
 
 }

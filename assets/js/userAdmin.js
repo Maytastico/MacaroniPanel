@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             body: JSON.stringify(params),
         }).then((response) => {
-            console.log(params)
+            console.log(params);
             if (response.status === 401) {
                 location.reload(true);
             } else if (response.status === 403) {
