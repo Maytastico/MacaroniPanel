@@ -13,6 +13,14 @@ include_once "_includes/header.inc.php";
 Loader::importJavaScript("Table.js");
 ?>
 <body>
+<section id="coolTable">
+
+</section>
 
 </body>
-<script>let tablee = new Table({header: ["hi", "makaroni", "was"], drawHeader:true});</script>
+<script>let tablee = new Table({
+        header: ["hi", "makaroni", "was"],
+        drawHeader: true,
+        generateTableContainer: "#coolTable",
+        pageButtons: true
+    });</script>

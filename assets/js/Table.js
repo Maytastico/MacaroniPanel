@@ -1,31 +1,44 @@
 class Table {
 
-    static generated = 0;
+    static versions = 0;
 
     constructor(tableProperties) {
-        this.n = Table.generated++;
+        this.n = Table.versions++;
+        //Evaluates where the table container will be generated
         if (tableProperties.hasOwnProperty("generateTableContainer")) {
             this.generateTableContainer(tableProperties["generateTableContainer"]);
-            this.containerDestination = document.querySelector(tableProperties["generateTableContainer"]);
-            this.innerTable = document.querySelector(`table.tableContent[data-id=${this.n}]`);
-
+            this.containerDestination = tableProperties["generateTableContainer"];
         } else {
             this.containerDestination = document.querySelector("body");
             this.generateTableContainer("body");
         }
-        if (tableProperties.hasOwnProperty("header")){
+
+        //Defines what kind of information will be shown on the header of the table
+        if (tableProperties.hasOwnProperty("header")) {
             this.headerData = tableProperties["header"];
             this.drawTableHeader();
         }
+
+        //Adds entrie to the data array
         if (tableProperties.hasOwnProperty("data")) {
             this.tableData = tableProperties["data"];
 
         }
 
+        if(tableProperties.hasOwnProperty("maxEntries"))
+            this.maxEntries = tableProperties["maxEntries"];
+        else
+            this.maxEntries = 10;
+
+        //Defines on which site the script should start
         if (tableProperties.hasOwnProperty("site"))
             this.currentSite = tableProperties["site"];
         if (tableProperties.hasOwnProperty("drawSiteButtons"))
             if (Table.drawSiteButtons() === true)
+                this.drawSiteButtons();
+
+        if(tableProperties.hasOwnProperty("pageButtons"))
+            if(tableProperties["pageButtons"]===true)
                 this.drawSiteButtons();
     }
 
@@ -34,31 +47,65 @@ class Table {
      */
     drawTableHeader() {
         let thead = document.createElement("thead");
-        let header = this.containerDestination.appendChild(thead);
+        let header = document.querySelector(this.containerDestination).appendChild(thead);
         const entry = document.createElement("tr");
-        this.headerData.forEach((element)=>{
+        this.innerTable = document.querySelector(`table.tableContent[data-id="${this.n}"]`);
+        this.headerData.forEach((element) => {
             const tableHeader = document.createElement("th");
             const profile = document.createTextNode(element);
-            this.innerTable.appendChild(entry).appendChild(tableHeader).appendChild(profile);
+            this.innerTable.appendChild(header).appendChild(entry).appendChild(tableHeader).appendChild(profile);
         });
     }
 
     /**
      * Generate html tags that specify a table inside the defined container
      */
-    generateTableContainer() {
+    generateTableContainer(containerPosition) {
+        const containerDestination = document.querySelector(containerPosition);
         let tableContainer = document.createElement("table");
         tableContainer.dataset.id = this.n;
         tableContainer.classList.add("tableContent");
         let tableBody = document.createElement("tbody");
-        this.containerDestination.appendChild(tableContainer).appendChild(tableBody);
+        containerDestination.appendChild(tableContainer).appendChild(tableBody);
     }
 
     /**
      * Renders button that can be clicked by the user and will modify the variables of the of the object
      */
     drawSiteButtons() {
+        const arrowRight = document.createTextNode("<")
+        const arrowLeft = document.createTextNode(">")
+        const buttonContainer = document.createElement("div");
+        buttonContainer.classList.add("buttonContainer");
+        const container = this.innerTable.appendChild(buttonContainer);
+        const leftPageButton = document.createElement("a");
+        leftPageButton.classList.add("leftArrow");
+        const rightPageButton = document.createElement("a");
+        leftPageButton.classList.add("rightArrow");
 
+        container.appendChild(rightPageButton).appendChild(arrowRight);
+        container.appendChild(leftPageButton).appendChild(arrowLeft);
+    }
+
+    hideSiteArrowButton(direction){
+        if(direction==="left"){
+            document.querySelector(`table.tableContent[data-id="${this.n}"].leftArrow`).style = "display:none";
+        }else if(direction === "right"){
+            document.querySelector(`table.tableContent[data-id="${this.n}"].rightArrow`).style = "display:none";
+        }
+    }
+
+    showSiteArrowButton(direction){
+        if(direction==="left"){
+            document.querySelector(`table.tableContent[data-id="${this.n}"].leftArrow`).style;
+        }else if(direction === "right"){
+            document.querySelector(`table.tableContent[data-id="${this.n}"].rightArrow`).style;
+        }
+    }
+
+
+    numOfPages() {
+        return Math.ceil(this.tableData.length / this.maxEntries);
     }
 
 }
