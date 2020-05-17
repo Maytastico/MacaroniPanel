@@ -73,18 +73,54 @@ class Table {
      * Renders button that can be clicked by the user and will modify the variables of the of the object
      */
     drawSiteButtons() {
-        const arrowRight = document.createTextNode("<")
-        const arrowLeft = document.createTextNode(">")
+        const arrowRight = document.createTextNode(">")
+        const arrowLeft = document.createTextNode("<")
         const buttonContainer = document.createElement("div");
         buttonContainer.classList.add("buttonContainer");
+        buttonContainer.classList.add("flex");
         const container = this.innerTable.appendChild(buttonContainer);
+        const pageButtons = document.createElement("div");
+        pageButtons.classList.add("pageButtons");
+        const leftPageButtonContainer = document.createElement("div");
         const leftPageButton = document.createElement("a");
         leftPageButton.classList.add("leftArrow");
+        leftPageButton.classList.add("small");
+        leftPageButton.addEventListener("click", ()=>{
+            if(this.currentSite > 0)
+                this.currentSite--;
+            this.drawSiteButtons();
+        });
+        const rightPageButtonContainer = document.createElement("div");
         const rightPageButton = document.createElement("a");
-        leftPageButton.classList.add("rightArrow");
+        rightPageButton.classList.add("rightArrow");
+        rightPageButton.classList.add("small");
+        rightPageButton.addEventListener("click", ()=>{
+           if(this.currentSite < this.numOfPages())
+                this.currentSite++;
+            this.drawSiteButtons();
+        });
 
-        container.appendChild(rightPageButton).appendChild(arrowRight);
-        container.appendChild(leftPageButton).appendChild(arrowLeft);
+        container.appendChild(leftPageButtonContainer).appendChild(leftPageButton).appendChild(arrowLeft);
+        container.appendChild(pageButtons);
+        container.appendChild(rightPageButtonContainer).appendChild(rightPageButton).appendChild(arrowRight);
+
+        if(this.numOfPages() <= 20){
+            for (let i = 1; i <= this.numOfPages(); i++) {
+                let pageButtonContainer = document.createElement("div");
+                let pageButton = document.createElement("a");
+                pageButton.dataset.id = i;
+                pageButton.classList.add("small");
+                if (i === Number(this.currentSite)) pageButton.classList.add("selected");
+
+                pageButton.addEventListener("click", (element) => {
+                    this.currentSite = element.target.dataset.id;
+                    this.drawSite();
+                });
+                let page = document.createTextNode(i);
+                pageButtons.appendChild(pageButton).appendChild(page);
+
+            }
+        }
     }
 
     hideSiteArrowButton(direction){
