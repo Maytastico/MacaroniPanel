@@ -1,31 +1,44 @@
 class Table {
 
-    static generated = 0;
+    static versions = 0;
 
     constructor(tableProperties) {
-        this.n = Table.generated++;
+        this.n = Table.versions++;
+        //Evaluates where the table container will be generated
         if (tableProperties.hasOwnProperty("generateTableContainer")) {
             this.generateTableContainer(tableProperties["generateTableContainer"]);
-            this.containerDestination = document.querySelector(tableProperties["generateTableContainer"]);
-            this.innerTable = document.querySelector(`table.tableContent[data-id=${this.n}]`);
-
+            this.containerDestination = tableProperties["generateTableContainer"];
         } else {
             this.containerDestination = document.querySelector("body");
             this.generateTableContainer("body");
         }
-        if (tableProperties.hasOwnProperty("header")){
+
+        //Defines what kind of information will be shown on the header of the table
+        if (tableProperties.hasOwnProperty("header")) {
             this.headerData = tableProperties["header"];
             this.drawTableHeader();
         }
+
+        //Adds entrie to the data array
         if (tableProperties.hasOwnProperty("data")) {
             this.tableData = tableProperties["data"];
 
         }
 
+        if(tableProperties.hasOwnProperty("maxEntries"))
+            this.maxEntries = tableProperties["maxEntries"];
+        else
+            this.maxEntries = 10;
+
+        //Defines on which site the script should start
         if (tableProperties.hasOwnProperty("site"))
             this.currentSite = tableProperties["site"];
         if (tableProperties.hasOwnProperty("drawSiteButtons"))
             if (Table.drawSiteButtons() === true)
+                this.drawSiteButtons();
+
+        if(tableProperties.hasOwnProperty("pageButtons"))
+            if(tableProperties["pageButtons"]===true)
                 this.drawSiteButtons();
     }
 
@@ -34,95 +47,101 @@ class Table {
      */
     drawTableHeader() {
         let thead = document.createElement("thead");
-        let header = this.containerDestination.appendChild(thead);
+        let header = document.querySelector(this.containerDestination).appendChild(thead);
         const entry = document.createElement("tr");
-        this.headerData.forEach((element)=>{
+        this.innerTable = document.querySelector(`table.tableContent[data-id="${this.n}"]`);
+        this.headerData.forEach((element) => {
             const tableHeader = document.createElement("th");
             const profile = document.createTextNode(element);
-            this.innerTable.appendChild(entry).appendChild(tableHeader).appendChild(profile);
+            this.innerTable.appendChild(header).appendChild(entry).appendChild(tableHeader).appendChild(profile);
         });
     }
 
     /**
      * Generate html tags that specify a table inside the defined container
      */
-    generateTableContainer() {
+    generateTableContainer(containerPosition) {
+        const containerDestination = document.querySelector(containerPosition);
         let tableContainer = document.createElement("table");
         tableContainer.dataset.id = this.n;
         tableContainer.classList.add("tableContent");
         let tableBody = document.createElement("tbody");
-        this.containerDestination.appendChild(tableContainer).appendChild(tableBody);
+        containerDestination.appendChild(tableContainer).appendChild(tableBody);
     }
 
     /**
      * Renders button that can be clicked by the user and will modify the variables of the of the object
      */
     drawSiteButtons() {
+        const arrowRight = document.createTextNode(">")
+        const arrowLeft = document.createTextNode("<")
+        const buttonContainer = document.createElement("div");
+        buttonContainer.classList.add("buttonContainer");
+        buttonContainer.classList.add("flex");
+        const container = this.innerTable.appendChild(buttonContainer);
+        const pageButtons = document.createElement("div");
+        pageButtons.classList.add("pageButtons");
+        const leftPageButtonContainer = document.createElement("div");
+        const leftPageButton = document.createElement("a");
+        leftPageButton.classList.add("leftArrow");
+        leftPageButton.classList.add("small");
+        leftPageButton.addEventListener("click", ()=>{
+            if(this.currentSite > 0)
+                this.currentSite--;
+            this.drawSiteButtons();
+        });
+        const rightPageButtonContainer = document.createElement("div");
+        const rightPageButton = document.createElement("a");
+        rightPageButton.classList.add("rightArrow");
+        rightPageButton.classList.add("small");
+        rightPageButton.addEventListener("click", ()=>{
+           if(this.currentSite < this.numOfPages())
+                this.currentSite++;
+            this.drawSiteButtons();
+        });
 
-=======
-    static versions = 0;
+        container.appendChild(leftPageButtonContainer).appendChild(leftPageButton).appendChild(arrowLeft);
+        container.appendChild(pageButtons);
+        container.appendChild(rightPageButtonContainer).appendChild(rightPageButton).appendChild(arrowRight);
 
-    constructor(tableInformation = {}) {
-        Table.versions++;
-        this.version = Table.versions;
-        /*
-         * Initializes and declares all attributes of the object.
-         */
+        if(this.numOfPages() <= 20){
+            for (let i = 1; i <= this.numOfPages(); i++) {
+                let pageButtonContainer = document.createElement("div");
+                let pageButton = document.createElement("a");
+                pageButton.dataset.id = i;
+                pageButton.classList.add("small");
+                if (i === Number(this.currentSite)) pageButton.classList.add("selected");
 
-        //contains the Strings that will be shown inside the header
-        if (tableInformation.hasOwnProperty("tableHeader"))
-            this.tableHeader = tableInformation["tableHeader"];
+                pageButton.addEventListener("click", (element) => {
+                    this.currentSite = element.target.dataset.id;
+                    this.drawSite();
+                });
+                let page = document.createTextNode(i);
+                pageButtons.appendChild(pageButton).appendChild(page);
 
-        //Contains a list of information that can be shown inside the table
-        if (tableInformation.hasOwnProperty("tableData"))
-            this.tableData = tableInformation["tableData"];
-
-        //If a developer wishes to specify a default max entries value,
-        //the developer should use this key during declaration.
-        if (tableInformation.hasOwnProperty("maxEntries"))
-            this.maxEntries = tableInformation["maxEntries"];
-        else
-            this.maxEntries = 10;
-
-        //If a developer wishes to specify a default site that should be displayed,
-        //the developer should use this key during declaration.
-        if(tableInformation.hasOwnProperty("site"))
-            this.currentSite = tableInformation["site"];
-        else
-            this.currentSite = 1;
-
-        if(tableInformation.hasOwnProperty("container"))
-            this.containerRef = tableInformation["container"];
-        else
-            this.containerRef = "body";
+            }
+        }
     }
 
-    generateTableContainer(containerRef){
-        const genRef = document.querySelector(containerRef);
-        let tableTag = document.createElement("table");
-        tableTag.classList.add("tableContent");
-        tableTag.dataset.id = Table.versions;
-
-        const tableHeadTag = document.createElement("thead");
-        const tableBodyTag = document.createElement("tbody");
-        tableTag = genRef.appendChild(tableTag);
-        tableTag.appendChild(tableHeadTag);
-        tableTag.appendChild(tableBodyTag);
+    hideSiteArrowButton(direction){
+        if(direction==="left"){
+            document.querySelector(`table.tableContent[data-id="${this.n}"].leftArrow`).style = "display:none";
+        }else if(direction === "right"){
+            document.querySelector(`table.tableContent[data-id="${this.n}"].rightArrow`).style = "display:none";
+        }
     }
+
+    showSiteArrowButton(direction){
+        if(direction==="left"){
+            document.querySelector(`table.tableContent[data-id="${this.n}"].leftArrow`).style;
+        }else if(direction === "right"){
+            document.querySelector(`table.tableContent[data-id="${this.n}"].rightArrow`).style;
+        }
+    }
+
 
     numOfPages() {
         return Math.ceil(this.tableData.length / this.maxEntries);
-    }
-
-    static drawTableHeader() {
-        const table = document.querySelector(`.tableContent[data-id="${this.version}"] thead`);
-        const entry = document.createElement("tr");
-        headers.forEach((element) => {
-            const header = document.createElement("th");
-            const profile = document.createTextNode(element);
-            table.appendChild(entry).appendChild(header).appendChild(profile);
-        })
->>>>>>> Table class added
     }
 
 }

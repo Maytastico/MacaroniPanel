@@ -1,5 +1,5 @@
 /*------------Add user event handler------------*/
-const apiUrl =  `${apiFolderDestination}/userAdmin.php`;
+const apiUrl = `${apiFolderDestination}/userAdmin.php`;
 
 let pwInputName = "showPW";
 let editPWName = "#editUserDialog input[name=\"pw\"]";
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const dialogField = document.querySelector('#addUserDialog .dialog');
         let params = {
             csrf: getCSRFToken(),
-            uid :  uid,
+            uid: uid,
             pw: pw,
             email: email,
             role: role,
@@ -109,40 +109,40 @@ document.addEventListener("DOMContentLoaded", () => {
             responseStatus = response.status;
             return response.json();
         }).then((data) => {
-                if (responseStatus === 400) {
-                    dialogField.classList.remove("success");
-                    if (data.error === "empty") {
-                        dialogField.classList.add("red");
-                        dialogField.innerHTML = "You have forgot to enter something into the fields";
-                    } else if (data.error === "admin") {
-                        dialogField.classList.add("red");
-                        dialogField.innerHTML = "You are not allowed to enter \"admin\" as a username!";
-                    } else if (data.error === "pw") {
-                        dialogField.classList.add("red");
-                        dialogField.innerHTML = "The password you have entered is too short";
-                    } else if (data.error === "usernameExists") {
-                        dialogField.classList.add("red");
-                        dialogField.innerHTML = "This username already exists!";
-                    } else if (data.error === "email") {
-                        dialogField.classList.add("red");
-                        dialogField.innerHTML = "This email format is not right";
-                    }else if(data.error === "userNotExist"){
-                        dialogField.classList.add("red");
-                        dialogField.innerHTML = "The user you wanted to edit does not exist!";
-                    }else{
-                        dialogField.classList.add("red");
-                        dialogField.innerHTML = "Something went wrong";
-                    }
+            if (responseStatus === 400) {
+                dialogField.classList.remove("success");
+                if (data.error === "empty") {
+                    dialogField.classList.add("red");
+                    dialogField.innerHTML = "You have forgot to enter something into the fields";
+                } else if (data.error === "admin") {
+                    dialogField.classList.add("red");
+                    dialogField.innerHTML = "You are not allowed to enter \"admin\" as a username!";
+                } else if (data.error === "pw") {
+                    dialogField.classList.add("red");
+                    dialogField.innerHTML = "The password you have entered is too short";
+                } else if (data.error === "usernameExists") {
+                    dialogField.classList.add("red");
+                    dialogField.innerHTML = "This username already exists!";
+                } else if (data.error === "email") {
+                    dialogField.classList.add("red");
+                    dialogField.innerHTML = "This email format is not right";
+                } else if (data.error === "userNotExist") {
+                    dialogField.classList.add("red");
+                    dialogField.innerHTML = "The user you wanted to edit does not exist!";
+                } else {
+                    dialogField.classList.add("red");
+                    dialogField.innerHTML = "Something went wrong";
                 }
-            }).catch((error) => {
-                let err = new Dialog({
-                    generateOverlay: true,
-                    close: {action:"destroy"},
-                    feedbackMsg: `An error occurred while adding an user!`,
-                    type: ":/",
-                    open: true
-                });
-                err.addMessage("error", error);
+            }
+        }).catch((error) => {
+            let err = new Dialog({
+                generateOverlay: true,
+                close: {action: "destroy"},
+                feedbackMsg: `An error occurred while adding an user!`,
+                type: ":/",
+                open: true
+            });
+            err.addMessage("error", error);
         });
     });
 
@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 dialogField.classList.remove("red");
                 dialogField.classList.add("success");
                 ;
-                if(params["newUid"] === "")
+                if (params["newUid"] === "")
                     uid.placeholder = params["identifierUid"];
                 else
                     uid.placeholder = params["newUid"];
@@ -218,10 +218,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     } else if (data.error === "email") {
                         dialogField.classList.add("red");
                         dialogField.innerHTML = "This email format is not right";
-                    }else if(data.error === "userNotExist"){
+                    } else if (data.error === "userNotExist") {
                         dialogField.classList.add("red");
                         dialogField.innerHTML = "The user you wanted to edit does not exist!";
-                    }else{
+                    } else {
                         dialogField.classList.add("red");
                         dialogField.innerHTML = "Something went wrong";
                     }
@@ -385,7 +385,7 @@ class Table {
                     if (response.status === 200) {
                         loading.editMessage("dataLoading", "Refreshing Data");
                         Table.getDataFromApi();
-                    } else if(response.status === 403){
+                    } else if (response.status === 403) {
                         let nope = new Dialog({
                             generateOverlay: true,
                             close: {action: "destroy"},
@@ -393,13 +393,13 @@ class Table {
                             type: "exclamationMark",
                             open: true
                         });
-                    }else{
+                    } else {
                         let error = new Dialog({
                             generateOverlay: true,
                             close: {action: "destroy"},
                             feedbackMsg: "Something went wrong :/",
                             type: "exclamationMark",
-                            open : true
+                            open: true
                         });
                     }
                 });
