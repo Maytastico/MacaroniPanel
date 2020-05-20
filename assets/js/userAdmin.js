@@ -232,6 +232,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
+    let userTable = new Table({
+        header: ["hi", "makaroni", "was"],
+        drawHeader: true,
+        generateTableContainer: "#content",
+        pageButtons: true,
+        maxEntries: 1,
+        data: ["Profile", "Username", "E-Mail", "Last Login", "Role", "Actions"],
+    });
+
+
 });
 
 function togglePWField() {
@@ -243,6 +253,9 @@ function togglePWField() {
         pwInputName.classList.add("hidden");
     }
 }
+
+
+
 
 class Table {
     /**

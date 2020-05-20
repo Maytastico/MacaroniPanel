@@ -2,7 +2,7 @@ class Table {
 
     static versions = 0;
 
-    constructor(tableProperties) {
+    constructor(tableProperties, TableDrawFunction) {
         this.n = Table.versions++;
         //Evaluates where the table container will be generated
         if (tableProperties.hasOwnProperty("generateTableContainer")) {
@@ -32,14 +32,20 @@ class Table {
 
         //Defines on which site the script should start
         if (tableProperties.hasOwnProperty("site"))
-            this.currentSite = tableProperties["site"];
-        if (tableProperties.hasOwnProperty("drawSiteButtons"))
-            if (Table.drawSiteButtons() === true)
-                this.drawSiteButtons();
+            this.currentSite = Number(tableProperties["site"]);
+        else
+            this.currentSite = 1;
 
         if(tableProperties.hasOwnProperty("pageButtons"))
-            if(tableProperties["pageButtons"]===true)
+            if(tableProperties["pageButtons"]===true){
+                this.generateSiteButtonContainer();
                 this.drawSiteButtons();
+            }
+
+        if(tableProperties.hasOwnProperty("maxEntryDropdown"))
+
+        this.drawTable = TableDrawFunction;
+
     }
 
     /**
@@ -69,12 +75,14 @@ class Table {
         containerDestination.appendChild(tableContainer).appendChild(tableBody);
     }
 
-    /**
-     * Renders button that can be clicked by the user and will modify the variables of the of the object
-     */
-    drawSiteButtons() {
-        const arrowRight = document.createTextNode(">")
-        const arrowLeft = document.createTextNode("<")
+    generateMaxEntriesContainer(){
+        const container = document.createElement("div");
+        const select = document.createElement("select");
+    }
+
+    generateSiteButtonContainer(){
+        const arrowRight = document.createTextNode(">");
+        const arrowLeft = document.createTextNode("<");
         const buttonContainer = document.createElement("div");
         buttonContainer.classList.add("buttonContainer");
         buttonContainer.classList.add("flex");
@@ -86,8 +94,9 @@ class Table {
         leftPageButton.classList.add("leftArrow");
         leftPageButton.classList.add("small");
         leftPageButton.addEventListener("click", ()=>{
-            if(this.currentSite > 0)
+            if(this.currentSite > 1)
                 this.currentSite--;
+            this.clearPageButtons();
             this.drawSiteButtons();
         });
         const rightPageButtonContainer = document.createElement("div");
@@ -95,15 +104,21 @@ class Table {
         rightPageButton.classList.add("rightArrow");
         rightPageButton.classList.add("small");
         rightPageButton.addEventListener("click", ()=>{
-           if(this.currentSite < this.numOfPages())
+
+            if(this.currentSite < this.numOfPages())
                 this.currentSite++;
+            this.clearPageButtons();
             this.drawSiteButtons();
         });
-
         container.appendChild(leftPageButtonContainer).appendChild(leftPageButton).appendChild(arrowLeft);
         container.appendChild(pageButtons);
         container.appendChild(rightPageButtonContainer).appendChild(rightPageButton).appendChild(arrowRight);
-
+    }
+    /**
+     * Renders button that can be clicked by the user and will modify the variables of the of the object
+     */
+    drawSiteButtons() {
+        const pageButtons = document.querySelector(`table.tableContent[data-id=\"${this.n}\"] .buttonContainer .pageButtons`);
         if(this.numOfPages() <= 20){
             for (let i = 1; i <= this.numOfPages(); i++) {
                 let pageButtonContainer = document.createElement("div");
@@ -114,28 +129,62 @@ class Table {
 
                 pageButton.addEventListener("click", (element) => {
                     this.currentSite = element.target.dataset.id;
-                    this.drawSite();
+                    pageButtons.innerHTML = "";
+                    this.drawSiteButtons();
                 });
                 let page = document.createTextNode(i);
                 pageButtons.appendChild(pageButton).appendChild(page);
 
             }
+        }else{
+            const selectElement = document.createElement("select");
+            for (let i = 1; i <= this.numOfPages(); i++) {
+                let pageButton = document.createElement("option");
+                if (i === Number(this.currentSite)) pageButton.selected = true;
+
+                pageButton.addEventListener("click",() => {
+                    this.currentSite = i;
+                    pageButtons.innerHTML = "";
+                    this.drawSiteButtons();
+                });
+                let page = document.createTextNode(i);
+                pageButtons.appendChild(selectElement).appendChild(pageButton).appendChild(page);
+
+            }
         }
+
+        //Hiding left or right page button
+        if(this.currentSite === 1){
+            this.hideSiteArrowButton("left");
+        }else if(this.currentSite === this.numOfPages()){
+            this.hideSiteArrowButton("right");
+        }else {
+            this.showSiteArrowButton("left");
+            this.showSiteArrowButton("right");
+        }
+
+        this.drawTable();
     }
 
+
+
+    clearPageButtons(){
+        const pageButtons = document.querySelector(`table.tableContent[data-id=\"${this.n}\"] .buttonContainer .pageButtons`);
+        pageButtons.innerHTML = "";
+    }
     hideSiteArrowButton(direction){
-        if(direction==="left"){
-            document.querySelector(`table.tableContent[data-id="${this.n}"].leftArrow`).style = "display:none";
-        }else if(direction === "right"){
-            document.querySelector(`table.tableContent[data-id="${this.n}"].rightArrow`).style = "display:none";
+        if(direction == "left"){
+            document.querySelector(`table.tableContent[data-id="${this.n}"] .leftArrow`).style = "opacity:0";
+        }else if(direction == "right"){
+            document.querySelector(`table.tableContent[data-id="${this.n}"] .rightArrow`).style = "opacity:0";
         }
     }
 
     showSiteArrowButton(direction){
         if(direction==="left"){
-            document.querySelector(`table.tableContent[data-id="${this.n}"].leftArrow`).style;
+            document.querySelector(`table.tableContent[data-id="${this.n}"] .leftArrow`).style = "opacity:1";
         }else if(direction === "right"){
-            document.querySelector(`table.tableContent[data-id="${this.n}"].rightArrow`).style;
+            document.querySelector(`table.tableContent[data-id="${this.n}"] .rightArrow`).style = "opacity:1";
         }
     }
 

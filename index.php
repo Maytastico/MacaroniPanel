@@ -29,7 +29,10 @@ Loader::importJavaScript("Table.js");
         generateTableContainer: "#coolTable",
         pageButtons: true,
         maxEntries: 1,
-        data: ["lkjasd", "aksjdhaslk", "kasjhdlka", "kasjdlkasjd", "asdad"]
-    });
+        data: ["lkjasd", "aksjdhaslk", "kasjhdlka", "kasjdlkasjd", "asdad","lkjasd", "aksjdhaslk", "kasjhdlka", "kasjdlkasjd", "asdad","lkjasd", "aksjdhaslk", "kasjhdlka", "kasjdlkasjd", "asdad","lkjasd", "aksjdhaslk", "kasjhdlka", "kasjdlkasjd", "asdad","lkjasd", "aksjdhaslk", "kasjhdlka", "kasjdlkasjd", "asdad","lkjasd", "aksjdhaslk", "kasjhdlka", "kasjdlkasjd", "asdad"],
+    }, drawTable);
 
+function drawTable(){
+
+}
     </script>

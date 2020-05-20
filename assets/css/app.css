@@ -348,6 +348,8 @@ div a {
     text-decoration: none;
     cursor: pointer;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
 }
 
 
